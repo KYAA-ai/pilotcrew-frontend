@@ -13,7 +13,7 @@ export function EmployeeAuthGuard({ children }: EmployeeAuthGuardProps) {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = localStorage.getItem('employee-token');
+      const token = localStorage.getItem('employee-token-cookie');
       
       if (!token) {
         setIsValidating(false);

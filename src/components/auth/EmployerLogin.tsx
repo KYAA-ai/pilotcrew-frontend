@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
 import type { FormField } from "@/components/form";
-import apiClient from "@/lib/api";
+import employerApiClient from "@/lib/api";
+import { useProfile } from "@/contexts/ProfileContext";
 
 interface EmployerLoginProps {
   onSuccess?: () => void;
@@ -36,17 +37,19 @@ const employerLoginFields: FormField[] = [
 
 export default function EmployerLogin({ onSuccess, onValidationError }: EmployerLoginProps) {
   const navigate = useNavigate();
+  const { setProfile } = useProfile();
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       console.log("Login form data:", data);
-      const response = await apiClient.post('/employer/login', data);
+      const response = await employerApiClient.post('/employer/login', data);
       console.log("Login successful:", response.data);
       
       toast.success("Login successful! Redirecting to dashboard...");
       
-      if (response.data.token) {
-        localStorage.setItem('employer-token', response.data.token);
+      // Set profile information in context
+      if (response.data.employer) {
+        setProfile(response.data.employer);
       }
       
       onSuccess?.();
