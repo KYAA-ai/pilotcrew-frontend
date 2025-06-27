@@ -1,7 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
-// import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { GenericDataTable } from "@/components/generic-data-table"
-// import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
@@ -21,11 +19,14 @@ import { toast } from "sonner"
 import { type ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react"
+//import { useProfile } from "@/contexts/ProfileContext"
 
 export default function Dashboard() {
   const [selectedJob, setSelectedJob] = useState<Record<string, unknown> | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+
+  //const { profile, isEmployer, isEmployee } = useProfile()
 
   const handleJobAction = (action: string, row: Record<string, unknown>) => {
     if (action === "view") {
@@ -99,7 +100,7 @@ export default function Dashboard() {
         const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
         if (salary?.min && salary?.max) {
           return (
-            <div className="text-sm font-medium">
+            <div className="text-sm font-medium text-default">
               {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
             </div>
           )
@@ -175,9 +176,6 @@ export default function Dashboard() {
             }}
           >
             View
-          </Button>
-          <Button size="sm" variant="outline">
-            Edit
           </Button>
         </div>
       ),
@@ -286,7 +284,7 @@ export default function Dashboard() {
                       const salary = selectedJob.salary as { min: number; max: number; currency: string } | null
                       if (salary?.min && salary?.max) {
                         return (
-                          <p className="text-lg font-semibold text-green-600">
+                          <p className="text-lg font-semibold text-default">
                             {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
                           </p>
                         )

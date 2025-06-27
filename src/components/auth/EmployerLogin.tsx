@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
 import type { FormField } from "@/components/form";
-import employerApiClient from "@/lib/api";
+import apiClient from "@/lib/api";
 import { useProfile } from "@/contexts/ProfileContext";
 
 interface EmployerLoginProps {
@@ -42,7 +42,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       console.log("Login form data:", data);
-      const response = await employerApiClient.post('/employer/login', data);
+      const response = await apiClient.post('/employer/login', data);
       console.log("Login successful:", response.data);
       
       toast.success("Login successful! Redirecting to dashboard...");

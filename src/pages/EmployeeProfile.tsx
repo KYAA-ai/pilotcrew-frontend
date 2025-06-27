@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
+import { useProfile } from "@/contexts/ProfileContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function EmployeeProfile() {
   const navigate = useNavigate();
-  useAuth();
+  // Using ProfileContext to ensure the component is wrapped properly
+  useProfile();
 
   const [form, setForm] = useState({
     name: "",
@@ -66,7 +67,7 @@ export default function EmployeeProfile() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="roles">Interested Roles (comma separated)</Label>
+              <Label htmlFor="name">Interested Roles (comma separated)</Label>
               <Input
                 id="roles"
                 name="roles"

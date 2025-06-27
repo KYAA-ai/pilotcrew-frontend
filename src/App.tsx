@@ -2,23 +2,24 @@ import { EmployeeAuthGuard } from '@/components/auth/employee-auth-guard'
 import { EmployerAuthGuard } from '@/components/auth/employer-auth-guard'
 import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
 import { Toaster } from '@/components/ui/sonner'
-import { ProfileProvider } from '@/contexts/ProfileContext'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import DashboardPage from './pages/Dashboard'
+import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeProfile from './pages/EmployeeProfile'
 import EmployerAuth from './pages/EmployerAuth'
 import EmployerProfile from './pages/EmployerProfile'
 import LandingPage from './pages/LandingPage'
+import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 
 function App() {
   return (
-    <ProfileProvider>
+    <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         {/* Auth Callback */}
         <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
+        <Route path="/auth/linkedin/callback" element={<LinkedInAuthCallback />} />
         {/* Employer Flow */}
         <Route path="/auth/employer" element={<EmployerAuth />} />
         {/* Employee Flow */}
@@ -36,7 +37,9 @@ function App() {
           path="/employee/dashboard"
           element={
             <EmployeeAuthGuard>
-              <DashboardPage />
+              <div>
+                <h1>Employee Dashboard</h1>
+              </div>
             </EmployeeAuthGuard>
           }
         />
@@ -45,7 +48,17 @@ function App() {
           path="/employer/dashboard"
           element={
             <EmployerAuthGuard>
-              <DashboardPage />
+              <EmployerDashboardPage />
+            </EmployerAuthGuard>
+          }
+        />
+        <Route
+          path="/employer/example"
+          element={
+            <EmployerAuthGuard>
+              <div>
+                <h1>Employer Example</h1>
+              </div>
             </EmployerAuthGuard>
           }
         />
@@ -62,7 +75,7 @@ function App() {
         <Route path="*" element={<LandingPage />} />
       </Routes>
       <Toaster />
-    </ProfileProvider>
+    </>
   )
 }
 

@@ -1,14 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useProfile } from "@/contexts/ProfileContext";
 import { useNavigate } from "react-router-dom";
+import apiClient from "@/lib/api";
 
 export default function EmployeeDashboard() {
-  const { logout } = useAuth();
+  const { clearProfile } = useProfile();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/auth/employee", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await apiClient.post('/employee/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      clearProfile();
+      navigate("/auth/employee", { replace: true });
+    }
   };
 
   return (

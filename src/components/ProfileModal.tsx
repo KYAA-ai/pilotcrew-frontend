@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { toast } from 'sonner';
-import employerApiClient from '@/lib/api';
+import apiClient from '@/lib/api';
 import {
   Dialog,
   DialogContent,
@@ -61,7 +61,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
     setIsLoading(true);
     try {
-      const response = await employerApiClient.put('/employer/profile', formData);
+      const response = await apiClient.put('/employer/profile', formData);
       
       if (response.status === 200) {
         // Update profile in context

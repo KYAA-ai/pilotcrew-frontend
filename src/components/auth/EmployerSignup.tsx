@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
 import type { FormField } from "@/components/form";
-import employerApiClient from "@/lib/api";
+import apiClient from "@/lib/api";
 import { useProfile } from "@/contexts/ProfileContext";
 
 interface EmployerSignupProps {
@@ -79,7 +79,7 @@ export default function EmployerSignup({ onSuccess, onValidationError }: Employe
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       console.log("Signup form data:", data);
-      const response = await employerApiClient.post('/employer/register', data);
+      const response = await apiClient.post('/employer/register', data);
       console.log("Registration successful:", response.data);
     
       toast.success("Registration successful! Please check your email to verify your account.");
