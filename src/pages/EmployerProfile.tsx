@@ -3,6 +3,7 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { useLogout } from '@/hooks/useLogout';
 import { toast } from 'sonner';
 import employerApiClient from '@/lib/api';
+import { EmployerLayout } from '@/components/layout/EmployerLayout';
 import {
   Card,
   CardContent,
@@ -16,21 +17,31 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  IconEdit,
-  IconDeviceFloppy,
-  IconX,
-  IconMail,
-  IconBuilding,
-  IconGlobe,
-  IconUser,
-  IconLogout,
-} from '@tabler/icons-react';
+  Edit,
+  Save,
+  X,
+  Mail,
+  Building,
+  Globe,
+  User,
+  Logout,
+} from '@/components/SimpleIcons';
+
+interface EmployerProfile {
+  id: string;
+  email: string;
+  name: string;
+  companyName: string;
+  companyWebsite?: string;
+  isEmailVerified: boolean;
+}
 
 export default function EmployerProfile() {
-  const { profile, setProfile } = useProfile();
+  const { profile, setProfile } = useProfile<EmployerProfile>();
   const { logout } = useLogout();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: profile?.name || '',
     companyName: profile?.companyName || '',
@@ -62,7 +73,6 @@ export default function EmployerProfile() {
       const response = await employerApiClient.put('/employer/profile', formData);
       
       if (response.status === 200) {
-        // Update profile in context
         setProfile({
           ...profile,
           ...response.data.employer,
@@ -90,17 +100,19 @@ export default function EmployerProfile() {
 
   if (!profile) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading profile...</p>
+      <EmployerLayout>
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-2 text-sm text-gray-600">Loading profile...</p>
+          </div>
         </div>
-      </div>
+      </EmployerLayout>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <EmployerLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -113,7 +125,7 @@ export default function EmployerProfile() {
             onClick={logout}
             className="flex items-center gap-2"
           >
-            <IconLogout className="h-4 w-4" />
+            <Logout className="h-4 w-4" />
             Logout
           </Button>
         </div>
@@ -133,7 +145,7 @@ export default function EmployerProfile() {
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-2"
                 >
-                  <IconEdit className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                   Edit Profile
                 </Button>
               ) : (
@@ -143,7 +155,7 @@ export default function EmployerProfile() {
                     disabled={isLoading}
                     className="flex items-center gap-2"
                   >
-                    <IconDeviceFloppy className="h-4 w-4" />
+                    <Save className="h-4 w-4" />
                     {isLoading ? 'Saving...' : 'Save Changes'}
                   </Button>
                   <Button
@@ -152,7 +164,7 @@ export default function EmployerProfile() {
                     disabled={isLoading}
                     className="flex items-center gap-2"
                   >
-                    <IconX className="h-4 w-4" />
+                    <X className="h-4 w-4" />
                     Cancel
                   </Button>
                 </div>
@@ -171,7 +183,7 @@ export default function EmployerProfile() {
                 {/* Name */}
                 <div className="space-y-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
-                    <IconUser className="h-4 w-4" />
+                    <User className="h-4 w-4" />
                     Full Name
                   </Label>
                   {isEditing ? (
@@ -182,41 +194,26 @@ export default function EmployerProfile() {
                       placeholder="Enter your full name"
                     />
                   ) : (
-                    <p className="text-lg font-medium">{profile.name}</p>
+                    <p className="font-medium">{profile.name}</p>
                   )}
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
-                    <IconMail className="h-4 w-4" />
+                    <Mail className="h-4 w-4" />
                     Email Address
                   </Label>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg">{profile.email}</p>
+                    <p className="text-sm">{profile.email}</p>
                     {profile.isEmailVerified ? (
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
                         Verified
                       </Badge>
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                          Not Verified
-                        </Badge>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            window.location.href = `${import.meta.env.VITE_API_URL}/employer/auth/google`;
-                          }}
-                          className="flex items-center gap-2 text-xs"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-3 w-3">
-                            <path d="M21.35 11.1h-9.09v3.7h5.82c-.25 1.46-1.5 4.3-5.82 4.3-3.5 0-6.36-2.9-6.36-6.5s2.86-6.5 6.36-6.5c2 0 3.34.88 4.09 1.63l2.8-2.8C17.57 2.46 15.46 1.5 12.32 1.5 6.46 1.5 2 5.93 2 11.7s4.46 10.2 10.32 10.2c5.93 0 9.82-4.16 9.82-10.07 0-.84-.08-1.43-.18-2.73z"/>
-                          </svg>
-                          Verify with Google
-                        </Button>
-                      </div>
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs">
+                        Not Verified
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -224,11 +221,11 @@ export default function EmployerProfile() {
             </div>
 
             {/* Company Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
+            <div className="grid grid-cols-1 gap-4 pt-4 border-t">
               {/* Company Name */}
               <div className="space-y-2">
                 <Label htmlFor="companyName" className="flex items-center gap-2">
-                  <IconBuilding className="h-4 w-4" />
+                  <Building className="h-4 w-4" />
                   Company Name
                 </Label>
                 {isEditing ? (
@@ -239,14 +236,14 @@ export default function EmployerProfile() {
                     placeholder="Enter your company name"
                   />
                 ) : (
-                  <p className="text-lg font-medium">{profile.companyName}</p>
+                  <p className="font-medium">{profile.companyName}</p>
                 )}
               </div>
 
               {/* Company Website */}
               <div className="space-y-2">
                 <Label htmlFor="companyWebsite" className="flex items-center gap-2">
-                  <IconGlobe className="h-4 w-4" />
+                  <Globe className="h-4 w-4" />
                   Company Website
                 </Label>
                 {isEditing ? (
@@ -264,41 +261,20 @@ export default function EmployerProfile() {
                         href={profile.companyWebsite}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
+                        className="text-blue-600 hover:text-blue-800 underline text-sm"
                       >
                         {profile.companyWebsite}
                       </a>
                     ) : (
-                      <p className="text-gray-500 italic">No website provided</p>
+                      <p className="text-gray-500 italic text-sm">No website provided</p>
                     )}
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Account Information */}
-            <div className="pt-6 border-t">
-              <h3 className="text-lg font-semibold mb-4">Account Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm text-gray-600">Account ID</Label>
-                  <p className="text-sm font-mono">{profile.id}</p>
-                </div>
-                <div>
-                  <Label className="text-sm text-gray-600">Member Since</Label>
-                  <p className="text-sm">
-                    {new Date().toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </EmployerLayout>
   );
 } 

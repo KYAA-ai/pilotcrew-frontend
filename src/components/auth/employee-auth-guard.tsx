@@ -11,20 +11,45 @@ interface EmployeeAuthGuardProps {
 export function EmployeeAuthGuard({ children }: EmployeeAuthGuardProps) {
   const [isValidating, setIsValidating] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { profile, setProfile, isEmployee } = useProfile();
+  const [isOverriding, setIsOverriding] = useState(false);
+  const { profile, setProfile, userType, isLoading: isProfileLoading, isLoggingOut } = useProfile();
 
   useEffect(() => {
     const validateToken = async () => {
-      if (profile && isEmployee()) {
+      if (isProfileLoading) {
+        return;
+      }
+      if (isOverriding) {
+        setIsOverriding(false);
+        return;
+      }
+      
+      // Don't validate if user is logging out
+      if (isLoggingOut) {
+        setIsAuthenticated(false);
+        setIsValidating(false);
+        return;
+      }
+      
+      if (profile && userType === 'employer') {
+        setIsOverriding(true);
+        setProfile(null);
+        localStorage.setItem('userType', 'employee');
+        return;
+      }
+
+      if (profile && userType === 'employee') {
         setIsAuthenticated(true);
         setIsValidating(false);
         return;
       }
+
       if (!profile) {
         try {
-          const profileResponse = await apiClient.get('/auth/profile');
+          const profileResponse = await apiClient.get('/employee/profile');
           setProfile(profileResponse.data.employee);
           setIsAuthenticated(true);
+          setIsValidating(false);
         } catch (error: unknown) {
           const apiError = error as { response?: { status?: number; data?: { error?: string; message?: string } } };
 
@@ -51,7 +76,6 @@ export function EmployeeAuthGuard({ children }: EmployeeAuthGuardProps) {
             setIsAuthenticated(false);
             setProfile(null);
           }
-        } finally {
           setIsValidating(false);
         }
       } else {
@@ -63,14 +87,16 @@ export function EmployeeAuthGuard({ children }: EmployeeAuthGuardProps) {
     };
 
     validateToken();
-  }, [setProfile, profile, isEmployee]);
+  }, [profile, userType, setProfile, isProfileLoading, isOverriding, isLoggingOut]);
 
   if (isValidating) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-600">Validating Employee Session...</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {isProfileLoading ? "Loading profile..." : "Validating Employee Session..."}
+          </p>
         </div>
       </div>
     );

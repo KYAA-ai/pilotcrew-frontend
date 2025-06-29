@@ -1,8 +1,8 @@
 import {
-  IconDotsVertical,
-  IconLogout,
-  IconUserCircle,
-} from "@tabler/icons-react"
+  DotsVertical,
+  Logout,
+  UserCircle,
+} from "@/components/SimpleIcons"
 import { useState } from "react"
 
 import {
@@ -26,15 +26,15 @@ import {
 } from "@/components/ui/sidebar"
 import { useProfile } from "@/contexts/ProfileContext"
 import { useLogout } from "@/hooks/useLogout"
-import { ProfileModal } from "./ProfileModal"
+import { EmployerProfileModal } from "./ProfileModal"
+import { EmployeeProfileModal } from "./EmployeeProfileModal"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { profile } = useProfile()
+  const { profile, userType } = useProfile()
   const { logout } = useLogout()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
-  // Show loading state if profile is not loaded
   if (!profile) {
     return (
       <SidebarMenu>
@@ -55,7 +55,6 @@ export function NavUser() {
     )
   }
 
-  // Generate initials from name
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -69,6 +68,15 @@ export function NavUser() {
     setIsProfileModalOpen(true);
   };
 
+  //REVISIT
+  const displayName = userType === 'employer' 
+    ? (profile as { name: string }).name 
+    : (profile as { linkedinName?: string }).linkedinName || 'Employee';
+  
+  const displaySubtitle = userType === 'employer' 
+    ? (profile as { email: string }).email 
+    : (profile as { headline?: string }).headline || 'Employee';
+
   return (
     <>
       <SidebarMenu>
@@ -81,16 +89,16 @@ export function NavUser() {
               >
                 <Avatar className="h-8 w-8 rounded-lg grayscale">
                   <AvatarFallback className="rounded-lg">
-                    {getInitials(profile.name)}
+                    {getInitials(displayName)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{profile.name}</span>
+                  <span className="truncate font-medium">{displayName}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {profile.email}
+                    {displaySubtitle}
                   </span>
                 </div>
-                <IconDotsVertical className="ml-auto size-4" />
+                <DotsVertical className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -103,13 +111,13 @@ export function NavUser() {
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarFallback className="rounded-lg">
-                      {getInitials(profile.name)}
+                      {getInitials(displayName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{profile.name}</span>
+                    <span className="truncate font-medium">{displayName}</span>
                     <span className="text-muted-foreground truncate text-xs">
-                      {profile.email}
+                      {displaySubtitle}
                     </span>
                   </div>
                 </div>
@@ -117,21 +125,13 @@ export function NavUser() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={handleAccountClick}>
-                  <IconUserCircle />
+                  <UserCircle />
                   Account
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem>
-                  <IconCreditCard />
-                  Billing
-                </DropdownMenuItem> */}
-                {/* <DropdownMenuItem>
-                  <IconNotification />
-                  Notifications
-                </DropdownMenuItem> */}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout}>
-                <IconLogout />
+                <Logout />
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -139,10 +139,19 @@ export function NavUser() {
         </SidebarMenuItem>
       </SidebarMenu>
 
-      <ProfileModal 
-        isOpen={isProfileModalOpen} 
-        onClose={() => setIsProfileModalOpen(false)} 
-      />
+      {userType === 'employer' && (
+        <EmployerProfileModal 
+          isOpen={isProfileModalOpen} 
+          onClose={() => setIsProfileModalOpen(false)} 
+        />
+      )}
+      
+      {userType === 'employee' && (
+        <EmployeeProfileModal 
+          isOpen={isProfileModalOpen} 
+          onClose={() => setIsProfileModalOpen(false)} 
+        />
+      )}
     </>
   )
 }

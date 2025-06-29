@@ -11,15 +11,38 @@ interface EmployerAuthGuardProps {
 export function EmployerAuthGuard({ children }: EmployerAuthGuardProps) {
   const [isValidating, setIsValidating] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { profile, setProfile, isEmployer } = useProfile();
+  const [isOverriding, setIsOverriding] = useState(false);
+  const { profile, setProfile, isEmployer, isLoading: isProfileLoading, userType, isLoggingOut } = useProfile();
+
   useEffect(() => {
     const validateToken = async () => {
+      if (isProfileLoading) {
+        return;
+      }
+      if (isOverriding) {
+        setIsOverriding(false);
+        return;
+      }
+      
+      if (isLoggingOut) {
+        setIsAuthenticated(false);
+        setIsValidating(false);
+        return;
+      }
+
+      if (profile && userType === 'employee') {
+        setIsOverriding(true);
+        setProfile(null);
+        localStorage.setItem('userType', 'employer');
+        return;
+      }
+
       if (profile && isEmployer()) {
-        console.log("✅ Profile exists and is employer - authenticating immediately");
         setIsAuthenticated(true);
         setIsValidating(false);
         return;
       }
+
       if (!profile) {
         try {
           const profileResponse = await apiClient.get('/employer/profile');
@@ -63,15 +86,16 @@ export function EmployerAuthGuard({ children }: EmployerAuthGuardProps) {
     };
 
     validateToken();
-  }, [isEmployer, profile, setProfile]);
-
+  }, [profile, isProfileLoading, setProfile, isEmployer, userType, isOverriding, isLoggingOut]);
 
   if (isValidating) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-600">Validating Employer Session...</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {isProfileLoading ? "Loading profile..." : "Validating Employer Session..."}
+          </p>
         </div>
       </div>
     );

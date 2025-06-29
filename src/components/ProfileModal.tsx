@@ -15,24 +15,34 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  IconEdit,
-  IconDeviceFloppy,
-  IconX,
-  IconMail,
-  IconBuilding,
-  IconGlobe,
-  IconUser,
-} from '@tabler/icons-react';
+  X,
+  Mail,
+  Building,
+  Globe,
+  User,
+  Edit,
+  Save,
+} from '@/components/SimpleIcons';
 
-interface ProfileModalProps {
+interface EmployerProfile {
+  id: string;
+  email: string;
+  name: string;
+  companyName: string;
+  companyWebsite?: string;
+  isEmailVerified: boolean;
+}
+
+interface EmployerProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
-  const { profile, setProfile } = useProfile();
+export function EmployerProfileModal({ isOpen, onClose }: EmployerProfileModalProps) {
+  const { profile, setProfile } = useProfile<EmployerProfile>();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: profile?.name || '',
     companyName: profile?.companyName || '',
@@ -105,9 +115,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-xl">Profile Settings</DialogTitle>
+              <DialogTitle className="text-xl">Employer Profile Settings</DialogTitle>
               <DialogDescription>
-                Manage your account information
+                Manage your employer account information
               </DialogDescription>
             </div>
             {!isEditing ? (
@@ -116,7 +126,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 size="sm"
                 className="flex items-center gap-2 mr-8"
               >
-                <IconEdit className="h-4 w-4" />
+                <Edit className="h-4 w-4" />
                 Edit
               </Button>
             ) : (
@@ -127,7 +137,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   size="sm"
                   className="flex items-center gap-2"
                 >
-                  <IconDeviceFloppy className="h-4 w-4" />
+                  <Save className="h-4 w-4" />
                   {isLoading ? 'Saving...' : 'Save'}
                 </Button>
                 <Button
@@ -137,7 +147,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   size="sm"
                   className="flex items-center gap-2"
                 >
-                  <IconX className="h-4 w-4 " />
+                  <X className="h-4 w-4 " />
                   Cancel
                 </Button>
               </div>
@@ -157,7 +167,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2 text-sm">
-                  <IconUser className="h-4 w-4" />
+                  <User className="h-4 w-4" />
                   Full Name
                 </Label>
                 {isEditing ? (
@@ -176,7 +186,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               {/* Email */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm">
-                  <IconMail className="h-4 w-4" />
+                  <Mail className="h-4 w-4" />
                   Email Address
                 </Label>
                 <div className="flex items-center gap-2">
@@ -215,7 +225,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             {/* Company Name */}
             <div className="space-y-2">
               <Label htmlFor="companyName" className="flex items-center gap-2 text-sm">
-                <IconBuilding className="h-4 w-4" />
+                <Building className="h-4 w-4" />
                 Company Name
               </Label>
               {isEditing ? (
@@ -234,7 +244,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             {/* Company Website */}
             <div className="space-y-2">
               <Label htmlFor="companyWebsite" className="flex items-center gap-2 text-sm">
-                <IconGlobe className="h-4 w-4" />
+                <Globe className="h-4 w-4" />
                 Company Website
               </Label>
               {isEditing ? (

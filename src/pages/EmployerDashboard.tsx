@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { GenericDataTable } from "@/components/generic-data-table"
-import { SiteHeader } from "@/components/site-header"
+import { SiteHeader } from "@/components/employer-header"
 import {
   SidebarInset,
   SidebarProvider,
@@ -18,15 +18,14 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { type ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react"
-//import { useProfile } from "@/contexts/ProfileContext"
+import { ChevronDown, ChevronUp } from '@/components/SimpleIcons'
+import { useProfile } from '@/contexts/ProfileContext'
 
-export default function Dashboard() {
+export default function EmployerDashboard() {
+  const { profile } = useProfile()
   const [selectedJob, setSelectedJob] = useState<Record<string, unknown> | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
-
-  //const { profile, isEmployer, isEmployee } = useProfile()
 
   const handleJobAction = (action: string, row: Record<string, unknown>) => {
     if (action === "view") {
@@ -182,6 +181,17 @@ export default function Dashboard() {
     },
   ]
 
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2 text-sm text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <SidebarProvider
       style={
@@ -323,12 +333,12 @@ export default function Dashboard() {
                   >
                     {isDescriptionExpanded ? (
                       <>
-                        <IconChevronUp className="h-4 w-4" />
+                        <ChevronUp className="h-4 w-4" />
                         Show Less
                       </>
                     ) : (
                       <>
-                        <IconChevronDown className="h-4 w-4" />
+                        <ChevronDown className="h-4 w-4" />
                         Show More
                       </>
                     )}

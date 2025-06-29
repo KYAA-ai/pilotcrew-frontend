@@ -33,6 +33,7 @@ interface ProfileContextType {
   clearProfile: () => void;
   isEmployer: () => boolean;
   isEmployee: () => boolean;
+  isLoggingOut: boolean;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -40,9 +41,9 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfileState] = useState<Profile | null>(null);
   const [userType, setUserType] = useState<UserType>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Load profile from localStorage on mount
   useEffect(() => {
     const savedProfile = localStorage.getItem('userProfile');
     const savedUserType = localStorage.getItem('userType') as UserType;
@@ -58,6 +59,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('userType');
       }
     }
+    setIsLoading(false);
   }, []);
 
   //REVISIT
@@ -68,6 +70,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setUserType(type);
       localStorage.setItem('userProfile', JSON.stringify(newProfile));
       localStorage.setItem('userType', type);
+      setIsLoggingOut(false);
     } else {
       setUserType(null);
       localStorage.removeItem('userProfile');
@@ -76,6 +79,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   };
 
   const clearProfile = () => {
+    setIsLoggingOut(true);
     setProfileState(null);
     setUserType(null);
     localStorage.removeItem('userProfile');
@@ -99,6 +103,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     clearProfile,
     isEmployer,
     isEmployee,
+    isLoggingOut,
   };
 
   return (
@@ -108,11 +113,18 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export function useProfile() {
+// Generic hook that returns the profile as the specified type
+function useProfile<T extends Profile = Profile>() {
   const context = useContext(ProfileContext);
   if (context === undefined) {
     throw new Error('useProfile must be used within a ProfileProvider');
   }
-  return context;
-} 
+  return {
+    ...context,
+    profile: context.profile as T | null,
+  };
+}
+
+// Export the generic hook
+// eslint-disable-next-line react-refresh/only-export-components
+export { useProfile }; 

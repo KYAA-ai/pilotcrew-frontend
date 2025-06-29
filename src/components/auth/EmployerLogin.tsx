@@ -41,13 +41,10 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
-      console.log("Login form data:", data);
       const response = await apiClient.post('/employer/login', data);
-      console.log("Login successful:", response.data);
       
       toast.success("Login successful! Redirecting to dashboard...");
       
-      // Set profile information in context
       if (response.data.employer) {
         setProfile(response.data.employer);
       }
@@ -70,7 +67,6 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   };
 
   const handleValidationError = (errors: string[]) => {
-    console.log("Login validation errors:", errors);
     if (errors.length > 0) {
       toast.error(errors[0]);
     }
@@ -78,7 +74,6 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   };
 
   const handleGoogleLogin = () => {
-    console.log("Google login clicked");
     window.location.href = `${import.meta.env.VITE_API_URL}/employer/auth/google`;
   };
 

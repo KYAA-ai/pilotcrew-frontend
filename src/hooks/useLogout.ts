@@ -9,10 +9,9 @@ export function useLogout() {
 
   const logout = async () => {
     try {
-      // Call the appropriate logout endpoint based on user type
       const logoutEndpoints = {
         employer: '/employer/logout',
-        employee: '/auth/logout'
+        employee: '/employee/logout'
       };
 
       if (userType && logoutEndpoints[userType]) {

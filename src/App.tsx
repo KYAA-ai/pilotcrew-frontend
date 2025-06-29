@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import EmployerDashboardPage from './pages/EmployerDashboard'
+import EmployeeDashboardPage from './pages/EmployeeDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeProfile from './pages/EmployeeProfile'
 import EmployerAuth from './pages/EmployerAuth'
@@ -37,9 +38,7 @@ function App() {
           path="/employee/dashboard"
           element={
             <EmployeeAuthGuard>
-              <div>
-                <h1>Employee Dashboard</h1>
-              </div>
+              <EmployeeDashboardPage />
             </EmployeeAuthGuard>
           }
         />
@@ -56,9 +55,7 @@ function App() {
           path="/employer/example"
           element={
             <EmployerAuthGuard>
-              <div>
-                <h1>Employer Example</h1>
-              </div>
+              <EmployerDashboardPage />
             </EmployerAuthGuard>
           }
         />
