@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
@@ -38,8 +39,10 @@ const employeeLoginFields: FormField[] = [
 export default function EmployeeLogin({ onSuccess, onValidationError }: EmployeeLoginProps) {
   const navigate = useNavigate();
   const { setProfile } = useProfile();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (data: Record<string, string>) => {
+    const handleSubmit = async (data: Record<string, string>) => {
+    setIsLoading(true);
     try {
       const response = await apiClient.post('/employee/login', data);
       
@@ -62,6 +65,8 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
         errorMessage = apiError.response?.data?.message || errorMessage;
       }
       toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,6 +89,7 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
         submitButtonText="Continue"
         onSubmit={handleSubmit}
         onValidationError={handleValidationError}
+        isLoading={isLoading}
       />
 
       <div className="text-center italic"> OR </div>

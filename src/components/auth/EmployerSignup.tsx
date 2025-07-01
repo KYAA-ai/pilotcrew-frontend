@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
@@ -75,11 +76,13 @@ const employerSignupFields: FormField[] = [
 export default function EmployerSignup({ onSuccess, onValidationError }: EmployerSignupProps) {
   const navigate = useNavigate();
   const { setProfile } = useProfile();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
+      setIsLoading(true);
       const response = await apiClient.post('/employer/register', data);
-      
+      setIsLoading(false);
       toast.success("Registration successful! Redirecting to dashboard...");
       
       if (response.data.employer) {
@@ -93,6 +96,7 @@ export default function EmployerSignup({ onSuccess, onValidationError }: Employe
       }, 1500);
       
     } catch (error) {
+      setIsLoading(false);
       console.error("Registration failed:", error);
       let errorMessage = "Registration failed. Please try again.";
       if (error && typeof error === 'object' && 'response' in error) {
@@ -117,6 +121,7 @@ export default function EmployerSignup({ onSuccess, onValidationError }: Employe
         submitButtonText="Sign up"
         onSubmit={handleSubmit}
         onValidationError={handleValidationError}
+        isLoading={isLoading}
       />
     </div>
   );

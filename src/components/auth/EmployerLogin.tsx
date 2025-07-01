@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GenericForm from "@/components/form";
@@ -38,10 +39,13 @@ const employerLoginFields: FormField[] = [
 export default function EmployerLogin({ onSuccess, onValidationError }: EmployerLoginProps) {
   const navigate = useNavigate();
   const { setProfile } = useProfile();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
+      setIsLoading(true);
       const response = await apiClient.post('/employer/login', data);
+      setIsLoading(false);
       
       toast.success("Login successful! Redirecting to dashboard...");
       
@@ -56,7 +60,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
       }, 1500);
       
     } catch (error) {
-      console.error("Login failed:", error);
+      setIsLoading(false);
       let errorMessage = "Login failed. Please try again.";
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as { response?: { data?: { message?: string } } };
@@ -84,6 +88,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
         submitButtonText="Continue"
         onSubmit={handleSubmit}
         onValidationError={handleValidationError}
+        isLoading={isLoading}
       />
 
       <div className="text-center italic"> OR </div>

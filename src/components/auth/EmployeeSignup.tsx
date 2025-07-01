@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { toast } from "sonner";
 import GenericFormWithFiles from "@/components/form-with-files";
 import type { FormFieldWithFiles } from "@/components/form-with-files";
@@ -103,8 +104,10 @@ const employeeSignupFields: FormFieldWithFiles[] = [
 export default function EmployeeSignup({ onSuccess, onValidationError }: EmployeeSignupProps) {
   const { setProfile } = useProfile();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (data: Record<string, string | File | null>) => {
+    const handleSubmit = async (data: Record<string, string | File | null>) => {
+    setIsLoading(true);
     try {
       console.log("Employee signup form data:", data);
       const formData = new FormData();
@@ -141,6 +144,8 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         errorMessage = apiError.response?.data?.message || errorMessage;
       }
       toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -159,6 +164,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         submitButtonText="Sign up"
         onSubmit={handleSubmit}
         onValidationError={handleValidationError}
+        isLoading={isLoading}
       />
     </div>
   );
