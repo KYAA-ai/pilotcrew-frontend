@@ -232,8 +232,6 @@ npm run build
 npm run preview
 ```
 
-## 🔍 Troubleshooting
-
 ### Common Issues
 
 1. **Authentication Errors**: Check if backend is running and JWT tokens are valid

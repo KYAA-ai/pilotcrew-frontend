@@ -1,12 +1,12 @@
 "use client"
 
 import {
-  IconDots,
-  IconFolder,
-  IconShare3,
-  IconTrash,
+  Dots,
+  Folder,
+  Share3,
+  Trash,
   type Icon,
-} from "@tabler/icons-react"
+} from "@/components/SimpleIcons"
 
 import {
   DropdownMenu,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
@@ -38,7 +37,6 @@ export function NavDocuments({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
@@ -54,7 +52,7 @@ export function NavDocuments({
                   showOnHover
                   className="data-[state=open]:bg-accent rounded-sm"
                 >
-                  <IconDots />
+                  <Dots />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -64,28 +62,22 @@ export function NavDocuments({
                 align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem>
-                  <IconFolder />
+                  <Folder />
                   <span>Open</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <IconShare3 />
+                  <Share3 />
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive">
-                  <IconTrash />
+                  <Trash />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-        <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <IconDots className="text-sidebar-foreground/70" />
-            <span>More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   )

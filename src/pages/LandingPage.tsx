@@ -1,32 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import Header from "@/components/layout/Header";
+// import { ContextTest } from "@/components/ContextTest";
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-4 text-center">
-      <h1 className="text-3xl font-bold md:text-5xl">Welcome to KYAA, Start Your Hiring Journey</h1>
-      <p className="max-w-xl text-muted-foreground md:text-lg">
-        Connecting skilled professionals with top employers.
-      </p>
-      <div className="flex flex-col gap-4 md:flex-row">
-        <Button
-          size="lg"
-          className="w-60 bg-primary text-primary-foreground hover:bg-primary/90"
-          onClick={() => navigate("/auth/employer")}
-        >
-          I'm an Employer
-        </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          className="w-60"
-          onClick={() => navigate("/auth/employee")}
-        >
-          I'm an Employee
-        </Button>
-      </div>
+    <div className="min-h-screen bg-[var(--background)] flex flex-col">
+      <Header />
+      <main className="flex flex-1 flex-col items-center justify-center text-center px-4">
+        <h1 className="text-4xl md:text-6xl font-bold text-[var(--foreground)] mb-4">
+          Your entire hiring journey.<br />
+          <span className="text-[var(--primary)]">Powered by one profile.</span>
+        </h1>
+        <p className="text-lg md:text-xl text-[var(--foreground)]/70 mb-8 max-w-xl">
+          Get personalized job recommendations, craft tailored resumes, autofill and track your job applications. KYAA is here for every step of your career.
+        </p>
+        <div className="flex flex-col gap-4 md:flex-row md:gap-6 mb-8">
+          <Button
+            size="lg"
+            className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-800)] text-lg font-semibold"
+            onClick={() => navigate("/auth/employer")}
+          >
+            I'm an Employer
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="w-60 border-[var(--secondary)] text-[var(--secondary)] hover:bg-[var(--secondary-50)] text-lg font-semibold"
+            onClick={() => navigate("/auth/employee")}
+          >
+            I'm an Employee
+          </Button>
+        </div>
+        <div className="text-[var(--foreground)]/60 text-sm mb-8">
+          <span className="text-yellow-500">★★★★★</span> Join 10,000+ professionals who use KYAA
+        </div>
+        
+        {/* Context Test Component */}
+        {/* <div className="w-full max-w-md">
+          <ContextTest />
+        </div> */}
+      </main>
     </div>
   );
 } 
