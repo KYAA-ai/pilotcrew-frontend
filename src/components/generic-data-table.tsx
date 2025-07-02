@@ -1,23 +1,3 @@
-import * as React from "react"
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
 import {
   ChevronDown,
   ChevronLeft,
@@ -27,9 +7,27 @@ import {
   DotsVertical,
   GripVertical,
   LayoutColumns,
-  Loader,
-  Plus,
+  Loader
 } from "@/components/SimpleIcons"
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  type UniqueIdentifier,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -45,9 +43,10 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table"
+import * as React from "react"
 import { toast } from "sonner"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+import { JobFormDialog } from "@/components/jobs/JobFormDialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -85,6 +84,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useIsMobile } from "@/hooks/use-mobile"
 import api from "@/lib/api"
 
 // Generic schema for any data
@@ -314,36 +314,35 @@ export function GenericDataTable({
     useSensor(KeyboardSensor, {})
   )
 
+  const fetchData = React.useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await api.get(endpoint)
+      const responseData = response.data
+
+      // Extract data using the provided key
+      const extractedData = responseData[dataKey] || responseData
+      setData(Array.isArray(extractedData) ? extractedData : [])
+    } catch (err) {
+      console.error('Error fetching data:', err)
+      setError('Failed to fetch data')
+      toast.error('Failed to fetch data')
+    } finally {
+      setLoading(false)
+    }
+  }, [endpoint, dataKey])
+
   // Fetch data from endpoint
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const response = await api.get(endpoint)
-        const responseData = response.data
-        
-        // Extract data using the provided key
-        const extractedData = responseData[dataKey] || responseData
-        setData(Array.isArray(extractedData) ? extractedData : [])
-      } catch (err) {
-        console.error('Error fetching data:', err)
-        setError('Failed to fetch data')
-        toast.error('Failed to fetch data')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchData()
-  }, [endpoint, dataKey])
+  }, [fetchData])
 
   // Generate columns dynamically if not provided
   const generateColumns = React.useCallback((data: Record<string, unknown>[]): ColumnDef<Record<string, unknown>>[] => {
     if (data.length === 0) return []
 
-    const sampleItem = data[0]
-    const keys = Object.keys(sampleItem)
+    const keys = Object.keys(data[0])
 
     const baseColumns: ColumnDef<Record<string, unknown>>[] = []
 
@@ -537,10 +536,7 @@ export function GenericDataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <Plus />
-            <span className="hidden lg:inline">Add Item</span>
-          </Button>
+          <JobFormDialog onJobCreated={fetchData} />
         </div>
       </div>
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
