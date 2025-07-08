@@ -1,25 +1,25 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { GenericDataTable } from "@/components/generic-data-table"
 import { SiteHeader } from "@/components/employer-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { GenericDataTable } from "@/components/generic-data-table"
+import { ChevronDown, ChevronUp } from '@/components/SimpleIcons'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
+import {
+    SidebarInset,
+    SidebarProvider,
+} from "@/components/ui/sidebar"
+import { useProfile } from '@/contexts/ProfileContext'
 import { type ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from '@/components/SimpleIcons'
-import { useProfile } from '@/contexts/ProfileContext'
+import { toast } from "sonner"
 
 export default function EmployerDashboard() {
   const { profile } = useProfile()
@@ -138,21 +138,21 @@ export default function EmployerDashboard() {
       },
     },
     {
-      accessorKey: "requirements",
-      header: "Requirements",
+      accessorKey: "features",
+      header: "Features",
       cell: ({ row }) => {
-        const requirements = row.getValue("requirements") as string[] | null
-        if (Array.isArray(requirements) && requirements.length > 0) {
+        const features = row.getValue("features") as string[] | null
+        if (Array.isArray(features) && features.length > 0) {
           return (
             <div className="flex flex-wrap gap-1">
-              {requirements.slice(0, 2).map((req, index) => (
+              {features.slice(0, 2).map((feature, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
-                  {req.length > 20 ? req.substring(0, 20) + "..." : req}
+                  {feature.length > 20 ? feature.substring(0, 20) + "..." : feature}
                 </Badge>
               ))}
-              {requirements.length > 2 && (
+              {features.length > 2 && (
                 <Badge variant="outline" className="text-xs">
-                  +{requirements.length - 2} more
+                  +{features.length - 2} more
                 </Badge>
               )}
             </div>
@@ -353,24 +353,24 @@ export default function EmployerDashboard() {
 
               <Separator />
 
-              {/* Requirements */}
+              {/* Features */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Requirements</h3>
+                <h3 className="text-lg font-semibold">Features</h3>
                 {(() => {
-                  const requirements = selectedJob.requirements as string[] | null
-                  if (Array.isArray(requirements) && requirements.length > 0) {
+                  const features = selectedJob.features as string[] | null
+                  if (Array.isArray(features) && features.length > 0) {
                     return (
                       <div className="space-y-2">
-                        {requirements.map((req, index) => (
+                        {features.map((feature, index) => (
                           <div key={index} className="flex items-start gap-3">
                             <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                            <p className="text-sm">{req}</p>
+                            <p className="text-sm">{feature}</p>
                           </div>
                         ))}
                       </div>
                     )
                   }
-                  return <p className="text-sm text-muted-foreground">No requirements specified.</p>
+                  return <p className="text-sm text-muted-foreground">No features specified.</p>
                 })()}
               </div>
 

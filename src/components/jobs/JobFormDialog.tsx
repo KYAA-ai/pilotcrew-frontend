@@ -20,7 +20,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
   // Form state
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
-  const [requirements, setRequirements] = React.useState("") // multiline textarea, split by newline
+  const [features, setFeatures] = React.useState("") // multiline textarea, split by newline
   const [location, setLocation] = React.useState("")
   const [type, setType] = React.useState("CONTRACT")
   const [startDate, setStartDate] = React.useState("")
@@ -33,7 +33,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
   const resetForm = () => {
     setTitle("")
     setDescription("")
-    setRequirements("")
+    setFeatures("")
     setLocation("")
     setType("CONTRACT")
     setStartDate("")
@@ -56,9 +56,9 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
     const payload = {
       title,
       description,
-      requirements: requirements
-        .split(/\n|,/)
-        .map((req) => req.trim())
+      features: features
+        .split(/\n/)
+        .map((feature) => feature.trim())
         .filter(Boolean),
       location,
       type,
@@ -120,11 +120,11 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="requirements">Requirements (one per line)</Label>
+            <Label htmlFor="features">Features (one per line)</Label>
             <textarea
-              id="requirements"
-              value={requirements}
-              onChange={(e) => setRequirements(e.target.value)}
+              id="features"
+              value={features}
+              onChange={(e) => setFeatures(e.target.value)}
               className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
           </div>

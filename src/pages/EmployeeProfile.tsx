@@ -1,26 +1,26 @@
+import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
+import {
+    Award,
+    Briefcase,
+    Edit,
+    FileText,
+    Globe,
+    Mail,
+    Phone,
+    Save,
+    User,
+    X,
+} from "@/components/SimpleIcons";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useState } from "react";
-import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import { useProfile } from "@/contexts/ProfileContext";
-import { toast } from "sonner";
 import apiClient from "@/lib/api";
-import {
-  User,
-  Mail,
-  Phone,
-  FileText,
-  Briefcase,
-  Award,
-  Globe,
-  Edit,
-  Save,
-  X,
-} from "@/components/SimpleIcons";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function EmployeeProfile() {
   const { profile, setProfile } = useProfile();
@@ -170,7 +170,7 @@ export default function EmployeeProfile() {
             <div className="flex items-start gap-6">
               <Avatar className="h-20 w-20 rounded-lg">
                 <AvatarFallback className="rounded-lg text-lg">
-                  {getInitials(employeeProfile?.linkedinName || employeeProfile?.name || 'Employee')}
+                  {getInitials(employeeProfile?.linkedinName || employeeProfile?.name || 'User')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-4">

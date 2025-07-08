@@ -1,33 +1,33 @@
 import {
-  DotsVertical,
-  Logout,
-  UserCircle,
+    DotsVertical,
+    Logout,
+    UserCircle,
 } from "@/components/SimpleIcons"
 import { useState } from "react"
 
 import {
-  Avatar,
-  AvatarFallback,
+    Avatar,
+    AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar"
 import { useProfile } from "@/contexts/ProfileContext"
 import { useLogout } from "@/hooks/useLogout"
-import { EmployerProfileModal } from "./ProfileModal"
 import { EmployeeProfileModal } from "./EmployeeProfileModal"
+import { EmployerProfileModal } from "./ProfileModal"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -71,11 +71,11 @@ export function NavUser() {
   //REVISIT
   const displayName = userType === 'employer' 
     ? (profile as { name: string }).name 
-    : (profile as { linkedinName?: string }).linkedinName || 'Employee';
+    : (profile as { linkedinName?: string; name?: string }).linkedinName || (profile as { name?: string }).name || 'User';
   
   const displaySubtitle = userType === 'employer' 
     ? (profile as { email: string }).email 
-    : (profile as { headline?: string }).headline || 'Employee';
+    : (profile as { headline?: string; email?: string }).headline || (profile as { email?: string }).email || 'User';
 
   return (
     <>

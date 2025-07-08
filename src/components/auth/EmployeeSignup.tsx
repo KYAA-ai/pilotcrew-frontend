@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import GenericFormWithFiles from "@/components/form-with-files";
 import type { FormFieldWithFiles } from "@/components/form-with-files";
-import apiClient from "@/lib/api";
+import GenericFormWithFiles from "@/components/form-with-files";
 import { useProfile } from "@/contexts/ProfileContext";
+import apiClient from "@/lib/api";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { SignupProcessingModal } from "./SignupProcessingModal";
 
 interface EmployeeSignupProps {
   onSuccess?: () => void;
@@ -104,49 +105,16 @@ const employeeSignupFields: FormFieldWithFiles[] = [
 export default function EmployeeSignup({ onSuccess, onValidationError }: EmployeeSignupProps) {
   const { setProfile } = useProfile();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [showProcessingModal, setShowProcessingModal] = useState(false);
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Record<string, string | File | null> | null>(null);
 
-    const handleSubmit = async (data: Record<string, string | File | null>) => {
-    setIsLoading(true);
-    try {
-      console.log("Employee signup form data:", data);
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (typeof value === 'string') {
-          formData.append(key, value);
-        } else if (value instanceof File) {
-          formData.append(key, value);
-        }
-      });
-
-      const response = await apiClient.post('/employee/register', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });    
-      toast.success("Registration successful!");
-      
-      if (response.data.employee) {
-        setProfile(response.data.employee);
-      }
-      
-      onSuccess?.();
-
-      setTimeout(() => {
-        navigate('/employee/profile');
-      }, 1500);
-      
-    } catch (error) {
-      console.error("Employee registration failed:", error);
-      let errorMessage = "Registration failed. Please try again.";
-      if (error && typeof error === 'object' && 'response' in error) {
-        const apiError = error as { response?: { data?: { message?: string } } };
-        errorMessage = apiError.response?.data?.message || errorMessage;
-      }
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSubmit = (data: Record<string, string | File | null>) => {
+    console.log("Form submitted, showing modal");
+    // Store the form data and show modal immediately
+    setFormData(data);
+    setShowProcessingModal(true);
+    setRegistrationError(null);
   };
 
   const handleValidationError = (errors: string[]) => {
@@ -157,15 +125,73 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
     onValidationError?.(errors);
   };
 
+  const handleProcessingComplete = async () => {
+    if (!formData) return;
+
+    try {
+      console.log("Processing complete, making API call");
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          formDataToSend.append(key, value);
+        } else if (value instanceof File) {
+          formDataToSend.append(key, value);
+        }
+      });
+
+      const response = await apiClient.post('/employee/register', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });    
+      
+      if (response.data.employee) {
+        setProfile(response.data.employee);
+      }
+      
+      onSuccess?.();
+      toast.success("Registration successful!");
+      
+      // Navigate to dashboard
+      navigate('/employee/dashboard');
+      
+    } catch (error) {
+      console.error("Employee registration failed:", error);
+      let errorMessage = "Registration failed. Please try again.";
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as { response?: { data?: { message?: string } } };
+        errorMessage = apiError.response?.data?.message || errorMessage;
+      }
+      setRegistrationError(errorMessage);
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowProcessingModal(false);
+    setRegistrationError(null);
+    setFormData(null);
+  };
+
   return (
-    <div className="flex flex-col gap-4">
-      <GenericFormWithFiles
-        fields={employeeSignupFields}
-        submitButtonText="Sign up"
-        onSubmit={handleSubmit}
-        onValidationError={handleValidationError}
-        isLoading={isLoading}
+    <>
+      <div className="flex flex-col gap-4">
+        <GenericFormWithFiles
+          fields={employeeSignupFields}
+          submitButtonText="Sign up"
+          onSubmit={handleSubmit}
+          onValidationError={handleValidationError}
+          isLoading={false}
+        />
+      </div>
+
+      <SignupProcessingModal 
+        isOpen={showProcessingModal}
+        onComplete={handleProcessingComplete}
+        onClose={handleModalClose}
+        hasError={!!registrationError}
+        errorMessage={registrationError}
       />
-    </div>
+    </>
   );
 } 

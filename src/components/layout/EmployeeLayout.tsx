@@ -1,14 +1,16 @@
-import React from 'react';
-import { EmployeeSidebar } from "@/components/employee-sidebar";
 import { EmployeeHeader } from "@/components/employee-header";
+import { EmployeeSidebar } from "@/components/employee-sidebar";
 import {
-  SidebarInset,
-  SidebarProvider,
+    SidebarInset,
+    SidebarProvider,
 } from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
+import React from 'react';
 
 interface EmployeeProfile {
   id: string;
+  name: string;
+  email: string;
   headline: string;
   linkedinId?: string;
   linkedinName?: string;

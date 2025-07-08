@@ -1,49 +1,51 @@
+import {
+    Bookmark,
+    Briefcase,
+    DotsVertical,
+    InnerShadowTop,
+    Logout,
+    Search,
+    Settings,
+    User,
+    UserCircle,
+} from "@/components/SimpleIcons"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
-import {
-  InnerShadowTop,
-  Briefcase,
-  Search,
-  Bookmark,
-  User,
-  Settings,
-  Logout,
-  DotsVertical,
-  UserCircle,
-} from "@/components/SimpleIcons"
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarGroup,
-  SidebarGroupContent,
-} from "@/components/ui/sidebar"
+    Avatar,
+    AvatarFallback,
+} from "@/components/ui/avatar"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar"
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
 import { useLogout } from '@/hooks/useLogout'
-import { useSidebar } from '@/components/ui/sidebar'
 import { useState } from 'react'
 import { EmployeeProfileModal } from './EmployeeProfileModal'
 
 interface EmployeeProfile {
   id: string;
+  name: string;
+  email: string;
   headline: string;
   linkedinId?: string;
   linkedinName?: string;
@@ -55,8 +57,8 @@ interface EmployeeProfile {
 
 const employeeNavItems = [
   {
-    title: "Job Search",
-    url: "/employee/jobs",
+    title: "Recommended Jobs",
+    url: "/employee/recommended-jobs",
     icon: Search,
   },
   {
@@ -229,15 +231,15 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   >
                     <Avatar className="h-8 w-8 rounded-lg grayscale">
                       <AvatarFallback className="rounded-lg">
-                        {getInitials(profile.linkedinName || 'Employee')}
+                        {getInitials(profile.linkedinName || profile.name || 'User')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">
-                        {profile.linkedinName || 'Employee'}
+                        {profile.linkedinName || profile.name || 'User'}
                       </span>
                       <span className="text-muted-foreground truncate text-xs">
-                        {profile.headline || 'Employee'}
+                        {profile.headline || profile.email || 'User'}
                       </span>
                     </div>
                     <DotsVertical className="ml-auto size-4" />
@@ -253,15 +255,15 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarFallback className="rounded-lg">
-                          {getInitials(profile.linkedinName || 'Employee')}
+                          {getInitials(profile.linkedinName || profile.name || 'User')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-medium">
-                          {profile.linkedinName || 'Employee'}
+                          {profile.linkedinName || profile.name || 'User'}
                         </span>
                         <span className="text-muted-foreground truncate text-xs">
-                          {profile.headline || 'Employee'}
+                          {profile.headline || profile.email || 'User'}
                         </span>
                       </div>
                     </div>

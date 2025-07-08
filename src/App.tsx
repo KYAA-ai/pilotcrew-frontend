@@ -4,14 +4,15 @@ import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
 import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import EmployerDashboardPage from './pages/EmployerDashboard'
-import EmployeeDashboardPage from './pages/EmployeeDashboard'
+import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import EmployeeAuth from './pages/EmployeeAuth'
+import EmployeeDashboardPage from './pages/EmployeeDashboard'
 import EmployeeProfile from './pages/EmployeeProfile'
+import EmployeeRecommendedJobs from './pages/EmployeeRecommendedJobs'
 import EmployerAuth from './pages/EmployerAuth'
+import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployerProfile from './pages/EmployerProfile'
 import LandingPage from './pages/LandingPage'
-import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
           element={
             <EmployeeAuthGuard>
               <EmployeeDashboardPage />
+            </EmployeeAuthGuard>
+          }
+        />
+        <Route
+          path="/employee/recommended-jobs"
+          element={
+            <EmployeeAuthGuard>
+              <EmployeeRecommendedJobs />
             </EmployeeAuthGuard>
           }
         />

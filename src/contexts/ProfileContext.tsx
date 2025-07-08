@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface EmployerProfile {
   id: string;
@@ -12,6 +12,8 @@ interface EmployerProfile {
 
 interface EmployeeProfile {
   id: string;
+  name: string;
+  email: string;
   headline: string;
   linkedinId?: string;
   linkedinName?: string;
@@ -127,4 +129,4 @@ function useProfile<T extends Profile = Profile>() {
 
 // Export the generic hook
 // eslint-disable-next-line react-refresh/only-export-components
-export { useProfile }; 
+export { useProfile };
