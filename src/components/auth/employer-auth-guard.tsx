@@ -45,7 +45,7 @@ export function EmployerAuthGuard({ children }: EmployerAuthGuardProps) {
 
       if (!profile) {
         try {
-          const profileResponse = await apiClient.get('/employer/profile');
+          const profileResponse = await apiClient.get('/v1/employer/profile');
           setProfile(profileResponse.data.employer);
           setIsAuthenticated(true);
           setIsValidating(false);

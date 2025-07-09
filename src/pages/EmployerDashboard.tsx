@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/employer-header"
 import { GenericDataTable } from "@/components/generic-data-table"
+import { JobFormDialog } from "@/components/jobs/JobFormDialog"
 import { ChevronDown, ChevronUp } from '@/components/SimpleIcons'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -214,11 +215,14 @@ export default function EmployerDashboard() {
               
               {/* Example of GenericDataTable with custom columns */}
               <GenericDataTable
-                endpoint="/jobs"
+                endpoint="/v1/jobs"
                 dataKey="jobs"
                 title="Jobs"
                 enableSelection={true}
                 customColumns={jobColumns}
+                customActionElement={(refreshTable) => (
+                  <JobFormDialog onJobCreated={refreshTable} />
+                )}
                 onRowAction={handleJobAction}
                 actions={[
                   { label: "View", value: "view" },

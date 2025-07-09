@@ -1,9 +1,7 @@
 import type { FormFieldWithFiles } from "@/components/form-with-files";
 import GenericFormWithFiles from "@/components/form-with-files";
-import { useProfile } from "@/contexts/ProfileContext";
 import apiClient from "@/lib/api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { SignupProcessingModal } from "./SignupProcessingModal";
 
@@ -103,66 +101,113 @@ const employeeSignupFields: FormFieldWithFiles[] = [
 ];
 
 export default function EmployeeSignup({ onSuccess, onValidationError }: EmployeeSignupProps) {
-  const { setProfile } = useProfile();
-  const navigate = useNavigate();
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Record<string, string | File | null> | null>(null);
+  const [modalStage, setModalStage] = useState<1 | 2>(1);
+  const [employeeId, setEmployeeId] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [processing, setProcessing] = useState(false);
 
-  const handleSubmit = (data: Record<string, string | File | null>) => {
-    console.log("Form submitted, showing modal");
-    // Store the form data and show modal immediately
-    setFormData(data);
+  const startPollingLlamaExtraction = (employeeId: string) => {
+    let isActive = true;
+    let retries = 0;
+    const maxRetries = 3;
+    const poll = async () => {
+      try {
+        const response = await apiClient.put(`/v1/employee/llama-extraction-status`, { employeeId });
+        const status = response.data.status;
+        if (!isActive) return;
+        if (status === "SUCCESS") {
+          setProcessing(false);
+          console.log("Navigating to /employee/recommended-jobs after registration SUCCESS");
+          onSuccess?.();
+          toast.success("Registration successful!");
+        } else if (status === "FAILED") {
+          setProcessing(false);
+          setRegistrationError("Resume analysis failed. Please try again later.");
+        } else if (status === "PENDING") {
+          setProcessing(true);
+          if (retries < maxRetries) {
+            retries++;
+            setTimeout(poll, 10000);
+          } else {
+            setProcessing(false);
+            setRegistrationError("Resume analysis is taking too long. Please try again later.");
+          }
+        } else {
+          setProcessing(false);
+          setRegistrationError("Unknown status from server.");
+        }
+      } catch {
+        setProcessing(false);
+        setRegistrationError("Error checking resume analysis status. Please try again later.");
+      }
+    };
+    poll();
+    return () => { isActive = false; };
+  };
+
+  const handleSubmit = async (data: Record<string, string | File | null>) => {
     setShowProcessingModal(true);
     setRegistrationError(null);
-  };
-
-  const handleValidationError = (errors: string[]) => {
-    console.log("Employee signup validation errors:", errors);
-    if (errors.length > 0) {
-      toast.error(errors[0]);
-    }
-    onValidationError?.(errors);
-  };
-
-  const handleProcessingComplete = async () => {
-    if (!formData) return;
-
+    setModalStage(1);
+    setProcessing(true);
     try {
-      console.log("Processing complete, making API call");
       const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
+      Object.entries(data).forEach(([key, value]) => {
         if (typeof value === 'string') {
           formDataToSend.append(key, value);
         } else if (value instanceof File) {
           formDataToSend.append(key, value);
         }
       });
-
-      const response = await apiClient.post('/employee/register', formDataToSend, {
+      const response = await apiClient.post('/v2/employee/register', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });    
-      
-      if (response.data.employee) {
-        setProfile(response.data.employee);
-      }
-      
-      onSuccess?.();
-      toast.success("Registration successful!");
-      
-      // Navigate to dashboard
-      navigate('/employee/dashboard');
-      
+      });
+      setEmployeeId(response.data?.employee?.id);
+      setCategories(response.data?.employee?.categories || []);
+      setSelectedCategories(response.data?.employee?.recommendedCategories || []);
+      setProcessing(false);
     } catch (error) {
-      console.error("Employee registration failed:", error);
       let errorMessage = "Registration failed. Please try again.";
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as { response?: { data?: { message?: string } } };
         errorMessage = apiError.response?.data?.message || errorMessage;
       }
       setRegistrationError(errorMessage);
+      setProcessing(false);
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleValidationError = (errors: string[]) => {
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+    }
+    onValidationError?.(errors);
+  };
+
+  const handleCategoriesConfirm = async () => {
+    if (!employeeId) return;
+    setRegistrationError(null);
+    setModalStage(2);
+    setProcessing(true);
+    try {
+      await apiClient.put('/v1/employee/profile', {
+        categories: selectedCategories,
+      });
+      startPollingLlamaExtraction(employeeId);
+    } catch (error) {
+      let errorMessage = "Failed to update categories. Please try again.";
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as { response?: { data?: { message?: string } } };
+        errorMessage = apiError.response?.data?.message || errorMessage;
+      }
+      setRegistrationError(errorMessage);
+      setProcessing(false);
       toast.error(errorMessage);
     }
   };
@@ -170,7 +215,16 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   const handleModalClose = () => {
     setShowProcessingModal(false);
     setRegistrationError(null);
-    setFormData(null);
+    setModalStage(1);
+    setEmployeeId(null);
+    setCategories([]);
+    setSelectedCategories([]);
+    setProcessing(false);
+  };
+
+  const handleComplete = () => {
+    // navigate('/employee/recommended-jobs');
+    window.location.href = '/employee/recommended-jobs';
   };
 
   return (
@@ -185,9 +239,14 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         />
       </div>
 
-      <SignupProcessingModal 
+      <SignupProcessingModal
         isOpen={showProcessingModal}
-        onComplete={handleProcessingComplete}
+        stage={modalStage}
+        processing={processing}
+        categories={categories}
+        selectedCategories={selectedCategories}
+        onCategoriesConfirm={handleCategoriesConfirm}
+        onComplete={handleComplete}
         onClose={handleModalClose}
         hasError={!!registrationError}
         errorMessage={registrationError}

@@ -44,7 +44,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       setIsLoading(true);
-      const response = await apiClient.post('/employer/login', data);
+      const response = await apiClient.post('/v1/employer/login', data);
       setIsLoading(false);
       
       toast.success("Login successful! Redirecting to dashboard...");

@@ -7,7 +7,8 @@ import {
   DotsVertical,
   GripVertical,
   LayoutColumns,
-  Loader
+  // Add a refresh icon if available, fallback to Loader
+  Loader as RefreshIcon
 } from "@/components/SimpleIcons"
 import {
   closestCenter,
@@ -46,10 +47,10 @@ import {
 import * as React from "react"
 import { toast } from "sonner"
 
-import { JobFormDialog } from "@/components/jobs/JobFormDialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Drawer,
   DrawerClose,
@@ -280,6 +281,7 @@ interface GenericDataTableProps {
     value: string
     variant?: "default" | "destructive"
   }>
+  customActionElement?: (refreshTable: () => void) => React.ReactNode
 }
 
 export function GenericDataTable({
@@ -293,7 +295,8 @@ export function GenericDataTable({
   actions = [
     { label: "Edit", value: "edit" },
     { label: "Delete", value: "delete", variant: "destructive" }
-  ]
+  ],
+  customActionElement 
 }: GenericDataTableProps) {
   const [data, setData] = React.useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -483,9 +486,40 @@ export function GenericDataTable({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader className="animate-spin size-6" />
-        <span className="ml-2">Loading...</span>
+      <div className="w-full flex-col justify-start gap-6 animate-pulse">
+        <div className="flex items-center justify-between px-4 lg:px-6">
+          <Skeleton className="h-7 w-40 mb-4" />
+          <div className="flex items-center gap-2 p-4">
+            <Skeleton className="h-8 w-36" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        </div>
+        <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+          <div className="overflow-hidden rounded-lg border">
+            <table className="w-full">
+              <thead>
+                <tr>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <th key={i} className="p-3">
+                      <Skeleton className="h-5 w-24" />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, rowIdx) => (
+                  <tr key={rowIdx}>
+                    {Array.from({ length: 6 }).map((_, colIdx) => (
+                      <td key={colIdx} className="p-3">
+                        <Skeleton className="h-4 w-full" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     )
   }
@@ -536,7 +570,17 @@ export function GenericDataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <JobFormDialog onJobCreated={fetchData} />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchData}
+            title="Refresh Table"
+            className="flex items-center gap-1"
+          >
+            <RefreshIcon className="size-4 animate-none" />
+            <span className="hidden lg:inline">Refresh</span>
+          </Button>
+          {customActionElement && customActionElement(fetchData)}
         </div>
       </div>
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">

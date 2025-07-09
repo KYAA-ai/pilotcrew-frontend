@@ -1,11 +1,8 @@
 import {
-    Bookmark,
-    Briefcase,
     DotsVertical,
     InnerShadowTop,
     Logout,
     Search,
-    Settings,
     User,
     UserCircle,
 } from "@/components/SimpleIcons"
@@ -61,16 +58,16 @@ const employeeNavItems = [
     url: "/employee/recommended-jobs",
     icon: Search,
   },
-  {
-    title: "My Applications",
-    url: "/employee/applications",
-    icon: Briefcase,
-  },
-  {
-    title: "Saved Jobs",
-    url: "/employee/saved",
-    icon: Bookmark,
-  },
+  // {
+  //   title: "My Applications",
+  //   url: "/employee/applications",
+  //   icon: Briefcase,
+  // },
+  // {
+  //   title: "Saved Jobs",
+  //   url: "/employee/saved",
+  //   icon: Bookmark,
+  // },
 ]
 
 const employeeSecondaryItems = [
@@ -79,11 +76,11 @@ const employeeSecondaryItems = [
     url: "/employee/profile",
     icon: User,
   },
-  {
-    title: "Settings",
-    url: "/employee/settings",
-    icon: Settings,
-  },
+  // {
+  //   title: "Settings",
+  //   url: "/employee/settings",
+  //   icon: Settings,
+  // },
 ]
 
 export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

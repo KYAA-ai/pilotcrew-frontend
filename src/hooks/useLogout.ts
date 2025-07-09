@@ -10,8 +10,8 @@ export function useLogout() {
   const logout = async () => {
     try {
       const logoutEndpoints = {
-        employer: '/employer/logout',
-        employee: '/employee/logout'
+        employer: '/v1/employer/logout',
+        employee: '/v1/employee/logout'
       };
 
       if (userType && logoutEndpoints[userType]) {
@@ -20,12 +20,12 @@ export function useLogout() {
 
       clearProfile();
       toast.success('Logged out successfully');
-      navigate('/', { replace: true });
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       clearProfile();
       toast.error('Logout failed, but you have been signed out locally');
-      navigate('/', { replace: true });
+      navigate('/');
     }
   };
 
