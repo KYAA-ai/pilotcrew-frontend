@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { toast } from 'sonner';
 import apiClient from '@/lib/api';

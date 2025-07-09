@@ -1,20 +1,5 @@
 import * as React from "react"
-import { useLocation } from "react-router-dom"
 import {
-  // IconCamera,
-  // IconChartBar,
-  // IconDashboard,
-  // IconDatabase,
-  // IconFileAi,
-  // IconFileDescription,
-  // IconFileWord,
-  // IconFolder,
-  // IconHelp,
-  // IconListDetails,
-  // IconReport,
-  // IconSearch,
-  // IconSettings,
-  // IconUsers,
   InnerShadowTop,
 } from "@/components/SimpleIcons"
 
@@ -39,62 +24,12 @@ const data = {
     //   url: "#",
     //   icon: IconDashboard,
     // },
-    // {
-    //   title: "Lifecycle",
-    //   url: "#",
-    //   icon: IconListDetails,
-    // },
-    // {
-    //   title: "Analytics",
-    //   url: "#",
-    //   icon: IconChartBar,
-    // },
-    // {
-    //   title: "Projects",
-    //   url: "#",
-    //   icon: IconFolder,
-    // },
-    // {
-    //   title: "Team",
-    //   url: "#",
-    //   icon: IconUsers,
-    // },
   ],
   navClouds: [
     // {
     //   title: "Capture",
     //   icon: IconCamera,
     //   isActive: true,
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Active Proposals",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Archived",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Proposal",
-    //   icon: IconFileDescription,
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Active Proposals",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Archived",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Prompts",
-    //   icon: IconFileAi,
     //   url: "#",
     //   items: [
     //     {
@@ -114,16 +49,6 @@ const data = {
     //   url: "#",
     //   icon: IconSettings,
     // },
-    // {
-    //   title: "Get Help",
-    //   url: "#",
-    //   icon: IconHelp,
-    // },
-    // {
-    //   title: "Search",
-    //   url: "#",
-    //   icon: IconSearch,
-    // },
   ],
   documents: [
     // {
@@ -131,29 +56,10 @@ const data = {
     //   url: "#",
     //   icon: IconDatabase,
     // },
-    // {
-    //   name: "Reports",
-    //   url: "#",
-    //   icon: IconReport,
-    // },
-    // {
-    //   name: "Word Assistant",
-    //   url: "#",
-    //   icon: IconFileWord,
-    // },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const location = useLocation()
-  
-  // Helper function to check if a URL is active
-  const isActive = (url: string) => {
-    if (url === "/") {
-      return location.pathname === "/"
-    }
-    return location.pathname.startsWith(url)
-  }
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -175,9 +81,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} isActive={isActive} />
-        <NavDocuments items={data.documents} isActive={isActive} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" isActive={isActive} />
+        <NavMain items={data.navMain} />
+        <NavDocuments items={data.documents} />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
