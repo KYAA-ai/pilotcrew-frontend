@@ -70,7 +70,7 @@ export default function EmployerProfile() {
 
     setIsLoading(true);
     try {
-      const response = await employerApiClient.put('/employer/profile', formData);
+      const response = await employerApiClient.put('/v1/employer/profile', formData);
       
       if (response.status === 200) {
         setProfile({

@@ -197,8 +197,8 @@ export default function EmployeeRecommendedJobs() {
 
         {/* Recommended Jobs Table */}
         <GenericDataTable
-          endpoint="/public/jobs"
-          dataKey="jobs"
+          endpoint="/v1/employee/recommended-jobs"
+          dataKey="recommendedJobs"
           title=""
           enableSelection={true}
           customColumns={jobColumns}

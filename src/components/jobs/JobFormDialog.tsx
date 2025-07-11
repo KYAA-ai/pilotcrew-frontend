@@ -76,7 +76,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
 
     try {
       setSubmitting(true)
-      await api.post("/jobs", payload)
+      await api.post("/v1/jobs", payload)
       toast.success("Job posted successfully")
       setOpen(false)
       resetForm()

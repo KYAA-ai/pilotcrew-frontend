@@ -44,7 +44,7 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
     const handleSubmit = async (data: Record<string, string>) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.post('/employee/login', data);
+      const response = await apiClient.post('/v1/employee/login', data);
       
       toast.success("Login successful! Redirecting to dashboard...");
       
@@ -55,7 +55,7 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
       onSuccess?.();
       
       setTimeout(() => {
-        navigate('/employee/dashboard');
+        navigate('/employee/recommended-jobs');
       }, 1500);
       
     } catch (error) {
