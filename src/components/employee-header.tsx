@@ -2,9 +2,13 @@
 // import { Button } from '@/components/ui/button';
 // import { Input } from '@/components/ui/input';
 // import { Search, Bell, Settings } from '@/components/SimpleIcons';
+import { useLocation } from 'react-router-dom';
 import { NavUser } from './nav-user';
 
 export function EmployeeHeader() {
+  const location = useLocation();
+  const hideNavUser = location.pathname === '/employee/agentic-dashboard';
+
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
@@ -24,7 +28,7 @@ export function EmployeeHeader() {
         <Button variant="ghost" size="icon">
           <Settings className="size-4" />
         </Button> */}
-        <NavUser />
+        {!hideNavUser && <NavUser />}
       </div>
     </header>
   );

@@ -12,6 +12,7 @@ import {
 import * as React from "react"
 import { useLocation } from "react-router-dom"
 
+import reviewIcon from '@/assets/review-icon.png'
 import {
     Avatar,
     AvatarFallback,
@@ -39,6 +40,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
 import { useLogout } from '@/hooks/useLogout'
+import { X } from 'lucide-react'
 import { useState } from 'react'
 import { EmployeeProfileModal } from './EmployeeProfileModal'
 
@@ -92,6 +94,9 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
   const { logout } = useLogout()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const location = useLocation()
+  const { toggleSidebar, state } = useSidebar();
+  const showCloseButton = location.pathname === '/employee/agentic-dashboard' && state === 'expanded';
+  const isAgenticDashboard = location.pathname === '/employee/agentic-dashboard';
 
   // Helper function to check if a URL is active
   const isActive = (url: string) => {
@@ -161,23 +166,51 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
     <>
       <Sidebar collapsible="offcanvas" {...props}>
         <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                className="data-[slot=sidebar-menu-button]:!p-1.5"
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="data-[slot=sidebar-menu-button]:!p-1.5"
+                >
+                  <a href="/">
+                    <img src={reviewIcon} alt="Review Icon" style={{ width: 24, height: 24, marginRight: 8 }} />
+                    <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                      KYAA.ai
+                    </div>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            {showCloseButton && (
+              <button
+                aria-label="Close sidebar"
+                onClick={toggleSidebar}
+                style={{ marginLeft: 8 }}
+                className="p-1 rounded hover:bg-muted"
               >
-                <a href="/">
-                  <InnerShadowTop className="!size-5" />
-                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
-                    KYAA.ai
-                  </div>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent
+          onClick={
+            isAgenticDashboard && state === 'collapsed'
+              ? (e) => {
+                  // Only trigger if the click is on the empty space, not on a menu item
+                  if (e.target === e.currentTarget) {
+                    toggleSidebar();
+                  }
+                }
+              : undefined
+          }
+          style={
+            isAgenticDashboard && state === 'collapsed'
+              ? { cursor: 'pointer' }
+              : undefined
+          }
+        >
           <SidebarGroup>
             <SidebarGroupContent className="flex flex-col gap-2">
               <SidebarMenu>

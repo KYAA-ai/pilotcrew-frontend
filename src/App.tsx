@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
+import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeDashboardPage from './pages/EmployeeDashboard'
 import EmployeeProfile from './pages/EmployeeProfile'
@@ -48,6 +49,14 @@ function App() {
           element={
             <EmployeeAuthGuard>
               <EmployeeRecommendedJobs />
+            </EmployeeAuthGuard>
+          }
+        />
+        <Route
+          path="/employee/agentic-dashboard"
+          element={
+            <EmployeeAuthGuard>
+              <EmployeeAgenticDashboard />
             </EmployeeAuthGuard>
           }
         />
