@@ -270,20 +270,20 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
   };
 
   // Review modal state
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [reviewAnswers, setReviewAnswers] = useState<string[]>(new Array(reviewNumberOfQuestions).fill(''));
+  // const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  // const [reviewAnswers, setReviewAnswers] = useState<string[]>(new Array(reviewNumberOfQuestions).fill(''));
 
-  const handleReviewAnswerChange = (index: number, value: string) => {
-    const newAnswers = [...reviewAnswers];
-    newAnswers[index] = value;
-    setReviewAnswers(newAnswers);
-  };
+  // const handleReviewAnswerChange = (index: number, value: string) => {
+  //   const newAnswers = [...reviewAnswers];
+  //   newAnswers[index] = value;
+  //   setReviewAnswers(newAnswers);
+  // };
 
-  const handleReviewSubmit = () => {
-    // TODO: handle review submission logic
-    setIsReviewModalOpen(false);
-    setReviewAnswers(new Array(reviewNumberOfQuestions).fill(''));
-  };
+  // const handleReviewSubmit = () => {
+  //   // TODO: handle review submission logic
+  //   setIsReviewModalOpen(false);
+  //   setReviewAnswers(new Array(reviewNumberOfQuestions).fill(''));
+  // };
 
   if (!profile) {
     return (
