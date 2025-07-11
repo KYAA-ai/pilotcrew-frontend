@@ -2,6 +2,8 @@ import botIcon from '@/assets/bot.png';
 import reviewIcon from '@/assets/review-icon.png';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import React, { useEffect, useRef, useState } from 'react';
 
 function ChatBubble({ text, sender }: { text: string; sender: 'user' | 'bot' }) {
@@ -11,8 +13,10 @@ function ChatBubble({ text, sender }: { text: string; sender: 'user' | 'bot' }) 
         <img src={botIcon} alt="Bot" className="w-10 h-10 rounded-full mr-2 p-1" />
       )}
       <div
-        className={`rounded-lg px-4 py-2 max-w-md whitespace-pre-line shadow-md ${
-          sender === 'bot' ? 'bg-white text-black' : 'bg-blue-900 text-white'
+        className={`px-4 py-2 max-w-md whitespace-pre-line shadow-md ${
+          sender === 'bot' 
+            ? 'bg-white text-black rounded-lg rounded-tl-none' 
+            : 'bg-blue-900 text-white rounded-lg rounded-tr-none'
         }`}
       >
         {text}
@@ -34,12 +38,10 @@ function TypingIndicator() {
 
 function ChatInterface() {
   const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hi! What is the problem?' }
+    { sender: 'bot', text: 'Hi! How may I help you today?'}
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [conversationData, setConversationData] = useState({ initial: '', answers: [] as string[] });
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,61 +57,48 @@ function ChatInterface() {
     setInput('');
     setIsTyping(true);
 
-    if (conversationData.initial === '') {
-      const updatedConversation = { ...conversationData, initial: input };
-      setConversationData(updatedConversation);
-
-      // API CALL 1: Send initial symptoms, receive 5 questions
-      const response = await fetch('/api/askQuestions', {
-        method: 'POST',
-        body: JSON.stringify({ symptoms: input }),
-      });
-      const data = await response.json();
+    // Simulate 5-second typing delay
+    setTimeout(() => {
       setIsTyping(false);
+      
+      // Default bot response
+      const botResponse = "That sounds great! What else do you want to know?";
+      setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    }, 5000);
 
-      const questionsArray = data.questions; // assume array of 5 questions
-      // setQuestions(questionsArray); // Remove this line
-
-      const questionMessages = questionsArray.map((q: string) => ({ sender: 'bot', text: q }));
-      setMessages(prev => [...prev, ...questionMessages]);
-    } else {
-      // storing answers to each question
-      const updatedAnswers = [...conversationData.answers, input];
-      setConversationData({ ...conversationData, answers: updatedAnswers });
-
-      // if done answering all questions
-      if (currentQuestionIndex === 4) {
-        setIsTyping(true);
-
-        // API CALL 2: Send full json for final diagnosis
-        const finalResponse = await fetch('/api/finalDiagnosis', {
-          method: 'POST',
-          body: JSON.stringify({
-            initial: conversationData.initial,
-            answers: updatedAnswers
-          }),
-        });
-        const result = await finalResponse.json();
-
-        setMessages(prev => [...prev, { sender: 'bot', text: result.finalDiagnosis }]);
+    // TODO: Future API integration 
+    /*
+    try {
+      // API CALL: Send user message and receive bot response
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          message: input,
+          conversationHistory: messages 
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
         setIsTyping(false);
-        setCurrentQuestionIndex(5); // trigger feedback state
+        setMessages(prev => [...prev, { sender: 'bot', text: data.response }]);
       } else {
-        setCurrentQuestionIndex(prev => prev + 1);
+        throw new Error('API request failed');
       }
+    } catch (error) {
+      console.error('API Error:', error);
+      setIsTyping(false);
+      // Fallback to default response
+      setMessages(prev => [...prev, { sender: 'bot', text: "That sounds great! What else do you want to know?" }]);
     }
-  };
-
-  const handleLike = () => {
-    // TODO: Trigger like API or feedback logic
-  };
-
-  const handleDislike = () => {
-    // TODO: Trigger dislike API or feedback logic
+    */
   };
 
   return (
-    <div className="flex flex-col h-full font-mono bg-slate-50 rounded-lg shadow-md overflow-hidden">
+    <div className="flex flex-col h-full bg-gradient-to-br from-gray-300 to-gray-400 shadow-md overflow-hidden">
       {/* Chat display */}
       <div className="flex-1 px-4 pt-4 overflow-y-auto space-y-2" style={{ minHeight: 0 }}>
         {messages.map((msg, idx) => (
@@ -119,17 +108,6 @@ function ChatInterface() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Feedback buttons */}
-      {currentQuestionIndex === 5 && (
-        <div className="flex justify-center my-4">
-          <div className="bg-white p-4 rounded shadow-md flex gap-4 items-center">
-            <span className="text-black">Rate this diagnosis:</span>
-            <button onClick={handleLike} className="bg-green-300 hover:bg-green-400 text-black px-4 py-1 rounded">Like</button>
-            <button onClick={handleDislike} className="bg-red-300 hover:bg-red-400 text-black px-4 py-1 rounded">Dislike</button>
-          </div>
-        </div>
-      )}
-
       {/* Message input */}
       <div className="flex items-center px-4 py-3 bg-slate-800">
         <input
@@ -137,12 +115,18 @@ function ChatInterface() {
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !isTyping && input.trim()) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
           className="flex-1 px-4 py-2 rounded bg-gray-200 outline-none text-black"
-          disabled={isTyping || currentQuestionIndex > 5}
+          disabled={isTyping}
         />
         <button
           onClick={handleSend}
-          disabled={isTyping || currentQuestionIndex > 5}
+          disabled={isTyping}
           className="ml-4 px-4 py-2 bg-orange-400 hover:bg-orange-500 text-white rounded transition disabled:opacity-50"
         >
           Send
@@ -164,6 +148,9 @@ const agents = [
   { id: 8, name: "Agent 8", description: "Agent 8 description" },
   { id: 9, name: "Agent 9", description: "Agent 9 description" },
 ];
+
+// Number of questions for the review form
+const reviewNumberOfQuestions = 5;
 
 // Collapsible Sidebar for Agentic Dashboard
 import { EmployeeProfileModal } from '@/components/EmployeeProfileModal';
@@ -280,6 +267,22 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
   const handleAccountClick = () => {
     setIsProfileModalOpen(true);
+  };
+
+  // Review modal state
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewAnswers, setReviewAnswers] = useState<string[]>(new Array(reviewNumberOfQuestions).fill(''));
+
+  const handleReviewAnswerChange = (index: number, value: string) => {
+    const newAnswers = [...reviewAnswers];
+    newAnswers[index] = value;
+    setReviewAnswers(newAnswers);
+  };
+
+  const handleReviewSubmit = () => {
+    // TODO: handle review submission logic
+    setIsReviewModalOpen(false);
+    setReviewAnswers(new Array(reviewNumberOfQuestions).fill(''));
   };
 
   if (!profile) {
@@ -486,6 +489,21 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
 }
 
 const AgenticDashboard: React.FC = () => {
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewAnswers, setReviewAnswers] = useState<string[]>(new Array(reviewNumberOfQuestions).fill(''));
+
+  const handleReviewAnswerChange = (index: number, value: string) => {
+    const newAnswers = [...reviewAnswers];
+    newAnswers[index] = value;
+    setReviewAnswers(newAnswers);
+  };
+
+  const handleReviewSubmit = () => {
+    // TODO: handle review submission logic
+    setIsReviewModalOpen(false);
+    setReviewAnswers(new Array(reviewNumberOfQuestions).fill(''));
+  };
+
   return (
     <SidebarProvider
       style={{
@@ -526,7 +544,7 @@ const AgenticDashboard: React.FC = () => {
               maxWidth: '50%',
               minWidth: 0,
               height: '100%',
-              borderRight: '1px solid #eee',
+              borderRight: '1px solid #23272f',
               display: 'flex',
               flexDirection: 'column',
               padding: 0,
@@ -568,12 +586,73 @@ const AgenticDashboard: React.FC = () => {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-green-400 via-yellow-400 to-red-400 hover:from-green-500 hover:via-yellow-500 hover:to-red-500 text-white px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300"
-                  // onClick={() => setIsModalOpen(true)}
-                  disabled
+                  onClick={() => setIsReviewModalOpen(true)}
                 >
                   Ready to submit a review?
                 </Button>
               </div>
+              {/* Review Questionnaire Modal */}
+              <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
+                <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto bg-white rounded-xl shadow-2xl border-0">
+                  <DialogHeader className="pb-6 border-b border-gray-200">
+                    <DialogTitle className="text-3xl font-bold text-center text-gray-800 bg-gradient-to-r from-blue-600 to-gray-700 bg-clip-text text-transparent">
+                      Submit Your Review
+                    </DialogTitle>
+                    <p className="text-center text-gray-600 mt-2">
+                      Please provide your feedback
+                    </p>
+                  </DialogHeader>
+                  <div className="space-y-8 py-6">
+                    {Array.from({ length: reviewNumberOfQuestions }, (_, index) => (
+                      <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <div className="flex items-center mb-4">
+                          <div className="bg-gradient-to-r from-blue-500 to-gray-600 text-white font-bold text-lg px-4 py-2 rounded-full mr-4">
+                            Q{index + 1}
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            Question {index + 1}
+                          </h3>
+                        </div>
+                        <div className="space-y-3">
+                          <label className="text-sm font-medium text-gray-700 block">
+                            Your Answer:
+                          </label>
+                          <Input
+                            type="text"
+                            placeholder="Enter your detailed response here..."
+                            value={reviewAnswers[index]}
+                            onChange={(e) => handleReviewAnswerChange(index, e.target.value)}
+                            className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-800 placeholder-gray-500"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200 bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-xl">
+                    <div className="text-sm text-gray-600">
+                      {reviewAnswers.filter(answer => answer.trim() !== '').length} of {reviewNumberOfQuestions} questions answered
+                    </div>
+                    <div className="flex space-x-3">
+                      <Button
+                        variant="outline"
+                        className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        onClick={() => {
+                          setIsReviewModalOpen(false);
+                          setReviewAnswers(new Array(reviewNumberOfQuestions).fill(''));
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="bg-gradient-to-r from-red-300 to-green-300 hover:from-red-400 hover:to-green-400 text-gray-800 px-6 py-2 font-semibold shadow-lg transition-all duration-200"
+                        onClick={handleReviewSubmit}
+                      >
+                        Submit Review
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <div
