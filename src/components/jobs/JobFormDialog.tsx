@@ -21,6 +21,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
   const [features, setFeatures] = React.useState("") // multiline textarea, split by newline
+  const [requirements, setRequirements] = React.useState("") // multiline textarea, split by newline
   const [location, setLocation] = React.useState("")
   const [type, setType] = React.useState("CONTRACT")
   const [startDate, setStartDate] = React.useState("")
@@ -34,6 +35,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
     setTitle("")
     setDescription("")
     setFeatures("")
+    setRequirements("")
     setLocation("")
     setType("CONTRACT")
     setStartDate("")
@@ -124,6 +126,15 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
             <textarea
               id="features"
               value={features}
+              onChange={(e) => setFeatures(e.target.value)}
+              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="requirements">Requirements (one per line)</Label>
+            <textarea
+              id="requirements"
+              value={requirements}
               onChange={(e) => setFeatures(e.target.value)}
               className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
