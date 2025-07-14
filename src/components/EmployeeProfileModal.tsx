@@ -86,7 +86,7 @@ export function EmployeeProfileModal({ isOpen, onClose }: EmployeeProfileModalPr
 
     setIsLoading(true);
     try {
-      const response = await apiClient.put('/employee/profile', formData);
+      const response = await apiClient.put('/v1/employee/profile', formData);
       
       if (response.status === 200) {
         // Update profile in context
