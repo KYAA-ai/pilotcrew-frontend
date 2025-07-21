@@ -1,10 +1,7 @@
 import {
-    DotsVertical,
     InnerShadowTop,
-    Logout,
     Search,
     User,
-    UserCircle,
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
@@ -15,29 +12,16 @@ import {
     AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
-import { useLogout } from '@/hooks/useLogout'
-import { X } from 'lucide-react'
 import { useState } from 'react'
 import { EmployeeProfileModal } from './EmployeeProfileModal'
 
@@ -56,7 +40,7 @@ interface EmployeeProfile {
 
 const employeeNavItems = [
   {
-    title: "Recommended Jobs",
+    title: "Recommended Products",
     url: "/employee/recommended-jobs",
     icon: Search,
   },
@@ -86,14 +70,9 @@ const employeeSecondaryItems = [
 ]
 
 export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { isMobile } = useSidebar()
   const { profile } = useProfile<EmployeeProfile>()
-  const { logout } = useLogout()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const location = useLocation()
-  const { toggleSidebar, state } = useSidebar();
-  const showCloseButton = location.pathname === '/employee/agentic-dashboard' && state === 'expanded';
-  const isAgenticDashboard = location.pathname === '/employee/agentic-dashboard';
 
   // Helper function to check if a URL is active
   const isActive = (url: string) => {
@@ -102,20 +81,6 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
     }
     return location.pathname.startsWith(url)
   }
-
-  // Generate initials from name
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  const handleAccountClick = () => {
-    setIsProfileModalOpen(true);
-  };
 
   // Show loading state if profile is not loaded
   if (!profile) {
@@ -179,35 +144,9 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
-            {showCloseButton && (
-              <button
-                aria-label="Close sidebar"
-                onClick={toggleSidebar}
-                style={{ marginLeft: 8 }}
-                className="p-1 rounded hover:bg-muted"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
           </div>
         </SidebarHeader>
-        <SidebarContent
-          onClick={
-            isAgenticDashboard && state === 'collapsed'
-              ? (e) => {
-                  // Only trigger if the click is on the empty space, not on a menu item
-                  if (e.target === e.currentTarget) {
-                    toggleSidebar();
-                  }
-                }
-              : undefined
-          }
-          style={
-            isAgenticDashboard && state === 'collapsed'
-              ? { cursor: 'pointer' }
-              : undefined
-          }
-        >
+        <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent className="flex flex-col gap-2">
               <SidebarMenu>
@@ -250,7 +189,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
+        {/* <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -314,7 +253,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
               </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarFooter>
+        </SidebarFooter> */}
       </Sidebar>
 
       <EmployeeProfileModal 

@@ -2,14 +2,11 @@ import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import {
     Award,
     Briefcase,
-    Edit,
     FileText,
     Globe,
     Mail,
     Phone,
-    Save,
     User,
-    X,
     MapPin,
     Calendar,
     GraduationCap,
@@ -17,20 +14,17 @@ import {
 } from "@/components/SimpleIcons";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useProfile } from "@/contexts/ProfileContext";
-import apiClient from "@/lib/api";
 import { useState } from "react";
-import { toast } from "sonner";
 
 export default function EmployeeProfile() {
-  const { profile, setProfile } = useProfile();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { profile } = useProfile();
+  const [isEditing] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("resume");
 
   const employeeProfile = profile as {
@@ -104,51 +98,12 @@ export default function EmployeeProfile() {
     headline: employeeProfile?.headline || "",
   });
 
-  const isValid = form.name.trim() && form.phone.trim();
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
-
-    setIsLoading(true);
-    try {
-      const response = await apiClient.put('/v1/employee/profile', form);
-      
-      if (response.status === 200) {
-        setProfile({
-          ...profile!,
-          ...response.data.employee,
-        });
-        
-        toast.success('Profile updated successfully!');
-        setIsEditing(false);
-      }
-    } catch (error) {
-      console.error('Profile update error:', error);
-      toast.error('Failed to update profile. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setForm({
-      name: employeeProfile?.name || "",
-      phone: employeeProfile?.phone || "",
-      skills: employeeProfile?.skills || "",
-      experience: employeeProfile?.experience || "",
-      headline: employeeProfile?.headline || "",
-    });
-    setIsEditing(false);
-  };
-
   // Generate initials from name
   const getInitials = (name: string) => {
     return name
@@ -196,7 +151,6 @@ export default function EmployeeProfile() {
   return (
     <EmployeeLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Employee Profile</h1>
@@ -204,7 +158,7 @@ export default function EmployeeProfile() {
               Manage your professional information and preferences
             </p>
           </div>
-          {!isEditing ? (
+          {/* {!isEditing ? (
             <Button
               onClick={() => setIsEditing(true)}
               className="flex items-center gap-2"
@@ -232,15 +186,11 @@ export default function EmployeeProfile() {
                 Cancel
               </Button>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-1/4 grid-cols-2">
-            <TabsTrigger value="resume">Resume Details</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-          </TabsList>
 
           {/* Resume Details Tab */}
           <TabsContent value="resume" className="space-y-6">

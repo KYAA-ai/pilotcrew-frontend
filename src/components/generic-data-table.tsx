@@ -282,6 +282,11 @@ interface GenericDataTableProps {
     variant?: "default" | "destructive"
   }>
   customActionElement?: (refreshTable: () => void) => React.ReactNode
+  searchBarElement?: React.ReactNode
+  /**
+   * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
+   */
+  requestBody?: Record<string, unknown>;
 }
 
 export function GenericDataTable({
@@ -296,7 +301,9 @@ export function GenericDataTable({
     { label: "Edit", value: "edit" },
     { label: "Delete", value: "delete", variant: "destructive" }
   ],
-  customActionElement 
+  customActionElement,
+  searchBarElement,
+  requestBody
 }: GenericDataTableProps) {
   const [data, setData] = React.useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -321,7 +328,12 @@ export function GenericDataTable({
     try {
       setLoading(true)
       setError(null)
-      const response = await api.get(endpoint)
+      let response;
+      if (requestBody) {
+        response = await api.post(endpoint, requestBody as Record<string, unknown>);
+      } else {
+        response = await api.get(endpoint);
+      }
       const responseData = response.data
 
       // Extract data using the provided key
@@ -334,7 +346,7 @@ export function GenericDataTable({
     } finally {
       setLoading(false)
     }
-  }, [endpoint, dataKey])
+  }, [endpoint, dataKey, requestBody])
 
   // Fetch data from endpoint
   React.useEffect(() => {
@@ -535,6 +547,11 @@ export function GenericDataTable({
   return (
     <div className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
+        {searchBarElement && (
+          <div className="flex-1 max-w-3/4 mr-4">
+            {searchBarElement}
+          </div>
+        )}
         <h2 className="text-lg font-semibold">{title}</h2>
         <div className="flex items-center gap-2 p-4">
           <DropdownMenu>

@@ -346,4 +346,25 @@ export const GraduationCap: React.FC<IconProps> = ({ className = "", size = 16 }
 );
 
 // Type for icon components
-export type Icon = React.FC<IconProps>; 
+export type Icon = React.FC<IconProps>;
+
+export const Personalize: React.FC<IconProps> = ({ className = "", size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <rect x="13" y="3" width="2" height="8" rx="1"/>
+    <rect x="13" y="13" width="2" height="8" rx="1" transform="rotate(45 14 17)"/>
+    <rect x="3" y="13" width="2" height="8" rx="1" transform="rotate(-45 4 17)"/>
+    <circle cx="12" cy="12" r="1.5"/>
+    <path d="M19 5l2-2M5 19l-2 2"/>
+    <path d="M19 19l2 2M5 5l-2-2"/>
+  </svg>
+);
+
+export const Filter: React.FC<IconProps> = ({ className = "", size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="M4 4h16" />
+    <path d="M6 8h12" />
+    <path d="M8 12h8" />
+    <path d="M10 16h4" />
+    <path d="M12 20h0" />
+  </svg>
+); 
