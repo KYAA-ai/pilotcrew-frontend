@@ -94,7 +94,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
       <div className="text-center italic"> OR </div>
 
       <button 
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 border rounded-md shadow-sm bg-foreground text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         onClick={handleGoogleLogin}
         type="button"
       >

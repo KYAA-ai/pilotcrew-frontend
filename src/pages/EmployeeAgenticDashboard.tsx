@@ -297,7 +297,7 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
               >
                 <a href="/">
                   <InnerShadowTop className="!size-5" />
-                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                  <div className="text-2xl font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
                     KYAA.ai
                   </div>
                 </a>

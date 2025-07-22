@@ -1,25 +1,25 @@
 import {
-    InnerShadowTop,
-    Search,
-    User,
+  InnerShadowTop,
+  Search,
+  User,
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
 
 import reviewIcon from '@/assets/review-icon.png'
 import {
-    Avatar,
-    AvatarFallback,
+  Avatar,
+  AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
 import { useState } from 'react'
@@ -95,7 +95,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
               >
                 <a href="/">
                   <InnerShadowTop className="!size-5" />
-                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                  <div className="text-2xl font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
                     KYAA.ai
                   </div>
                 </a>
@@ -137,9 +137,9 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 >
                   <a href="/">
                     <img src={reviewIcon} alt="Review Icon" style={{ width: 24, height: 24, marginRight: 8 }} />
-                    <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
-                      KYAA.ai
-                    </div>
+                    <div className="text-lg font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                    KYAA.ai
+                  </div>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -152,8 +152,8 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
               <SidebarMenu>
                 {employeeNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       tooltip={item.title}
                       className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                     >
@@ -167,14 +167,14 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          
+
           <SidebarGroup>
             <SidebarGroupContent className="flex flex-col gap-2 mt-auto">
               <SidebarMenu>
                 {employeeSecondaryItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       tooltip={item.title}
                       className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                     >
@@ -256,9 +256,9 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
         </SidebarFooter> */}
       </Sidebar>
 
-      <EmployeeProfileModal 
-        isOpen={isProfileModalOpen} 
-        onClose={() => setIsProfileModalOpen(false)} 
+      <EmployeeProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </>
   )

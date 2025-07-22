@@ -141,7 +141,7 @@ export default function EmployeeProfile() {
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading profile...</p>
+            <p className="mt-2 text-sm 600">Loading profile...</p>
           </div>
         </div>
       </EmployeeLayout>
@@ -207,7 +207,7 @@ export default function EmployeeProfile() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {employeeProfile.llamaResumeInfo.profile.name && (
                           <div className="space-y-1">
-                            <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Label className="flex items-center gap-2 text-sm font-medium 600">
                               <User className="h-4 w-4" />
                               Name
                             </Label>
@@ -217,7 +217,7 @@ export default function EmployeeProfile() {
                         
                         {employeeProfile.llamaResumeInfo.profile.email && (
                           <div className="space-y-1">
-                            <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Label className="flex items-center gap-2 text-sm font-medium 600">
                               <Mail className="h-4 w-4" />
                               Email
                             </Label>
@@ -227,7 +227,7 @@ export default function EmployeeProfile() {
 
                         {employeeProfile.llamaResumeInfo.profile.phone && (
                           <div className="space-y-1">
-                            <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Label className="flex items-center gap-2 text-sm font-medium 600">
                               <Phone className="h-4 w-4" />
                               Phone
                             </Label>
@@ -237,7 +237,7 @@ export default function EmployeeProfile() {
 
                         {employeeProfile.llamaResumeInfo.profile.location && (
                           <div className="space-y-1">
-                            <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Label className="flex items-center gap-2 text-sm font-medium 600">
                               <MapPin className="h-4 w-4" />
                               Location
                             </Label>
@@ -249,7 +249,7 @@ export default function EmployeeProfile() {
                       {/* Social Profiles */}
                       {employeeProfile.llamaResumeInfo.profile.profiles && employeeProfile.llamaResumeInfo.profile.profiles.length > 0 && (
                         <div className="space-y-2">
-                          <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                          <Label className="flex items-center gap-2 text-sm font-medium 600">
                             <Globe className="h-4 w-4" />
                             Social Profiles
                           </Label>
@@ -278,7 +278,7 @@ export default function EmployeeProfile() {
                       <div className="space-y-4">
                         {employeeProfile.llamaResumeInfo.skills.map((skillCategory, index) => (
                           <div key={index} className="space-y-2">
-                            <h4 className="font-medium text-sm text-gray-700">{skillCategory.category}</h4>
+                            <h4 className="font-medium text-sm 700">{skillCategory.category}</h4>
                             <div className="flex flex-wrap gap-2">
                               {skillCategory.keywords?.map((skill, skillIndex) => (
                                 <Badge key={skillIndex} variant="outline" className="text-xs">
@@ -301,11 +301,11 @@ export default function EmployeeProfile() {
                           <div key={index} className="border-l-2 border-gray-200 pl-4 space-y-3">
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
-                                <Building className="h-4 w-4 text-gray-500" />
+                                <Building className="h-4 w-4 500" />
                                 <h4 className="font-semibold text-sm">{exp.position}</h4>
                               </div>
-                              <p className="text-sm text-gray-600">{exp.company}</p>
-                              <div className="flex items-center gap-2 text-xs text-gray-500">
+                              <p className="text-sm">{exp.company}</p>
+                              <div className="flex items-center gap-2 text-xs 500">
                                 <Calendar className="h-3 w-3" />
                                 <span>
                                   {formatDate(exp.startDate)} - {exp.endDate === 'Present' ? 'Present' : formatDate(exp.endDate)}
@@ -316,10 +316,10 @@ export default function EmployeeProfile() {
                             {/* Highlights */}
                             {exp.highlights && exp.highlights.length > 0 && (
                               <div className="space-y-2">
-                                <h5 className="text-xs font-medium text-gray-600">Key Achievements:</h5>
+                                <h5 className="text-xs font-medium">Key Achievements:</h5>
                                 <ul className="space-y-1">
                                   {exp.highlights.map((highlight, highlightIndex) => (
-                                    <li key={highlightIndex} className="text-xs text-gray-700 list-disc list-inside">
+                                    <li key={highlightIndex} className="text-xs list-disc list-inside">
                                       {highlight}
                                     </li>
                                   ))}
@@ -330,7 +330,7 @@ export default function EmployeeProfile() {
                             {/* Technologies */}
                             {exp.technologies && exp.technologies.length > 0 && (
                               <div className="space-y-2">
-                                <h5 className="text-xs font-medium text-gray-600">Technologies:</h5>
+                                <h5 className="text-xs font-medium">Technologies:</h5>
                                 <div className="flex flex-wrap gap-1">
                                   {exp.technologies.map((tech, techIndex) => (
                                     <Badge key={techIndex} variant="secondary" className="text-xs bg-blue-50 text-blue-700">
@@ -354,11 +354,11 @@ export default function EmployeeProfile() {
                         {employeeProfile.llamaResumeInfo.education.map((edu, index) => (
                           <div key={index} className="border-l-2 border-gray-200 pl-4 space-y-2">
                             <div className="flex items-center gap-2">
-                              <GraduationCap className="h-4 w-4 text-gray-500" />
+                              <GraduationCap className="h-4 w-4 500" />
                               <h4 className="font-semibold text-sm">{edu.degree} in {edu.field}</h4>
                             </div>
-                            <p className="text-sm text-gray-600">{edu.institution}</p>
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <p className="text-sm 600">{edu.institution}</p>
+                            <div className="flex items-center gap-4 text-xs 500">
                               <span>Graduated: {formatDate(edu.graduationDate)}</span>
                               {edu.gpa && <span>GPA: {edu.gpa}</span>}
                             </div>
@@ -373,9 +373,9 @@ export default function EmployeeProfile() {
               <Card>
                 <CardContent className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Resume Information</h3>
-                    <p className="text-gray-500 text-sm">
+                    <FileText className="h-12 w-12 400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium 900 mb-2">No Resume Information</h3>
+                    <p className="500 text-sm">
                       Resume details will appear here once your resume is processed.
                     </p>
                   </div>
@@ -503,7 +503,7 @@ export default function EmployeeProfile() {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-gray-500 italic text-sm">No skills listed</p>
+                          <p className="500 italic text-sm">No skills listed</p>
                         )}
                       </div>
                     )}
@@ -549,7 +549,7 @@ export default function EmployeeProfile() {
                           View Resume
                         </a>
                       ) : (
-                        <p className="text-gray-500 italic text-sm">No resume uploaded</p>
+                        <p className="500 italic text-sm">No resume uploaded</p>
                       )}
                     </div>
                   </div>
@@ -571,7 +571,7 @@ export default function EmployeeProfile() {
                           View LinkedIn Profile
                         </a>
                       ) : (
-                        <p className="text-gray-500 italic text-sm">No LinkedIn profile linked</p>
+                        <p className="500 italic text-sm">No LinkedIn profile linked</p>
                       )}
                       {employeeProfile?.linkedinId && (
                         <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">

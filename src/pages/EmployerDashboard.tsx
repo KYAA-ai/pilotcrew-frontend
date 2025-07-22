@@ -93,21 +93,21 @@ export default function EmployerDashboard() {
         )
       },
     },
-    {
-      accessorKey: "salary",
-      header: "Salary Range",
-      cell: ({ row }) => {
-        const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
-        if (salary?.min && salary?.max) {
-          return (
-            <div className="text-sm font-medium text-default">
-              {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
-            </div>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
+    // {
+    //   accessorKey: "salary",
+    //   header: "Salary Range",
+    //   cell: ({ row }) => {
+    //     const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
+    //     if (salary?.min && salary?.max) {
+    //       return (
+    //         <div className="text-sm font-medium text-default">
+    //           {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
+    //         </div>
+    //       )
+    //     }
+    //     return <span className="text-muted-foreground">-</span>
+    //   },
+    // },
     {
       accessorKey: "duration",
       header: "Duration",
