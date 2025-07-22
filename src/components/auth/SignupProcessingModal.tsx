@@ -160,8 +160,8 @@ export function SignupProcessingModal({
                     <div className="mb-4">
                       <CheckCircle className="w-16 h-16 text-primary mx-auto" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      All set! 🎉
+                    <h3 className="text-xl font-semiboldmb-2">
+                      All set!
                     </h3>
                     <p className="text-muted-foreground mb-6">
                       Your profile is ready. Welcome to KYAA.ai!

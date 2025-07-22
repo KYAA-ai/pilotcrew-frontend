@@ -1,6 +1,5 @@
-import { CirclePlusFilled, Mail, type Icon } from "@/components/SimpleIcons"
+import { type Icon } from "@/components/SimpleIcons"
 
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -27,17 +26,8 @@ export function NavMain({
               tooltip="Jobs"
               className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
             >
-              <CirclePlusFilled />
-              <span>Jobs</span>
+              <span>Posted Jobs</span>
             </SidebarMenuButton>
-            <Button
-              size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
-              variant="outline"
-            >
-              <Mail />
-              <span className="sr-only">Inbox</span>
-            </Button>
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
