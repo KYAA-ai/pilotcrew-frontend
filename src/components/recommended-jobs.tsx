@@ -14,30 +14,18 @@ import {
   } from "@tanstack/react-table"
   import * as React from "react"
   import { toast } from "sonner"
+  import { useNavigate } from "react-router-dom";
   
   import { Badge } from "@/components/ui/badge"
   import { Button } from "@/components/ui/button"
   import { Skeleton } from "@/components/ui/skeleton"
   import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
   import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-  } from "@/components/ui/drawer"
-  import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-  import { Input } from "@/components/ui/input"
-  import { Label } from "@/components/ui/label"
-  import { useIsMobile } from "@/hooks/use-mobile"
   import api from "@/lib/api"
 
   // Card component for displaying items
@@ -54,7 +42,7 @@ import {
       variant?: "default" | "destructive"
     }>
   }) {
-    const isMobile = useIsMobile()
+    const navigate = useNavigate();
 
     // Extract key information for the card
     const title = String(item.title || item.name || "Untitled")
@@ -67,11 +55,21 @@ import {
       ? (item.tags || item.skills || item.categories) as string[] : []
 
     return (
-      <Card className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-border h-full flex flex-col">
+      <Card
+        className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-border h-full flex flex-col cursor-pointer"
+        onClick={() => {
+          const id = item.id || item._id;
+          if (id) {
+            navigate(`/employee/jobs/${id}`, { state: { job: item } });
+          }
+        }}
+        tabIndex={0}
+        role="button"
+      >
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-lg font-semibold line-clamp-2 hover:text-primary transition-colors">
+              <CardTitle className="text-lg font-semibold line-clamp-2">
                 {title}
               </CardTitle>
               {company && (
@@ -87,6 +85,7 @@ import {
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 group-hover:opacity-100 transition-opacity"
+                  onClick={e => e.stopPropagation()}
                 >
                   <DotsVertical className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
@@ -97,7 +96,7 @@ import {
                   <DropdownMenuItem
                     key={action.value}
                     variant={action.variant}
-                    onClick={() => onAction?.(action.value, item)}
+                    onClick={e => { e.stopPropagation(); onAction?.(action.value, item); }}
                   >
                     {action.label}
                   </DropdownMenuItem>
@@ -106,14 +105,12 @@ import {
             </DropdownMenu>
           </div>
         </CardHeader>
-        
         <CardContent className="space-y-3 flex-1">
           {description && (
             <CardDescription className="line-clamp-3 text-sm">
               {description}
             </CardDescription>
           )}
-          
           <div className="space-y-2">
             {location && (
               <div className="flex items-center gap-2">
@@ -121,7 +118,6 @@ import {
                 <span className="text-sm text-muted-foreground">{location}</span>
               </div>
             )}
-            
             {salary && (
               <div className="flex items-center gap-2">
                 <Badge variant="default" className="text-xs">
@@ -132,7 +128,6 @@ import {
                 </Badge>
               </div>
             )}
-            
             {type && (
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
@@ -141,7 +136,6 @@ import {
               </div>
             )}
           </div>
-          
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-1 pt-2">
               {tags.slice(0, 3).map((tag, index) => (
@@ -157,58 +151,6 @@ import {
             </div>
           )}
         </CardContent>
-        
-        <CardFooter className="pt-3">
-          <Drawer direction={isMobile ? "bottom" : "right"}>
-            <DrawerTrigger asChild>
-              <Button variant="outline" size="sm" className="w-full">
-                {/*<ExternalLink className="h-4 w-4 mr-2" />*/}
-                View Details
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader className="gap-1">
-                <DrawerTitle>{title}</DrawerTitle>
-                <DrawerDescription>
-                  Detailed information about this item
-                </DrawerDescription>
-              </DrawerHeader>
-              <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-                <form className="flex flex-col gap-4">
-                  {Object.entries(item).map(([key, value]) => {
-                    if (key === '_id' || key === '__v') return null
-                    
-                    return (
-                      <div key={key} className="flex flex-col gap-3">
-                        <Label htmlFor={key} className="capitalize">
-                          {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                        </Label>
-                        {typeof value === "object" && value !== null ? (
-                          <div className="rounded-md border p-3">
-                            <pre className="text-xs overflow-auto">
-                              {JSON.stringify(value, null, 2)}
-                            </pre>
-                          </div>
-                        ) : (
-                          <Input 
-                            id={key} 
-                            defaultValue={String(value || "")} 
-                            readOnly
-                          />
-                        )}
-                      </div>
-                    )
-                  })}
-                </form>
-              </div>
-              <DrawerFooter>
-                <DrawerClose asChild>
-                  <Button variant="outline">Close</Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-        </CardFooter>
       </Card>
     )
   }

@@ -69,40 +69,40 @@ export function JobForm(props: JobFormProps) {
       {props.instructions !== undefined && (
         <input type="hidden" name="instructions" value={props.instructions} />
       )}
-      <div className="grid gap-2">
-        <Label htmlFor="title">Title</Label>
+          <div className="grid gap-2">
+            <Label htmlFor="title">Title</Label>
         <Input id="title" value={props.title} onChange={(e) => props.onTitleChange(e.target.value)} required />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
-        <textarea
-          id="description"
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <textarea
+              id="description"
           value={props.description}
           onChange={(e) => props.onDescriptionChange(e.target.value)}
-          className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          required
-        />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="features">Features (one per line)</Label>
-        <textarea
-          id="features"
+              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="features">Features (one per line)</Label>
+            <textarea
+              id="features"
           value={props.features}
           onChange={(e) => props.onFeaturesChange(e.target.value)}
-          className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="requirements">Requirements (one per line)</Label>
-        <textarea
-          id="requirements"
+              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="requirements">Requirements (one per line)</Label>
+            <textarea
+              id="requirements"
           value={props.requirements}
           onChange={(e) => props.onRequirementsChange(e.target.value)}
-          className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="location">Location</Label>
+              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="location">Location</Label>
         <Input id="location" value={props.location} onChange={(e) => props.onLocationChange(e.target.value)} />
       </div>
       <div className="grid gap-2">
@@ -124,79 +124,79 @@ export function JobForm(props: JobFormProps) {
             </label>
           ))}
         </div>
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="type">Type</Label>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="type">Type</Label>
         <Select value={props.type} onValueChange={props.onTypeChange}>
-          <SelectTrigger id="type">
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="FULL_TIME">Full Time</SelectItem>
-            <SelectItem value="PART_TIME">Part Time</SelectItem>
-            <SelectItem value="CONTRACT">Contract</SelectItem>
-            <SelectItem value="TEMPORARY">Temporary</SelectItem>
-            <SelectItem value="INTERN">Intern</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="startDate">Start Date</Label>
+              <SelectTrigger id="type">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="FULL_TIME">Full Time</SelectItem>
+                <SelectItem value="PART_TIME">Part Time</SelectItem>
+                <SelectItem value="CONTRACT">Contract</SelectItem>
+                <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                <SelectItem value="INTERN">Intern</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="startDate">Start Date</Label>
         <Input id="startDate" type="date" value={props.startDate} onChange={(e) => props.onStartDateChange(e.target.value)} />
-      </div>
-      <div className="grid gap-2">
-        <Label>Duration</Label>
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            min={1}
-            placeholder="Value"
+          </div>
+          <div className="grid gap-2">
+            <Label>Duration</Label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                min={1}
+                placeholder="Value"
             value={props.durationValue as number | undefined}
             onChange={(e) => props.onDurationValueChange(e.target.value ? Number(e.target.value) : "")}
-            className="w-24"
-          />
+                className="w-24"
+              />
           <Select value={props.durationUnit} onValueChange={props.onDurationUnitChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Unit" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="DAYS">Days</SelectItem>
-              <SelectItem value="WEEKS">Weeks</SelectItem>
-              <SelectItem value="MONTHS">Months</SelectItem>
-              <SelectItem value="YEARS">Years</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <div className="grid gap-2">
-        <Label>Salary Range</Label>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            type="number"
-            min={0}
-            placeholder="Min"
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DAYS">Days</SelectItem>
+                  <SelectItem value="WEEKS">Weeks</SelectItem>
+                  <SelectItem value="MONTHS">Months</SelectItem>
+                  <SelectItem value="YEARS">Years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label>Salary Range</Label>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                type="number"
+                min={0}
+                placeholder="Min"
             value={props.salaryMin as number | undefined}
             onChange={(e) => props.onSalaryMinChange(e.target.value ? Number(e.target.value) : "")}
-          />
-          <Input
-            type="number"
-            min={0}
-            placeholder="Max"
+              />
+              <Input
+                type="number"
+                min={0}
+                placeholder="Max"
             value={props.salaryMax as number | undefined}
             onChange={(e) => props.onSalaryMaxChange(e.target.value ? Number(e.target.value) : "")}
-          />
+              />
           <Select value={props.currency} onValueChange={props.onCurrencyChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Currency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="EUR">EUR</SelectItem>
-              <SelectItem value="GBP">GBP</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </form>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </form>
   )
 } 

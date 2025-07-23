@@ -15,6 +15,7 @@ import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployerProfile from './pages/EmployerProfile'
 import LandingPage from './pages/LandingPage'
 import JobFormPage from './pages/JobFormPage';
+import JobDetailsPage from './pages/JobDetailsPage';
 
 function App() {
   return (
@@ -50,6 +51,14 @@ function App() {
           element={
             <EmployeeAuthGuard>
               <EmployeeRecommendedJobs />
+            </EmployeeAuthGuard>
+          }
+        />
+        <Route
+          path="/employee/jobs/:jobId"
+          element={
+            <EmployeeAuthGuard>
+              <JobDetailsPage />
             </EmployeeAuthGuard>
           }
         />
