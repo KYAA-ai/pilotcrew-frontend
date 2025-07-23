@@ -1,5 +1,5 @@
 import { EmployeeLayout } from "@/components/layout/EmployeeLayout"
-import { ChevronDown, ChevronUp, Filter } from '@/components/SimpleIcons'
+import { Filter } from '@/components/SimpleIcons'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch";
@@ -11,10 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
 import { useProfile } from '@/contexts/ProfileContext'
 import { type ColumnDef } from "@tanstack/react-table"
 import { useState, useRef, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { SearchBar } from "@/components/ui/search-bar";
 import { RecommendedJobsView } from "@/components/recommended-jobs"
@@ -144,12 +144,10 @@ function CategoryCheckbox({ checked, indeterminate, onCheckedChange, id, label }
 
 export default function EmployeeRecommendedJobs() {
   const { profile } = useProfile()
-  const [selectedJob, setSelectedJob] = useState<Record<string, unknown> | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [accuraSearch, setAccuraSearch] = useState(false);
+  const navigate = useNavigate();
   const [tableRequestBody, setTableRequestBody] = useState<{
     skillsByCategory: Record<string, string[]>;
     keywords: string[];
@@ -181,9 +179,7 @@ export default function EmployeeRecommendedJobs() {
 
   const handleJobAction = (action: string, row: Record<string, unknown>) => {
     if (action === "view") {
-      setSelectedJob(row)
-      setIsModalOpen(true)
-      setIsDescriptionExpanded(false) // Reset expansion state
+      navigate(`/employee/jobs/${row.id}`, { state: { job: row } });
     } else if (action === "apply") {
       toast.info(`Applying to job: ${row.title}`)
       console.log(`Action: ${action}`, row)
@@ -191,16 +187,6 @@ export default function EmployeeRecommendedJobs() {
       toast.info(`Job action: ${action} for ${row.title}`)
       console.log(`Action: ${action}`, row)
     }
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedJob(null)
-    setIsDescriptionExpanded(false)
-  }
-
-  const toggleDescription = () => {
-    setIsDescriptionExpanded(!isDescriptionExpanded)
   }
 
   // Custom columns configuration for jobs
@@ -310,11 +296,10 @@ export default function EmployeeRecommendedJobs() {
             size="sm"
             variant="outline"
             onClick={() => {
-              setSelectedJob(row.original)
-              setIsModalOpen(true)
+              navigate(`/employee/jobs/${row.original.id}`, { state: { job: row.original } });
             }}
           >
-            View
+            View Details
           </Button>
           <Button
             size="sm"
@@ -424,183 +409,6 @@ export default function EmployeeRecommendedJobs() {
             { label: "Save", value: "save" }
           ]}
         />
-
-        {/* Job Details Modal */}
-        <Dialog open={isModalOpen} onOpenChange={closeModal}>
-          <DialogContent className="w-3/4 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">
-                {selectedJob?.title ? String(selectedJob.title) : "Job Details"}
-              </DialogTitle>
-              <DialogDescription>
-                Detailed information about this job posting
-              </DialogDescription>
-            </DialogHeader>
-
-            {selectedJob && (
-              <div className="space-y-6">
-                {/* Basic Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Basic Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Company</label>
-                      <p className="text-sm">{String(selectedJob.companyName || "-")}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Location</label>
-                      <p className="text-sm">{String(selectedJob.location || "-")}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Job Type</label>
-                      <div className="mt-1">
-                        {(() => {
-                          const type = String(selectedJob.type || "")
-                          const variant = type === "FULL_TIME" ? "default" : "secondary"
-                          const label = type === "FULL_TIME" ? "Full Time" : type === "PART_TIME" ? "Part Time" : type
-                          return <Badge variant={variant}>{label}</Badge>
-                        })()}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Status</label>
-                      <div className="mt-1">
-                        {(() => {
-                          const status = String(selectedJob.status || "")
-                          const variant = status === "PUBLISHED" ? "default" : "secondary"
-                          const label = status === "PUBLISHED" ? "Published" : status === "DRAFT" ? "Draft" : status
-                          return <Badge variant={variant}>{label}</Badge>
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Compensation & Duration */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Compensation & Duration</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Salary Range</label>
-                      {(() => {
-                        const salary = selectedJob.salary as { min: number; max: number; currency: string } | null
-                        if (salary?.min && salary?.max) {
-                          return (
-                            <p className="text-lg font-semibold text-default">
-                              {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
-                            </p>
-                          )
-                        }
-                        return <p className="text-sm text-muted-foreground">-</p>
-                      })()}
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Duration</label>
-                      {(() => {
-                        const duration = selectedJob.duration as { value: number; unit: string } | null
-                        if (duration?.value && duration?.unit) {
-                          return (
-                            <p className="text-sm">
-                              {duration.value} {duration.unit.toLowerCase()}
-                            </p>
-                          )
-                        }
-                        return <p className="text-sm text-muted-foreground">-</p>
-                      })()}
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Description - Expandable */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Description</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={toggleDescription}
-                      className="flex items-center gap-2"
-                    >
-                      {isDescriptionExpanded ? (
-                        <>
-                          <ChevronUp className="h-4 w-4" />
-                          Show Less
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="h-4 w-4" />
-                          Show More
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-4">
-                    <p className={`text-sm leading-relaxed ${!isDescriptionExpanded ? 'line-clamp-3' : ''}`}>
-                      {String(selectedJob.description || "No description available.")}
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Features */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Features</h3>
-                  {(() => {
-                    const features = selectedJob.features as string[] | null
-                    if (Array.isArray(features) && features.length > 0) {
-                      return (
-                        <div className="space-y-2">
-                          {features.map((feature, index) => (
-                            <div key={index} className="flex items-start gap-3">
-                              <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                              <p className="text-sm">{feature}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    }
-                    return <p className="text-sm text-muted-foreground">No features specified.</p>
-                  })()}
-                </div>
-
-                <Separator />
-
-                {/* Additional Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Additional Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <label className="font-medium text-muted-foreground">Start Date</label>
-                      <p>{selectedJob.startDate ? new Date(String(selectedJob.startDate)).toLocaleDateString() : "-"}</p>
-                    </div>
-                    <div>
-                      <label className="font-medium text-muted-foreground">Created</label>
-                      <p>{selectedJob.createdAt ? new Date(String(selectedJob.createdAt)).toLocaleDateString() : "-"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Apply Button */}
-                <div className="flex justify-end pt-4">
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      handleJobAction("apply", selectedJob)
-                      closeModal()
-                    }}
-                  >
-                    Apply for this Position
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </EmployeeLayout>
   )

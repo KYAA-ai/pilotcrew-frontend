@@ -1,122 +1,84 @@
 import React from "react"
-import { toast } from "sonner"
 
-import { Plus } from "@/components/SimpleIcons"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import api from "@/lib/api"
+import { Checkbox } from "@/components/ui/checkbox";
 
-interface JobFormDialogProps {
-  onJobCreated?: () => void
+// If the Category enum is not available in the frontend, define it here or import from a shared location
+const Category = {
+  ADMINISTRATION_OFFICE_SUPPORT: "Administration & Office Support",
+  ARTS_DESIGN_CREATIVE: "Arts, Design & Creative",
+  BUSINESS_MANAGEMENT: "Business & Management",
+  CUSTOMER_SERVICE: "Customer Service",
+  EDUCATION_TRAINING: "Education & Training",
+  ENGINEERING: "Engineering",
+  FINANCE_ACCOUNTING: "Finance & Accounting",
+  HEALTHCARE_MEDICAL: "Healthcare & Medical",
+  HOSPITALITY_TOURISM: "Hospitality & Tourism",
+  HUMAN_RESOURCES: "Human Resources",
+  SOFTWARE_ENGINEERING: "Software Engineering",
+  INFORMATION_TECHNOLOGY_IT: "Information Technology (IT)",
+  LEGAL: "Legal",
+  MANUFACTURING_PRODUCTION: "Manufacturing & Production",
+  MARKETING_ADVERTISING: "Marketing & Advertising",
+  MEDIA_COMMUNICATIONS: "Media & Communications",
+  OPERATIONS_LOGISTICS: "Operations & Logistics",
+  RETAIL_SALES: "Retail & Sales",
+  SCIENCE_RESEARCH: "Science & Research",
+  SKILLED_TRADES_TECHNICAL: "Skilled Trades & Technical",
+  SOCIAL_SERVICES_NONPROFIT: "Social Services & Nonprofit",
+  TRANSPORTATION_WAREHOUSING: "Transportation & Warehousing"
+};
+
+export interface JobFormProps {
+  title: string;
+  onTitleChange: (v: string) => void;
+  description: string;
+  onDescriptionChange: (v: string) => void;
+  features: string;
+  onFeaturesChange: (v: string) => void;
+  requirements: string;
+  onRequirementsChange: (v: string) => void;
+  location: string;
+  onLocationChange: (v: string) => void;
+  type: string;
+  onTypeChange: (v: string) => void;
+  startDate: string;
+  onStartDateChange: (v: string) => void;
+  durationValue: number | "";
+  onDurationValueChange: (v: number | "") => void;
+  durationUnit: string;
+  onDurationUnitChange: (v: string) => void;
+  salaryMin: number | "";
+  onSalaryMinChange: (v: number | "") => void;
+  salaryMax: number | "";
+  onSalaryMaxChange: (v: number | "") => void;
+  currency: string;
+  onCurrencyChange: (v: string) => void;
+  categories: string[];
+  onCategoriesChange: (v: string[]) => void;
+  instructions?: string;
+  onSubmit: (e: React.FormEvent) => void;
 }
 
-export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
-  const [open, setOpen] = React.useState(false)
-  const [submitting, setSubmitting] = React.useState(false)
-
-  // Form state
-  const [title, setTitle] = React.useState("")
-  const [description, setDescription] = React.useState("")
-  const [features, setFeatures] = React.useState("") // multiline textarea, split by newline
-  const [requirements, setRequirements] = React.useState("") // multiline textarea, split by newline
-  const [location, setLocation] = React.useState("")
-  const [type, setType] = React.useState("CONTRACT")
-  const [startDate, setStartDate] = React.useState("")
-  const [durationValue, setDurationValue] = React.useState<number | "">("")
-  const [durationUnit, setDurationUnit] = React.useState("MONTHS")
-  const [salaryMin, setSalaryMin] = React.useState<number | "">("")
-  const [salaryMax, setSalaryMax] = React.useState<number | "">("")
-  const [currency, setCurrency] = React.useState("USD")
-
-  const resetForm = () => {
-    setTitle("")
-    setDescription("")
-    setFeatures("")
-    setRequirements("")
-    setLocation("")
-    setType("CONTRACT")
-    setStartDate("")
-    setDurationValue("")
-    setDurationUnit("MONTHS")
-    setSalaryMin("")
-    setSalaryMax("")
-    setCurrency("USD")
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Basic validation
-    if (!title || !description) {
-      toast.error("Title and description are required")
-      return
-    }
-
-    const payload = {
-      title,
-      description,
-      features: features
-        .split(/\n/)
-        .map((feature) => feature.trim())
-        .filter(Boolean),
-      location,
-      type,
-      startDate,
-      duration: {
-        value: durationValue ? Number(durationValue) : undefined,
-        unit: durationUnit,
-      },
-      salary: {
-        min: salaryMin ? Number(salaryMin) : undefined,
-        max: salaryMax ? Number(salaryMax) : undefined,
-        currency,
-      },
-    }
-
-    try {
-      setSubmitting(true)
-      await api.post("/v1/jobs", payload)
-      toast.success("Job posted successfully")
-      setOpen(false)
-      resetForm()
-      onJobCreated?.()
-    } catch (error) {
-      console.error("Error creating job", error)
-      toast.error("Failed to create job")
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
+export function JobForm(props: JobFormProps) {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Plus />
-          <span className="hidden lg:inline">Post a Job</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Post a Job</DialogTitle>
-          <DialogDescription>
-            Fill in the details below to create a new job posting.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+    <form onSubmit={props.onSubmit} className="grid gap-4 py-4">
+      {/* Hidden input for instructions markdown */}
+      {props.instructions !== undefined && (
+        <input type="hidden" name="instructions" value={props.instructions} />
+      )}
           <div className="grid gap-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Input id="title" value={props.title} onChange={(e) => props.onTitleChange(e.target.value)} required />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+          value={props.description}
+          onChange={(e) => props.onDescriptionChange(e.target.value)}
               className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               required
             />
@@ -125,8 +87,8 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
             <Label htmlFor="features">Features (one per line)</Label>
             <textarea
               id="features"
-              value={features}
-              onChange={(e) => setFeatures(e.target.value)}
+          value={props.features}
+          onChange={(e) => props.onFeaturesChange(e.target.value)}
               className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
           </div>
@@ -134,18 +96,38 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
             <Label htmlFor="requirements">Requirements (one per line)</Label>
             <textarea
               id="requirements"
-              value={requirements}
-              onChange={(e) => setFeatures(e.target.value)}
+          value={props.requirements}
+          onChange={(e) => props.onRequirementsChange(e.target.value)}
               className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="location">Location</Label>
-            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <Input id="location" value={props.location} onChange={(e) => props.onLocationChange(e.target.value)} />
+      </div>
+      <div className="grid gap-2">
+        <Label>Categories</Label>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 max-h-72 overflow-y-auto border rounded-md p-2 bg-muted/20 min-h-[180px]">
+          {Object.entries(Category).map(([key, value]) => (
+            <label key={key} className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={props.categories.includes(value)}
+                onCheckedChange={(checked) => {
+                  props.onCategoriesChange(
+                    checked
+                      ? [...props.categories, value]
+                      : props.categories.filter((cat) => cat !== value)
+                  );
+                }}
+              />
+              {value}
+            </label>
+          ))}
+        </div>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="type">Type</Label>
-            <Select value={type} onValueChange={setType}>
+        <Select value={props.type} onValueChange={props.onTypeChange}>
               <SelectTrigger id="type">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
@@ -160,7 +142,7 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="startDate">Start Date</Label>
-            <Input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <Input id="startDate" type="date" value={props.startDate} onChange={(e) => props.onStartDateChange(e.target.value)} />
           </div>
           <div className="grid gap-2">
             <Label>Duration</Label>
@@ -169,11 +151,11 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
                 type="number"
                 min={1}
                 placeholder="Value"
-                value={durationValue as number | undefined}
-                onChange={(e) => setDurationValue(e.target.value ? Number(e.target.value) : "")}
+            value={props.durationValue as number | undefined}
+            onChange={(e) => props.onDurationValueChange(e.target.value ? Number(e.target.value) : "")}
                 className="w-24"
               />
-              <Select value={durationUnit} onValueChange={setDurationUnit}>
+          <Select value={props.durationUnit} onValueChange={props.onDurationUnitChange}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Unit" />
                 </SelectTrigger>
@@ -193,17 +175,17 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
                 type="number"
                 min={0}
                 placeholder="Min"
-                value={salaryMin as number | undefined}
-                onChange={(e) => setSalaryMin(e.target.value ? Number(e.target.value) : "")}
+            value={props.salaryMin as number | undefined}
+            onChange={(e) => props.onSalaryMinChange(e.target.value ? Number(e.target.value) : "")}
               />
               <Input
                 type="number"
                 min={0}
                 placeholder="Max"
-                value={salaryMax as number | undefined}
-                onChange={(e) => setSalaryMax(e.target.value ? Number(e.target.value) : "")}
+            value={props.salaryMax as number | undefined}
+            onChange={(e) => props.onSalaryMaxChange(e.target.value ? Number(e.target.value) : "")}
               />
-              <Select value={currency} onValueChange={setCurrency}>
+          <Select value={props.currency} onValueChange={props.onCurrencyChange}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Currency" />
                 </SelectTrigger>
@@ -215,18 +197,6 @@ export function JobFormDialog({ onJobCreated }: JobFormDialogProps) {
               </Select>
             </div>
           </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit" disabled={submitting}>
-              {submitting ? "Posting..." : "Post Job"}
-            </Button>
-          </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
   )
 } 

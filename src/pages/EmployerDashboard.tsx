@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/employer-header"
 import { GenericDataTable } from "@/components/generic-data-table"
-import { JobFormDialog } from "@/components/jobs/JobFormDialog"
+import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp } from '@/components/SimpleIcons'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -93,21 +93,21 @@ export default function EmployerDashboard() {
         )
       },
     },
-    {
-      accessorKey: "salary",
-      header: "Salary Range",
-      cell: ({ row }) => {
-        const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
-        if (salary?.min && salary?.max) {
-          return (
-            <div className="text-sm font-medium text-default">
-              {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
-            </div>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
+    // {
+    //   accessorKey: "salary",
+    //   header: "Salary Range",
+    //   cell: ({ row }) => {
+    //     const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
+    //     if (salary?.min && salary?.max) {
+    //       return (
+    //         <div className="text-sm font-medium text-default">
+    //           {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
+    //         </div>
+    //       )
+    //     }
+    //     return <span className="text-muted-foreground">-</span>
+    //   },
+    // },
     {
       accessorKey: "duration",
       header: "Duration",
@@ -220,8 +220,12 @@ export default function EmployerDashboard() {
                 title="Jobs"
                 enableSelection={true}
                 customColumns={jobColumns}
-                customActionElement={(refreshTable) => (
-                  <JobFormDialog onJobCreated={refreshTable} />
+                customActionElement={() => (
+                  <Link to="/employer/jobs/new">
+                    <Button variant="outline" size="sm">
+                      Post a Job
+                    </Button>
+                  </Link>
                 )}
                 onRowAction={handleJobAction}
                 actions={[

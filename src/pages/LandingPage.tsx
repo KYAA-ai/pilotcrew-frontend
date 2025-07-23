@@ -10,7 +10,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[var(--background)] flex flex-col">
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center text-center px-4">
-        <h1 className="text-4xl md:text-6xl font-bold text-[var(--foreground)] mb-4">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">
           Your entire hiring journey.<br />
           <span className="text-[var(--primary)]">Powered by one profile.</span>
         </h1>
@@ -28,7 +28,7 @@ export default function LandingPage() {
           <Button
             size="lg"
             variant="outline"
-            className="w-60 border-[var(--secondary)] text-[var(--secondary)] hover:bg-[var(--secondary-50)] text-lg font-semibold"
+            className="w-60 border-[var(--secondary)] hover:bg-[var(--secondary-800)] text-lg font-semibold"
             onClick={() => navigate("/auth/employee")}
           >
             I'm an Employee
