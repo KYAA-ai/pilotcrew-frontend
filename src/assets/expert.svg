@@ -1,0 +1,68 @@
+<svg width="380" height="400" viewBox="0 0 380 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="skinExpert" cx="50%" cy="35%" r="60%">
+      <stop offset="15%" stop-color="#F7D7C4"></stop>
+      <stop offset="80%" stop-color="#dba77a"></stop>
+    </radialGradient>
+    <linearGradient id="hairExpert" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#2e4057"></stop>
+      <stop offset="1" stop-color="#0e2238"></stop>
+    </linearGradient>
+    <linearGradient id="jacketExpert" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#45D3F7"></stop>
+      <stop offset="1" stop-color="#215482"></stop>
+    </linearGradient>
+    <linearGradient id="shirtExpert" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ecf5fd"></stop>
+      <stop offset="1" stop-color="#d1e6fa"></stop>
+    </linearGradient>
+    <filter id="neonGlowExpert" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Hair -->
+  <ellipse cx="190" cy="95" rx="64" ry="42" fill="url(#hairExpert)" stroke="#33dbff" stroke-width="3" opacity="0.7"></ellipse>
+  <!-- Face -->
+  <ellipse cx="190" cy="150" rx="60" ry="70" fill="url(#skinExpert)" stroke="#41c9ff" stroke-width="6" filter="url(#neonGlowExpert)"></ellipse>
+  <!-- Ears -->
+  <ellipse cx="129" cy="152" rx="10" ry="18" fill="#f6cdbb" opacity="0.7"></ellipse>
+  <ellipse cx="251" cy="152" rx="10" ry="18" fill="#f6cdbb" opacity="0.7"></ellipse>
+  <!-- Neck -->
+  <rect x="170" y="190" width="40" height="30" rx="15" fill="url(#skinExpert)"></rect>
+  <!-- Eyes -->
+  <ellipse cx="170" cy="152" rx="7" ry="9" fill="#222c32"></ellipse>
+  <ellipse cx="210" cy="152" rx="7" ry="9" fill="#222c32"></ellipse>
+  <!-- Eyebrows -->
+  <rect x="156" y="138" width="20" height="3" rx="2" fill="#2d2320" opacity="0.7"></rect>
+  <rect x="204" y="138" width="20" height="3" rx="2" fill="#2d2320" opacity="0.7"></rect>
+  <!-- Glasses (optional, expert look) -->
+  <ellipse cx="170" cy="152" rx="13" ry="9" fill="none" stroke="#5BE6FF" stroke-width="2"></ellipse>
+  <ellipse cx="210" cy="152" rx="13" ry="9" fill="none" stroke="#5BE6FF" stroke-width="2"></ellipse>
+  <rect x="183" y="152" width="14" height="2" fill="#5BE6FF"></rect>
+  <!-- Nose -->
+  <path d="M190 164 Q192 178 190 184" stroke="#b6826b" stroke-width="3" fill="none" opacity="0.7"></path>
+  <!-- Smile -->
+  <path d="M175 190 Q190 200 205 190" stroke="#a96f56" stroke-width="4" fill="none"></path>
+  <!-- Blush -->
+  <ellipse cx="163" cy="172" rx="6" ry="2" fill="#ffbeb8" opacity="0.19"></ellipse>
+  <ellipse cx="217" cy="172" rx="6" ry="2" fill="#ffbeb8" opacity="0.19"></ellipse>
+  <!-- Upper body: Shirt and jacket -->
+  <!-- Shirt -->
+  <rect x="154" y="217" width="72" height="34" rx="16" fill="url(#shirtExpert)" stroke="#cdf4ff" stroke-width="2"></rect>
+  <!-- Jacket sides -->
+  <path d="M124 245 Q160 222 190 235 Q220 222 256 245 Q265 330 190 320 Q115 330 124 245 Z" fill="url(#jacketExpert)" stroke="#41c9ff" stroke-width="7" filter="url(#neonGlowExpert)"></path>
+  <!-- Lapels -->
+  <polygon points="172,250 190,235 208,250 190,270" fill="#154d6d" opacity="0.6"></polygon>
+  <!-- Collar lines -->
+  <path d="M172 250 Q178 258 190 270 Q202 258 208 250" stroke="#82e9ff" stroke-width="3" fill="none"></path>
+  <!-- Arms (folded or straight at side) -->
+  <path d="M130 260 Q120 315 190 325 Q260 315 250 260" stroke="#41c9ff" stroke-width="8" fill="none" filter="url(#neonGlowExpert)"></path>
+  <!-- Text with extra gap -->
+  <text x="50%" y="380" text-anchor="middle" fill="#fff" font-size="34" font-family="Montserrat, Arial, sans-serif" font-weight="bold" filter="url(#neonGlowExpert)">
+    Expert Review
+  </text>
+</svg>

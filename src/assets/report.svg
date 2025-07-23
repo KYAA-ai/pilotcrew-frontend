@@ -1,0 +1,38 @@
+<svg width="380" height="370" viewBox="0 0 380 370" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="reportEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#31f6ff"></stop>
+      <stop offset="1" stop-color="#1787cf"></stop>
+    </linearGradient>
+    <filter id="neonGlowReport" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Shadow for page stack -->
+  <ellipse cx="190" cy="195" rx="75" ry="17" fill="#123456" opacity="0.20"></ellipse>
+  <!-- Back page -->
+  <rect x="120" y="95" width="100" height="135" rx="18" fill="#11274B" stroke="url(#reportEdge)" stroke-width="6" filter="url(#neonGlowReport)" opacity="0.62"></rect>
+  <!-- Middle page -->
+  <rect x="135" y="75" width="120" height="160" rx="22" fill="#1a355f" stroke="url(#reportEdge)" stroke-width="7" filter="url(#neonGlowReport)" opacity="0.86"></rect>
+  <!-- Front page -->
+  <rect x="150" y="60" width="130" height="180" rx="23" fill="#233d70" stroke="url(#reportEdge)" stroke-width="8" filter="url(#neonGlowReport)"></rect>
+  <!-- Checkmark -->
+  <polyline points="172,185 210,217 262,117" fill="none" stroke="#82E9FF" stroke-width="14" filter="url(#neonGlowReport)" stroke-linecap="round" stroke-linejoin="round"></polyline>
+  <!-- Holo seal -->
+  <ellipse cx="250" cy="88" rx="17" ry="12" fill="#29f6fa" opacity="0.22"></ellipse>
+  <ellipse cx="250" cy="88" rx="12" ry="7" fill="none" stroke="#2EC4FF" stroke-width="2" opacity="0.44"></ellipse>
+  <!-- Digital signature -->
+  <path d="M175 225 Q185 230 200 225 Q212 221 230 227" stroke="#2ec4ff" stroke-width="3" fill="none" opacity="0.26"></path>
+  <!-- Front page lines -->
+  <rect x="170" y="90" width="70" height="11" rx="5" fill="#41c9ff" opacity="0.18"></rect>
+  <rect x="170" y="109" width="56" height="9" rx="4" fill="#41c9ff" opacity="0.15"></rect>
+  <rect x="170" y="128" width="84" height="8" rx="4" fill="#82E9FF" opacity="0.13"></rect>
+  <!-- Text with gap -->
+  <text x="50%" y="335" text-anchor="middle" fill="#fff" font-size="34" font-family="Montserrat, Arial, sans-serif" font-weight="bold" filter="url(#neonGlowReport)">
+    Validated Report
+  </text>
+</svg>

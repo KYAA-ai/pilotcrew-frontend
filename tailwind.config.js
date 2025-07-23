@@ -11,6 +11,10 @@ module.exports = {
           'bounce-slow': 'bounce-slow 4s ease-in-out infinite',
           'spin-slow': 'spin 12s linear infinite',
         },
+        fontFamily: {
+          italiana: ['Italiana', 'serif'],
+          inter: ['Inter', 'sans-serif'],
+        },
       },
     },
   };

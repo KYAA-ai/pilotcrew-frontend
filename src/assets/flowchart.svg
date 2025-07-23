@@ -1,0 +1,118 @@
+<svg width="2000" height="700" viewBox="0 0 2000 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Neon gradients and glows -->
+    <radialGradient id="facePlate" cx="50%" cy="45%" r="80%">
+      <stop offset="10%" stop-color="#8EF8FF"></stop>
+      <stop offset="80%" stop-color="#1263B8"></stop>
+    </radialGradient>
+    <linearGradient id="sideBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#41c9ff"></stop>
+      <stop offset="1" stop-color="#82E9FF"></stop>
+    </linearGradient>
+    <filter id="neonGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+
+    <radialGradient id="skinExpert" cx="50%" cy="35%" r="60%">
+      <stop offset="15%" stop-color="#F7D7C4"></stop>
+      <stop offset="80%" stop-color="#dba77a"></stop>
+    </radialGradient>
+    <linearGradient id="hairExpert" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#2e4057"></stop>
+      <stop offset="1" stop-color="#0e2238"></stop>
+    </linearGradient>
+    <linearGradient id="jacketExpert" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#45D3F7"></stop>
+      <stop offset="1" stop-color="#215482"></stop>
+    </linearGradient>
+    <linearGradient id="shirtExpert" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ecf5fd"></stop>
+      <stop offset="1" stop-color="#d1e6fa"></stop>
+    </linearGradient>
+    <filter id="neonGlowExpert" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+
+    <linearGradient id="reportEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#31f6ff"></stop>
+      <stop offset="1" stop-color="#1787cf"></stop>
+    </linearGradient>
+    <filter id="neonGlowReport" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- AI Agent (left) -->
+  <g transform="translate(60,120)">
+    <ellipse cx="190" cy="135" rx="93" ry="95" fill="url(#facePlate)" stroke="url(#sideBlue)" stroke-width="10" filter="url(#neonGlow)"></ellipse>
+    <ellipse cx="90" cy="135" rx="18" ry="40" fill="#061E39" stroke="#41c9ff" stroke-width="4" filter="url(#neonGlow)" opacity="0.5"></ellipse>
+    <ellipse cx="290" cy="135" rx="18" ry="40" fill="#061E39" stroke="#41c9ff" stroke-width="4" filter="url(#neonGlow)" opacity="0.5"></ellipse>
+    <path d="M120 160 Q190 205 260 160" stroke="#3aefff" stroke-width="2" opacity="0.16" fill="none"></path>
+    <path d="M130 115 Q190 50 250 115" stroke="#97eaff" stroke-width="2" opacity="0.11" fill="none"></path>
+    <ellipse cx="155" cy="135" rx="15" ry="13" fill="#223b59" stroke="#b9feff" stroke-width="3"></ellipse>
+    <ellipse cx="225" cy="135" rx="15" ry="13" fill="#223b59" stroke="#b9feff" stroke-width="3"></ellipse>
+    <ellipse cx="190" cy="170" rx="18" ry="7" fill="#19335d" stroke="#41c9ff" stroke-width="2"></ellipse>
+    <circle cx="105" cy="100" r="6" fill="#41c9ff" filter="url(#neonGlow)"></circle>
+    <circle cx="275" cy="100" r="6" fill="#41c9ff" filter="url(#neonGlow)"></circle>
+    <rect x="180" y="27" width="20" height="45" rx="10" fill="#1bb6ff" filter="url(#neonGlow)"></rect>
+    <ellipse cx="190" cy="27" rx="12" ry="12" fill="#192842" stroke="#41c9ff" stroke-width="3" filter="url(#neonGlow)"></ellipse>
+    <circle cx="190" cy="27" r="5" fill="#6afffa"></circle>
+    <path d="M170 180 Q170 215 190 215 Q210 215 210 180" stroke="#57e6ff" stroke-width="1.5" opacity="0.22" fill="none"></path>
+    <ellipse cx="190" cy="215" rx="54" ry="18" fill="none" stroke="url(#sideBlue)" stroke-width="8" opacity="0.60"></ellipse>
+    <text x="190" y="330" text-anchor="middle" fill="#fff" font-size="36" font-family="Montserrat, Arial, sans-serif" font-weight="bold" filter="url(#neonGlow)">AI Output</text>
+  </g>
+
+  <!-- Expert Reviewer (center) -->
+  <g transform="translate(840,80)">
+    <ellipse cx="190" cy="95" rx="64" ry="42" fill="url(#hairExpert)" stroke="#33dbff" stroke-width="3" opacity="0.7"></ellipse>
+    <ellipse cx="190" cy="150" rx="60" ry="70" fill="url(#skinExpert)" stroke="#41c9ff" stroke-width="6" filter="url(#neonGlowExpert)"></ellipse>
+    <ellipse cx="129" cy="152" rx="10" ry="18" fill="#f6cdbb" opacity="0.7"></ellipse>
+    <ellipse cx="251" cy="152" rx="10" ry="18" fill="#f6cdbb" opacity="0.7"></ellipse>
+    <rect x="170" y="190" width="40" height="30" rx="15" fill="url(#skinExpert)"></rect>
+    <ellipse cx="170" cy="152" rx="7" ry="9" fill="#222c32"></ellipse>
+    <ellipse cx="210" cy="152" rx="7" ry="9" fill="#222c32"></ellipse>
+    <rect x="156" y="138" width="20" height="3" rx="2" fill="#2d2320" opacity="0.7"></rect>
+    <rect x="204" y="138" width="20" height="3" rx="2" fill="#2d2320" opacity="0.7"></rect>
+    <ellipse cx="170" cy="152" rx="13" ry="9" fill="none" stroke="#5BE6FF" stroke-width="2"></ellipse>
+    <ellipse cx="210" cy="152" rx="13" ry="9" fill="none" stroke="#5BE6FF" stroke-width="2"></ellipse>
+    <rect x="183" y="152" width="14" height="2" fill="#5BE6FF"></rect>
+    <path d="M190 164 Q192 178 190 184" stroke="#b6826b" stroke-width="3" fill="none" opacity="0.7"></path>
+    <path d="M175 190 Q190 200 205 190" stroke="#a96f56" stroke-width="4" fill="none"></path>
+    <ellipse cx="163" cy="172" rx="6" ry="2" fill="#ffbeb8" opacity="0.19"></ellipse>
+    <ellipse cx="217" cy="172" rx="6" ry="2" fill="#ffbeb8" opacity="0.19"></ellipse>
+    <rect x="154" y="217" width="72" height="34" rx="16" fill="url(#shirtExpert)" stroke="#cdf4ff" stroke-width="2"></rect>
+    <path d="M124 245 Q160 222 190 235 Q220 222 256 245 Q265 330 190 320 Q115 330 124 245 Z" fill="url(#jacketExpert)" stroke="#41c9ff" stroke-width="7" filter="url(#neonGlowExpert)"></path>
+    <polygon points="172,250 190,235 208,250 190,270" fill="#154d6d" opacity="0.6"></polygon>
+    <path d="M172 250 Q178 258 190 270 Q202 258 208 250" stroke="#82e9ff" stroke-width="3" fill="none"></path>
+    <path d="M130 260 Q120 315 190 325 Q260 315 250 260" stroke="#41c9ff" stroke-width="8" fill="none" filter="url(#neonGlowExpert)"></path>
+    <text x="190" y="390" text-anchor="middle" fill="#fff" font-size="36" font-family="Montserrat, Arial, sans-serif" font-weight="bold" filter="url(#neonGlowExpert)">Expert Review</text>
+  </g>
+
+  <!-- Validated Report (right) -->
+  <g transform="translate(1690,120)">
+    <ellipse cx="190" cy="195" rx="75" ry="17" fill="#123456" opacity="0.20"></ellipse>
+    <rect x="120" y="95" width="100" height="135" rx="18" fill="#11274B" stroke="url(#reportEdge)" stroke-width="6" filter="url(#neonGlowReport)" opacity="0.62"></rect>
+    <rect x="135" y="75" width="120" height="160" rx="22" fill="#1a355f" stroke="url(#reportEdge)" stroke-width="7" filter="url(#neonGlowReport)" opacity="0.86"></rect>
+    <rect x="150" y="60" width="130" height="180" rx="23" fill="#233d70" stroke="url(#reportEdge)" stroke-width="8" filter="url(#neonGlowReport)"></rect>
+    <polyline points="172,185 210,217 262,117" fill="none" stroke="#82E9FF" stroke-width="14" filter="url(#neonGlowReport)" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    <ellipse cx="250" cy="88" rx="17" ry="12" fill="#29f6fa" opacity="0.22"></ellipse>
+    <ellipse cx="250" cy="88" rx="12" ry="7" fill="none" stroke="#2EC4FF" stroke-width="2" opacity="0.44"></ellipse>
+    <path d="M175 225 Q185 230 200 225 Q212 221 230 227" stroke="#2ec4ff" stroke-width="3" fill="none" opacity="0.26"></path>
+    <rect x="170" y="90" width="70" height="11" rx="5" fill="#41c9ff" opacity="0.18"></rect>
+    <rect x="170" y="109" width="56" height="9" rx="4" fill="#41c9ff" opacity="0.15"></rect>
+    <rect x="170" y="128" width="84" height="8" rx="4" fill="#82E9FF" opacity="0.13"></rect>
+    <text x="190" y="360" text-anchor="middle" fill="#fff" font-size="36" font-family="Montserrat, Arial, sans-serif" font-weight="bold" filter="url(#neonGlowReport)">Validated Report</text>
+  </g>
+</svg>
