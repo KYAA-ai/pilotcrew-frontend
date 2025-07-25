@@ -9,7 +9,7 @@ export function GoogleAuthCallback() {
     const handleCallback = async () => {
       try {
         toast.success('Google authentication successful!');
-        navigate('/employer/dashboard');
+        navigate('/employer/jobs');
       } catch (error) {
         console.error('Google auth callback error:', error);
         toast.error('Authentication failed. Please try again.');

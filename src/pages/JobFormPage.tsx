@@ -111,9 +111,7 @@ export default function JobFormPage() {
           {/* Top bar: Breadcrumbs left, buttons right */}
           <div className="flex items-center justify-between mb-2 mt-4 gap-4">
             <nav className="text-sm text-muted-foreground flex gap-2 items-center">
-              <Link to="/employer/dashboard" className="hover:underline">Dashboard</Link>
-              <span>/</span>
-              <Link to="/employer/dashboard" className="hover:underline">Jobs</Link>
+              <Link to="/employer/jobs" className="hover:underline">Jobs</Link>
               <span>/</span>
               <span className="text-foreground font-semibold">Post a Job</span>
             </nav>
@@ -124,7 +122,7 @@ export default function JobFormPage() {
                 onClick={resetForm}
                 disabled={submitting}
               >
-                Cancel
+                Clear
               </button>
               <button
                 type="button"
@@ -160,7 +158,7 @@ export default function JobFormPage() {
                     Create Another Job
                   </button>
                   <Link
-                    to="/employer/dashboard"
+                    to="/employer/jobs"
                     className="px-6 py-2 border border-input bg-background text-foreground rounded hover:bg-muted transition"
                   >
                     Go to Jobs Board

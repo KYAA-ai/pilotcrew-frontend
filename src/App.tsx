@@ -73,7 +73,7 @@ function App() {
         />
         {/* Employer Dashboard with proper auth guard */}
         <Route
-          path="/employer/dashboard"
+          path="/employer/jobs"
           element={
             <EmployerAuthGuard>
               <EmployerDashboardPage />
