@@ -99,7 +99,7 @@ export function DomainsCarousel() {
 
   return (
     <section className="w-full flex flex-col items-center mt-24 px-4">
-      <h2 className="text-center font-[Italiana,serif] text-4xl md:text-5xl text-white mb-16">
+      <h2 className="text-center font-eudoxus-bold text-4xl md:text-5xl text-white mb-16">
         Domains we serve
       </h2>
 

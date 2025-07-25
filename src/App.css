@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'EudoxusSans-Bold';
+  src: url('/fonts/EudoxusSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'EudoxusSans-ExtraBold';
+  src: url('/fonts/EudoxusSans-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-eudoxus-bold {
+  font-family: 'EudoxusSans-Bold', sans-serif !important;
+  font-weight: 700;
+}
+
+.font-eudoxus-extrabold {
+  font-family: 'EudoxusSans-ExtraBold', sans-serif !important;
+  font-weight: 800;
+}

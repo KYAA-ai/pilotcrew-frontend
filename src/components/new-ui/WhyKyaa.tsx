@@ -128,7 +128,7 @@ export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
       ref={sectionRef}
       className="w-full max-w-6xl mx-auto mt-32 px-4 relative overflow-visible"
     >
-      <h2 className="text-center font-[Italiana,serif] text-4xl text-white mb-12">
+      <h2 className="text-center font-eudoxus-bold text-4xl text-white mb-12">
         {"Why KYAA.ai?"}
       </h2>
       {/* Progress line + markers */}
