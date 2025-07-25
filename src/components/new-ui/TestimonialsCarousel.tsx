@@ -37,7 +37,7 @@ export default function TestimonialsCarousel({ quoteIcon }: { quoteIcon: ReactNo
   const extended = [...base, ...base, ...base];
 
   // Current index into `extended`. Start in the middle copy.
-  const [index, setIndex] = useState(baseLen);
+  const [index, setIndex] = useState(-0.5);
 
   // Control CSS transitions
   const [disableTransition, setDisableTransition] = useState(false);
@@ -107,10 +107,10 @@ export default function TestimonialsCarousel({ quoteIcon }: { quoteIcon: ReactNo
                 className="flex-shrink-0 min-w-[320px] max-w-[320px] border-2 border-dashed border-[#338AFF] rounded-xl p-8 flex flex-col gap-4 text-white bg-[#12162c]"
                 style={{ gap: "1rem" }}
               >
-                <span className="text-4xl leading-none flex items-center justify-center mb-2">
+                <span className="text-xl leading-none flex items-start justify-start mb-2">
                   {quoteIcon}
                 </span>
-                <p className="flex-1 font-inter">{t.quote}</p>
+                <p className="flex-1 font-inter">{t.quote}"</p>
                 <span className="font-inter text-sm text-white/70">{t.author}</span>
               </div>
             ) : (

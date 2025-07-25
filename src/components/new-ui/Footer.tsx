@@ -1,7 +1,7 @@
 // components/new-ui/Footer.tsx
-import butterfly from "../../assets/logo.png";        // your glowing butterfly
+import GitHubIcon from "../../assets/github.png"; // your GitHub icon
 import LinkedInIcon from "../../assets/linkedin.png"; // your LinkedIn icon
-import GitHubIcon from "../../assets/github.png";     // your GitHub icon
+import butterfly from "../../assets/logo.png"; // your glowing butterfly
 
 export default function Footer() {
   return (
@@ -24,11 +24,23 @@ export default function Footer() {
           </div>
           <div className="space-y-2">
             <div className="text-lg font-inter">Subscribe to our newsletter!</div>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full md:w-3/4 h-12 bg-gray-200 rounded px-4 focus:outline-none"
-            />
+            <form className="flex w-full md:w-3/4 h-12">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 h-full bg-gray-200 rounded-l-2xl border border-black px-4 focus:outline-none placeholder-black"
+                style={{ color: '#000' }}
+              />
+              <button
+                type="submit"
+                className="h-full px-4 bg-[#E5BE5B] rounded-r-2xl flex items-center justify-center border border-black border-l-0 hover:bg-[#59A2FF] transition-colors cursor-pointer"
+                aria-label="Send"
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                  <path d="M2 21l21-9-21-9v7l15 2-15 2v7z" fill="#000" />
+                </svg>
+              </button>
+            </form>
           </div>
         </div>
 

@@ -128,31 +128,22 @@ export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
       ref={sectionRef}
       className="w-full max-w-6xl mx-auto mt-32 px-4 relative overflow-visible"
     >
-      <h2 className="text-center font-eudoxus-bold text-4xl text-white mb-12">
+      <h2 className="text-center font-[Italiana,serif] text-5xl text-white mb-12">
         {"Why KYAA.ai?"}
       </h2>
       {/* Progress line + markers */}
       <div className="relative h-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full h-[1px] bg-white/50" />
-          {cards.map((_, i) => (
-            <div
-              key={i}
-              className="absolute top-0 h-[1px]"
-              style={{ left: `${(i + 0.5) * (100 / cards.length)}%` }}
-            >
-              <div className="w-3 h-3 bg-white/70 rotate-45 -translate-x-1.5" />
-            </div>
-          ))}
         </div>
         {/* Butterfly */}
         <motion.img
           src={butterfly}
           alt="Butterfly"
-          className="absolute top-0 w-8 h-8"
+          className="absolute top-1/2 w-16 h-16"
           animate={{ left: `${butterflyLeft}%` }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          style={{ x: "-50%" }}
+          style={{ x: "-50%", y: "-50%" }}
         />
       </div>
       {/* Cards grid */}
@@ -160,7 +151,7 @@ export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
         {cards.map((card, i) => (
           <motion.div
             key={card.title}
-            className="border border-[#338AFF] rounded-xl p-8 flex flex-col"
+            className="border border-[#338AFF] rounded-xl p-8 flex flex-col min-h-[220px] items-center text-center justify-center"
             animate={{
               boxShadow:
                 activeIdx === i
@@ -169,7 +160,7 @@ export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
             }}
             transition={{ duration: 0.2 }}
           >
-            <h3 className="text-xl font-[Italiana,serif] text-white mb-3">
+            <h3 className="text-xl font-eudoxus-bold text-white mb-3">
               {card.title}
             </h3>
             <p className="text-white text-sm">{card.subtitle}</p>

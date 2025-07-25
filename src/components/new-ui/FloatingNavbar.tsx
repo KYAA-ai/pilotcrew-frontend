@@ -48,7 +48,7 @@ export default function FloatingNavbar({
             {NAV_LINKS.map((tab) => (
               <span
                 key={tab}
-                className="font-inter text-white text-lg font-medium cursor-pointer hover:opacity-80 transition"
+                className="font-eudoxus-medium text-white font-medium cursor-pointer hover:opacity-80 transition"
               >
                 {tab}
               </span>

@@ -1,9 +1,9 @@
 // components/new-ui/DomainsCarousel.tsx
-import { useState, useEffect, useLayoutEffect } from "react";
-import legalIcon from "../../assets/legal.png";
-import healthcareIcon from "../../assets/healthcare.png";
+import { useEffect, useLayoutEffect, useState } from "react";
 import edtechIcon from "../../assets/edtech.png";
 import financeIcon from "../../assets/finance.png";
+import healthcareIcon from "../../assets/healthcare.png";
+import legalIcon from "../../assets/legal.png";
 import roboticsIcon from "../../assets/robotics.png";
 
 const CARD_WIDTH = 270;
@@ -55,7 +55,7 @@ export function DomainsCarousel() {
   const extended = [...base, ...base, ...base];
 
   // Current index into `extended`. Start in the middle copy.
-  const [index, setIndex] = useState(baseLen);
+  const [index, setIndex] = useState(-0.5);
 
   // Control CSS transitions
   const [disableTransition, setDisableTransition] = useState(false);
@@ -143,7 +143,7 @@ export function DomainsCarousel() {
                   className="h-16 mb-4"
                   style={{ filter: "drop-shadow(0 0 10px #e9a85588)" }}
                 />
-                <h3 className="text-white text-2xl font-[Italiana,serif] mb-2 text-center">
+                <h3 className="text-white text-2xl font-eudoxus-medium mb-2 text-center">
                   {domain.name}
                 </h3>
                 <p className="text-white text-base text-center">

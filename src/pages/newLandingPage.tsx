@@ -9,6 +9,7 @@ import agent from "../assets/agent.svg";
 import expert from "../assets/expert.svg";
 import flowchart from "../assets/flowchart.svg";
 import butterfly from "../assets/logo.png";
+import quoteUp from "../assets/quote-up.png";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -63,11 +64,11 @@ export default function NewLandingPage() {
       <div className="w-full max-w-6xl mx-auto mt-24 flex flex-col gap-24 px-4">
         {/* For Clients */}
         <div className="flex flex-col md:flex-row md:justify-between gap-12">
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col justify-center">
             <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text">
               For Clients
             </h2>
-            <ul className="text-white text-lg font-inter list-disc pl-4 space-y-3">
+            <ul className="text-white text-xl font-inter list-disc pl-4 space-y-3">
               <li>Submit your AI outputs and validation criteria</li>
               <li>Get matched with vetted domain experts</li>
               <li>Receive annotated, trustworthy feedback</li>
@@ -84,11 +85,11 @@ export default function NewLandingPage() {
         </div>
         {/* For Experts */}
         <div className="flex flex-col md:flex-row-reverse md:justify-between gap-12">
-          <div className="flex-1 md:text-right">
+          <div className="flex-1 flex flex-col justify-center items-start text-left">
             <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text inline-block">
               For Experts
             </h2>
-            <ul className="text-white text-lg font-inter list-disc pl-4 md:pl-0 md:pr-4 space-y-3">
+            <ul className="font-eudoxus-medium text-white text-xl list-disc list-inside space-y-3">
               <li>Create a profile and get certified</li>
               <li>Get matched with AI validation jobs</li>
               <li>Earn income while ensuring ethical AI</li>
@@ -134,7 +135,7 @@ export default function NewLandingPage() {
         <h2 className="font-eudoxus-bold text-center text-4xl text-white mb-8">
           Testimonials
         </h2>
-        <TestimonialsCarousel quoteIcon={<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 20C8 15.5817 11.5817 12 16 12V8C9.37258 8 4 13.3726 4 20H8ZM16 20C16 15.5817 19.5817 12 24 12V8C17.3726 8 12 13.3726 12 20H16Z" fill="#e9c188"/></svg>} />
+        <TestimonialsCarousel quoteIcon={<img src={quoteUp} alt="Quote" className="w-14 h-14 ml-0" />} />
       </section>
 
       {/* Metrics & Impact */}
@@ -173,12 +174,18 @@ export default function NewLandingPage() {
       </section>
 
       {/* Resources / Blog */}
-      <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col items-center gap-8">
-        <h2 className="font-eudoxus-bold text-4xl text-white">
+      <section className="w-full mt-32 flex flex-col items-center gap-8">
+        <h2 className="font-eudoxus-bold text-4xl text-white text-center mb-8">
           Resources / Blog
         </h2>
-        <div className="w-full bg-gradient-to-r from-[#e9c188] to-[#e9a855] p-8 rounded-xl">
-          <ul className="text-white font-inter text-lg list-disc list-inside space-y-3">
+        <div
+          className="w-full flex justify-center items-center"
+          style={{
+            background: "radial-gradient(ellipse at center, #FFD886 0%, #040713 100%)",
+            minHeight: "260px",
+          }}
+        >
+          <ul className="text-white font-eudoxus-medium text-xl list-disc list-inside space-y-6 max-w-2xl mx-auto" style={{ textShadow: '0 0.5px 4px #0004, 0 1px 1px #0003' }}>
             <li>AI Safety &amp; HITL Guidelines</li>
             <li>EU AI Act Explained</li>
             <li>RLHF vs. RLAIF</li>
