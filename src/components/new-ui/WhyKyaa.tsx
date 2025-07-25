@@ -5,11 +5,12 @@ import butterfly from "../../assets/logo.png";
 
 type Card = { title: string; subtitle: string };
 
-enum ScrollDir {
-  None = 0,
-  Down = 1,
-  Up = -1,
-}
+export const ScrollDir = {
+  None: 0,
+  Down: 1,
+  Up: -1,
+} as const;
+type ScrollDir = typeof ScrollDir[keyof typeof ScrollDir];
 
 export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
