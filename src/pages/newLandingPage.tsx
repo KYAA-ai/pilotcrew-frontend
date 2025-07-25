@@ -3,9 +3,10 @@ import { useState, useEffect, useRef } from "react";
 import flowchart from "../assets/flowchart.svg";
 import agent from "../assets/agent.svg";
 import expert from "../assets/expert.svg";
-import butterfly from "../assets/logo.png";              // your butterfly asset
+import butterfly from "../assets/logo.png";              
 import FloatingNavbar from "@/components/new-ui/FloatingNavbar";
 import { DomainsCarousel } from "@/components/new-ui/DomainsCarousel";
+import WhyKyaaSection from "@/components/new-ui/WhyKyaa";
 import Footer from "@/components/new-ui/Footer";
 
 export default function NewLandingPage() {
@@ -129,49 +130,7 @@ export default function NewLandingPage() {
       </div>
 
       {/* Why KYAA.ai? Slider */}
-      <div
-        ref={sliderRef}
-        className="w-full max-w-6xl mx-auto mt-32 px-4 relative overflow-visible"
-      >
-        <h2 className="text-center font-[Italiana,serif] text-4xl text-white mb-12">
-          Why KYAA.ai?
-        </h2>
-        <div className="relative h-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full h-[1px] bg-white/50" />
-            {cards.map((_, i) => (
-              <div
-                key={i}
-                className="absolute top-0 h-[1px]"
-                style={{ left: `${(i + 0.5) * (100 / cards.length)}%` }}
-              >
-                <div className="w-3 h-3 bg-white/70 rotate-45 -translate-x-1.5" />
-              </div>
-            ))}
-          </div>
-          <img
-            src={butterfly}
-            alt="Butterfly"
-            className="absolute top-0 w-8 h-8 transition-all duration-300"
-            style={{ left: `${butterflyLeft}%`, transform: "translateX(-50%)" }}
-          />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-          {cards.map((card, i) => (
-            <div
-              key={card.title}
-              className={`border border-[#338AFF] rounded-xl p-8 flex flex-col transition-shadow duration-300 ${
-                activeIdx === i ? "shadow-[0_0_30px_rgba(233,193,136,0.6)]" : ""
-              }`}
-            >
-              <h3 className="text-xl font-[Italiana,serif] text-white mb-3">
-                {card.title}
-              </h3>
-              <p className="text-white text-sm">{card.subtitle}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <WhyKyaaSection cards={cards} />
 
       {/* Matching & Oversight System */}
       <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col md:flex-row items-start gap-12">
