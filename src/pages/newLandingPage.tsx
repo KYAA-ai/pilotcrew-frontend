@@ -1,44 +1,25 @@
 // pages/NewLandingPage.tsx
-import { useState, useEffect, useRef } from "react";
-import flowchart from "../assets/flowchart.svg";
+import { DomainsCarousel } from "@/components/new-ui/DomainsCarousel";
+import FloatingNavbar from "@/components/new-ui/FloatingNavbar";
+import Footer from "@/components/new-ui/Footer";
+import TestimonialsCarousel from "@/components/new-ui/TestimonialsCarousel";
+import WhyKyaaSection from "@/components/new-ui/WhyKyaa";
+import { useState } from "react";
 import agent from "../assets/agent.svg";
 import expert from "../assets/expert.svg";
-import butterfly from "../assets/logo.png";              
-import FloatingNavbar from "@/components/new-ui/FloatingNavbar";
-import { DomainsCarousel } from "@/components/new-ui/DomainsCarousel";
-import WhyKyaaSection from "@/components/new-ui/WhyKyaa";
-import Footer from "@/components/new-ui/Footer";
+import flowchart from "../assets/flowchart.svg";
+import butterfly from "../assets/logo.png";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // ——— Slider section state & refs ———
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
   const cards = [
     { title: "Expert Insights", subtitle: "Real‑world domain experts" },
     { title: "Global Talent",   subtitle: "Cost‑effective expert pool" },
     { title: "API Integration", subtitle: "Integrate via API for validation feedback" },
     { title: "GDPR Compliant",  subtitle: "Enterprise‑ready data handling" },
   ];
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (!sliderRef.current) return;
-      const rect = sliderRef.current.getBoundingClientRect();
-      const winH = window.innerHeight;
-      const prog = Math.min(
-        Math.max((winH - rect.top) / (rect.height + winH), 0),
-        1
-      );
-      setActiveIdx(Math.floor(prog * cards.length));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [cards.length]);
-
-  const butterflyLeft = ((activeIdx + 0.5) / cards.length) * 100;
 
   return (
     <div className="relative min-h-screen w-full bg-[#040713] overflow-x-hidden">
@@ -129,7 +110,7 @@ export default function NewLandingPage() {
         <DomainsCarousel />
       </div>
 
-      {/* Why KYAA.ai? Slider */}
+      {/* Why KYAA.ai? Slider */}
       <WhyKyaaSection cards={cards} />
 
       {/* Matching & Oversight System */}
@@ -153,36 +134,7 @@ export default function NewLandingPage() {
         <h2 className="text-center font-[Italiana,serif] text-4xl text-white mb-8">
           Testimonials
         </h2>
-        <div className="relative">
-          <button
-            aria-label="Prev"
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 z-10"
-          >
-            ‹
-          </button>
-          <div className="flex gap-8 overflow-x-auto scrollbar-none py-4">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="min-w-[300px] border-2 border-dashed border-[#338AFF] rounded-xl p-8 flex flex-col gap-4 text-white"
-              >
-                <span className="text-4xl leading-none">“</span>
-                <p className="flex-1 font-inter">
-                  KYAA.ai helped us flag and fix 17 hallucinations before go‑live.
-                </p>
-                <span className="font-inter text-sm text-white/70">
-                  CTO, FinTech AI
-                </span>
-              </div>
-            ))}
-          </div>
-          <button
-            aria-label="Next"
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 z-10"
-          >
-            ›
-          </button>
-        </div>
+        <TestimonialsCarousel quoteIcon={<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 20C8 15.5817 11.5817 12 16 12V8C9.37258 8 4 13.3726 4 20H8ZM16 20C16 15.5817 19.5817 12 24 12V8C17.3726 8 12 13.3726 12 20H16Z" fill="#e9c188"/></svg>} />
       </section>
 
       {/* Metrics & Impact */}

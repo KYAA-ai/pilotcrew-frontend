@@ -1,5 +1,5 @@
 // components/new-ui/DomainsCarousel.tsx
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import legalIcon from "../../assets/legal.png";
 import healthcareIcon from "../../assets/healthcare.png";
 import edtechIcon from "../../assets/edtech.png";
