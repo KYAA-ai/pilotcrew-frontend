@@ -6,7 +6,7 @@ import healthcareIcon from "../../assets/healthcare.png";
 import legalIcon from "../../assets/legal.png";
 import roboticsIcon from "../../assets/robotics.png";
 
-const CARD_WIDTH = 270;
+const getCardWidth = () => (typeof window !== 'undefined' && window.innerWidth < 640 ? 160 : 270);
 const CARD_GAP = 32;
 
 const DOMAINS = [
@@ -47,6 +47,15 @@ export function DomainsCarousel() {
     return () => window.removeEventListener("resize", upd);
   }, []);
 
+  // Responsive card width
+  const [cardWidth, setCardWidth] = useState(getCardWidth());
+  useLayoutEffect(() => {
+    const upd = () => setCardWidth(getCardWidth());
+    upd();
+    window.addEventListener("resize", upd, { passive: true });
+    return () => window.removeEventListener("resize", upd);
+  }, []);
+
   // Build a "base" list = real domains + placeholders
   const base = [...DOMAINS, ...Array(placeholders).fill(null)];
   const baseLen = base.length;
@@ -54,8 +63,8 @@ export function DomainsCarousel() {
   // Triple‑clone for infinite loop
   const extended = [...base, ...base, ...base];
 
-  // Current index into `extended`. Start in the middle copy.
-  const [index, setIndex] = useState(-0.5);
+  // Current index into `extended`. Start at the beginning of the middle copy
+  const [index, setIndex] = useState(baseLen);
 
   // Control CSS transitions
   const [disableTransition, setDisableTransition] = useState(false);
@@ -95,7 +104,7 @@ export function DomainsCarousel() {
   }, [disableTransition]);
 
   // Compute transform: card+gap times index
-  const offset = -(CARD_WIDTH + CARD_GAP) * index;
+  const offset = -(cardWidth + CARD_GAP) * index;
 
   return (
     <section className="w-full flex flex-col items-center mt-24 px-4">
@@ -134,8 +143,8 @@ export function DomainsCarousel() {
             domain ? (
               <div
                 key={`${idx}-${domain.name}`}
-                className="flex-shrink-0 flex flex-col items-center justify-start border border-[#338AFF] rounded-xl p-8 bg-transparent"
-                style={{ width: CARD_WIDTH, gap: "1rem" }}
+                className="flex-shrink-0 flex flex-col items-center justify-start border border-[#338AFF] rounded-xl p-4 md:p-8 bg-transparent"
+                style={{ width: cardWidth, gap: "1rem" }}
               >
                 <img
                   src={domain.icon}
@@ -143,10 +152,10 @@ export function DomainsCarousel() {
                   className="h-16 mb-4"
                   style={{ filter: "drop-shadow(0 0 10px #e9a85588)" }}
                 />
-                <h3 className="text-white text-2xl font-eudoxus-medium mb-2 text-center">
+                <h3 className="text-white text-lg md:text-2xl font-eudoxus-medium mb-2 text-center">
                   {domain.name}
                 </h3>
-                <p className="text-white text-base text-center">
+                <p className="text-white text-sm md:text-base text-center">
                   {domain.desc}
                 </p>
               </div>
@@ -155,7 +164,7 @@ export function DomainsCarousel() {
               <div
                 key={`ph-${idx}`}
                 className="flex-shrink-0"
-                style={{ width: CARD_WIDTH }}
+                style={{ width: cardWidth }}
               />
             )
           )}

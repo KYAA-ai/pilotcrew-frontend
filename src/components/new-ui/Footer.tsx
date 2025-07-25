@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#e9c188] to-[#e9a855]" />
 
       {/* Main footer content */}
-      <div className="max-w-6xl mx-auto px-4 py-12 md:flex md:justify-between md:items-start gap-8">
+      <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col gap-10 md:flex-row md:justify-between md:items-start md:gap-8">
         {/* Left: Logo + Newsletter */}
         <div className="flex-1 space-y-6">
           <div className="flex items-center gap-3">

@@ -4,6 +4,7 @@ import FloatingNavbar from "@/components/new-ui/FloatingNavbar";
 import Footer from "@/components/new-ui/Footer";
 import TestimonialsCarousel from "@/components/new-ui/TestimonialsCarousel";
 import WhyKyaaSection from "@/components/new-ui/WhyKyaa";
+import WhyKyaaMobile from "@/components/new-ui/WhyKyaaMobile";
 import { useState } from "react";
 import agent from "../assets/agent.svg";
 import expert from "../assets/expert.svg";
@@ -40,7 +41,7 @@ export default function NewLandingPage() {
       <div className="hidden lg:block h-24" aria-hidden />
 
       {/* Headline & tagline */}
-      <div className="w-full flex flex-col items-center mt-28 px-4">
+      <div className="w-full flex flex-col items-center mt-20 md:mt-28 px-8">
         <h1 className="font-eudoxus-extrabold text-center text-5xl md:text-6xl text-white leading-tight max-w-5xl">
           Validate Your AI with{" "}
           <span className="bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text">
@@ -61,14 +62,14 @@ export default function NewLandingPage() {
       </div>
 
       {/* Clients & Experts */}
-      <div className="w-full max-w-6xl mx-auto mt-24 flex flex-col gap-24 px-4">
+      <div className="w-full max-w-6xl mx-auto mt-12 md:mt-24 flex flex-col gap-12 px-8 md:px-4">
         {/* For Clients */}
-        <div className="flex flex-col md:flex-row md:justify-between gap-12">
+        <div className="flex flex-col md:flex-row md:justify-between gap-12 px-0">
           <div className="flex-1 flex flex-col justify-center">
             <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text">
               For Clients
             </h2>
-            <ul className="text-white text-xl font-inter list-disc pl-4 space-y-3">
+            <ul className="text-white text-lg font-inter list-disc pl-4 space-y-3">
               <li>Submit your AI outputs and validation criteria</li>
               <li>Get matched with vetted domain experts</li>
               <li>Receive annotated, trustworthy feedback</li>
@@ -84,12 +85,12 @@ export default function NewLandingPage() {
           </div>
         </div>
         {/* For Experts */}
-        <div className="flex flex-col md:flex-row-reverse md:justify-between gap-12">
+        <div className="flex flex-col md:flex-row-reverse md:justify-between gap-12 px-0">
           <div className="flex-1 flex flex-col justify-center items-start text-left">
             <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text inline-block">
               For Experts
             </h2>
-            <ul className="font-eudoxus-medium text-white text-xl list-disc list-inside space-y-3">
+            <ul className="text-white text-lg font-inter list-disc pl-4 space-y-3">
               <li>Create a profile and get certified</li>
               <li>Get matched with AI validation jobs</li>
               <li>Earn income while ensuring ethical AI</li>
@@ -112,20 +113,25 @@ export default function NewLandingPage() {
       </div>
 
       {/* Why KYAA.ai? Slider */}
-      <WhyKyaaSection cards={cards} />
+      <div className="block md:hidden">
+        <WhyKyaaMobile cards={cards} />
+      </div>
+      <div className="hidden md:block">
+        <WhyKyaaSection cards={cards} />
+      </div>
 
       {/* Matching & Oversight System */}
-      <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col md:flex-row items-start gap-12">
+      <section className="w-full max-w-6xl mx-auto mt-20 mb-10 md:mt-32 px-8 md:px-4 flex flex-col md:flex-row items-start gap-12">
         <div className="flex-1">
-          <h2 className="font-eudoxus-bold text-4xl text-white mb-6">
+          <h2 className="font-eudoxus-bold text-4xl text-white mb-6 text-center md:text-left">
             Matching &amp; Oversight System
           </h2>
-          <p className="text-white text-lg">
+          <p className="text-white text-lg text-center md:text-left">
             We use AI‑driven matching + human QA oversight to route tasks to the best
             validators.
           </p>
         </div>
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 items-center justify-center hidden md:flex">
           <div className="w-full max-w-[500px] aspect-[16/9] border border-[#338AFF] rounded-xl" />
         </div>
       </section>
@@ -139,7 +145,7 @@ export default function NewLandingPage() {
       </section>
 
       {/* Metrics & Impact */}
-      <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col md:flex-row items-center gap-12">
+      <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col-reverse md:flex-row items-center gap-12">
         {/* Left: 2×2 grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
           <div className="border border-white/20 rounded-xl p-8">
@@ -160,8 +166,8 @@ export default function NewLandingPage() {
           </div>
         </div>
         {/* Right: heading + butterfly */}
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <h2 className="font-eudoxus-bold text-4xl text-white mb-6">
+        <div className="flex-1 flex flex-col items-center justify-center mb-8 md:mb-0">
+          <h2 className="font-eudoxus-bold text-4xl text-white mb-6 text-center md:text-left">
             Metrics &amp; Impact
           </h2>
           <img
@@ -185,7 +191,7 @@ export default function NewLandingPage() {
             minHeight: "260px",
           }}
         >
-          <ul className="text-white font-eudoxus-medium text-xl list-disc list-inside space-y-6 max-w-2xl mx-auto" style={{ textShadow: '0 0.5px 4px #0004, 0 1px 1px #0003' }}>
+          <ul className="text-white font-eudoxus-medium text-lg md:text-xl list-disc list-inside space-y-6 max-w-2xl mx-auto" style={{ textShadow: '0 0.5px 4px #0004, 0 1px 1px #0003' }}>
             <li>AI Safety &amp; HITL Guidelines</li>
             <li>EU AI Act Explained</li>
             <li>RLHF vs. RLAIF</li>
@@ -195,8 +201,9 @@ export default function NewLandingPage() {
       </section>
 
       {/* Empty footer */}
-      <footer className="w-full h-[20vh]" />
+      <footer className="w-full h-28 md:h-[20vh]" />
       <Footer />
+      <div style={{ height: '3vh' }} />
     </div>
   );
 }
