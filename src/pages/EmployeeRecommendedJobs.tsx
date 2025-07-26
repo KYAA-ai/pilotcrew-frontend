@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { SearchBar } from "@/components/ui/search-bar";
 import { RecommendedJobsView } from "@/components/recommended-jobs"
+import { useNavigate } from "react-router-dom";
 
 type SkillCategory = { category?: string; keywords?: string[] };
 
@@ -161,6 +162,7 @@ export default function EmployeeRecommendedJobs() {
   const skillsData = employeeProfile?.llamaResumeInfo?.skills ?? [];
   const skills = skillsData;
 
+  const navigate = useNavigate();
   // Handler for new search bar
   const handleSearchSubmit = (field: string, query: string) => {
     setTableRequestBody(prev => ({
@@ -341,6 +343,11 @@ export default function EmployeeRecommendedJobs() {
             </p>
           </div>
         </div>
+
+
+        <button onClick={() => navigate("/employee/chat")}>
+          Go to Chat
+        </button>
 
         {/* Recommended Jobs Table */}
         <RecommendedJobsView

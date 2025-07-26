@@ -7,6 +7,7 @@ import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import NewLandingPage from './pages/newLandingPage'
+import EmployeeJobWorkflowChatScreen from './pages/EmployeeJobWorkflowChatScreen'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeDashboardPage from './pages/EmployeeDashboard'
 import EmployeeProfile from './pages/EmployeeProfile'
@@ -68,6 +69,14 @@ function App() {
           element={
             <EmployeeAuthGuard>
               <EmployeeAgenticDashboard />
+            </EmployeeAuthGuard>
+          }
+        />
+        <Route
+          path="/employee/chat"
+          element={
+            <EmployeeAuthGuard>
+              <EmployeeJobWorkflowChatScreen />
             </EmployeeAuthGuard>
           }
         />
