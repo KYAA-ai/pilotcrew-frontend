@@ -96,7 +96,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 <a href="/">
                   <InnerShadowTop className="!size-5" />
                   <div className="text-2xl font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
-                    KYAA.ai
+                    Pilotcrew.ai
                   </div>
                 </a>
               </SidebarMenuButton>
@@ -138,7 +138,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   <a href="/">
                     <img src={reviewIcon} alt="Review Icon" style={{ width: 24, height: 24, marginRight: 8 }} />
                     <div className="text-lg font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
-                    KYAA.ai
+                    Pilotcrew.ai
                   </div>
                   </a>
                 </SidebarMenuButton>

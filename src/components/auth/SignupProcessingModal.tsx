@@ -164,7 +164,7 @@ export function SignupProcessingModal({
                       All set!
                     </h3>
                     <p className="text-muted-foreground mb-6">
-                      Your profile is ready. Welcome to KYAA.ai!
+                      Your profile is ready. Welcome to Pilotcrew.ai!
                     </p>
                     <Button 
                       onClick={handleContinueClick}

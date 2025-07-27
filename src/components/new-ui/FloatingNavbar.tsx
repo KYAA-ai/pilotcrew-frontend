@@ -41,7 +41,7 @@ export default function FloatingNavbar({
           <div className="flex items-center gap-1 z-10">
             <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
             <span className="font-[Italiana,serif] text-white text-2xl tracking-wide">
-              KYAA.ai
+              Pilotcrew.ai
             </span>
           </div>
           <div className="flex gap-12 ml-auto z-10">
@@ -71,7 +71,7 @@ export default function FloatingNavbar({
           <div className="flex items-center gap-2">
             <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
             <span className="font-[Italiana,serif] text-white text-2xl tracking-wide">
-              KYAA.ai
+              Pilotcrew.ai
             </span>
           </div>
           <button

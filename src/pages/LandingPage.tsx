@@ -15,7 +15,7 @@ export default function LandingPage() {
           <span className="text-[var(--primary)]">Powered by one profile.</span>
         </h1>
         <p className="text-lg md:text-xl text-[var(--foreground)]/70 mb-8 max-w-xl">
-          Get personalized job recommendations, craft tailored resumes, autofill and track your job applications. KYAA is here for every step of your career.
+          Get personalized job recommendations, craft tailored resumes, autofill and track your job applications. Pilotcrew is here for every step of your career.
         </p>
         <div className="flex flex-col gap-4 md:flex-row md:gap-6 mb-8">
           <Button
@@ -35,7 +35,7 @@ export default function LandingPage() {
           </Button>
         </div>
         <div className="text-[var(--foreground)]/60 text-sm mb-8">
-          <span className="text-yellow-500">★★★★★</span> Join 10,000+ professionals who use KYAA
+          <span className="text-yellow-500">★★★★★</span> Join 10,000+ professionals who use Pilotcrew
         </div>
         
         {/* Context Test Component */}

@@ -3,8 +3,8 @@ import { DomainsCarousel } from "@/components/new-ui/DomainsCarousel";
 import FloatingNavbar from "@/components/new-ui/FloatingNavbar";
 import Footer from "@/components/new-ui/Footer";
 import TestimonialsCarousel from "@/components/new-ui/TestimonialsCarousel";
-import WhyKyaaSection from "@/components/new-ui/WhyKyaa";
-import WhyKyaaMobile from "@/components/new-ui/WhyKyaaMobile";
+import WhyPilotcrew from "@/components/new-ui/WhyPilotcrew";
+import WhyPilotcrewMobile from "@/components/new-ui/WhyPilotecrewMobile";
 import { useState } from "react";
 import agent from "../assets/agent.svg";
 import expert from "../assets/expert.svg";
@@ -49,7 +49,7 @@ export default function NewLandingPage() {
           </span>
         </h1>
         <p className="mt-8 text-center text-white text-lg md:text-xl font-inter max-w-2xl">
-          KYAA.ai connects businesses building AI systems with qualified human reviewers
+          Pilotcrew.ai connects businesses building AI systems with qualified human reviewers
           to ensure accuracy, safety, and compliance.
         </p>
         <img
@@ -112,12 +112,12 @@ export default function NewLandingPage() {
         <DomainsCarousel />
       </div>
 
-      {/* Why KYAA.ai? Slider */}
+      {/* Why Pilotcrew.ai? Slider */}
       <div className="block md:hidden">
-        <WhyKyaaMobile cards={cards} />
+        <WhyPilotcrewMobile cards={cards} />
       </div>
       <div className="hidden md:block">
-        <WhyKyaaSection cards={cards} />
+        <WhyPilotcrew cards={cards} />
       </div>
 
       {/* Matching & Oversight System */}

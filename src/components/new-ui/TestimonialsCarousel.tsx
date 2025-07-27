@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 
 const TESTIMONIALS = [
   {
-    quote: "KYAA.ai helped us flag and fix 17 hallucinations before go‑live.",
+    quote: "Pilotcrew.ai helped us flag and fix 17 hallucinations before go‑live.",
     author: "CTO, FinTech AI",
   },
   {
@@ -11,7 +11,7 @@ const TESTIMONIALS = [
     author: "Head of Product, HealthTech",
   },
   {
-    quote: "We improved our model's compliance thanks to KYAA.ai reviewers.",
+    quote: "We improved our model's compliance thanks to Pilotcrew.ai reviewers.",
     author: "AI Lead, LegalTech",
   },
 ];

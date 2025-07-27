@@ -1,4 +1,4 @@
-// components/new-ui/WhyKyaaSection.tsx
+// components/new-ui/WhyPilotcrew.tsx
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import butterfly from "../../assets/logo.png";
@@ -12,7 +12,7 @@ export const ScrollDir = {
 } as const;
 type ScrollDir = typeof ScrollDir[keyof typeof ScrollDir];
 
-export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
+export default function WhyPilotcrew({ cards }: { cards: Card[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [locked, setLocked] = useState(false);
   const [progress, setProgress] = useState(0); // 0=start, 1=end
@@ -130,7 +130,7 @@ export default function WhyKyaaSection({ cards }: { cards: Card[] }) {
       className="w-full max-w-6xl mx-auto mt-32 px-4 relative overflow-visible"
     >
       <h2 className="text-center font-[Italiana,serif] text-5xl text-white mb-12">
-        {"Why KYAA.ai?"}
+        {"Why Pilotcrew.ai?"}
       </h2>
       {/* Progress line + markers */}
       <div className="relative h-6">

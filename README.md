@@ -1,4 +1,4 @@
-# KYAA - Employment Platform
+# Pilotcrew - Employment Platform
 
 A full-stack employment platform built with React + TypeScript + Vite frontend and Express.js + MongoDB backend, supporting both employers and employees with separate authentication flows and role-based access control.
 

@@ -16,11 +16,11 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <img
               src={butterfly}
-              alt="KYAA.ai Logo"
+              alt="Pilotcrew.ai Logo"
               className="w-10 h-10"
               style={{ filter: "drop-shadow(0 0 10px rgba(233,168,85,0.6))" }}
             />
-            <span className="font-[Italiana,serif] text-3xl">KYAA.ai</span>
+            <span className="font-[Italiana,serif] text-3xl">Pilotcrew.ai</span>
           </div>
           <div className="space-y-2">
             <div className="text-lg font-inter">Subscribe to our newsletter!</div>
@@ -66,7 +66,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="mt-8">
         <div className="max-w-6xl mx-auto px-4 border-t border-white/20 pt-4 flex flex-col md:flex-row justify-between text-gray-500 text-sm space-y-2 md:space-y-0">
-          <span className="font-inter">KYAA.ai</span>
+          <span className="font-inter">Pilotcrew.ai</span>
           <span className="font-inter">
             Privacy Policy | Terms of Service | ISO 27001, GDPR compliant
           </span>
