@@ -56,7 +56,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
       onSuccess?.();
       
       setTimeout(() => {
-        navigate('/employer/dashboard');
+        navigate('/employer/jobs');
       }, 1500);
       
     } catch (error) {

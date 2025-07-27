@@ -92,7 +92,7 @@ export default function EmployerSignup({ onSuccess, onValidationError }: Employe
       onSuccess?.();
       
       setTimeout(() => {
-        navigate('/employer/dashboard');
+        navigate('/employer/jobs');
       }, 1500);
       
     } catch (error) {

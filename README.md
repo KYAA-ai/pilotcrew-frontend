@@ -65,7 +65,7 @@ The authentication system uses **Route Guards** to protect pages based on user t
 ```typescript
 // Example: Protecting employer routes
 <Route
-  path="/employer/dashboard"
+  path="/employer/jobs"
   element={
     <EmployerAuthGuard>
       <EmployerDashboardPage />
@@ -158,7 +158,7 @@ VITE_API_BASE_URL=http://localhost:3000
 - `/auth/linkedin/callback` - LinkedIn OAuth callback
 
 ### Protected Employer Routes
-- `/employer/dashboard` - Employer dashboard
+- `/employer/jobs` - Employer dashboard
 - `/employer/profile` - Employer profile management
 
 ### Protected Employee Routes
