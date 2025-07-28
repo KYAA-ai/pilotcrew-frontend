@@ -6,7 +6,6 @@ import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
-import NewLandingPage from './pages/newLandingPage'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeDashboardPage from './pages/EmployeeDashboard'
 import EmployeeProfile from './pages/EmployeeProfile'
@@ -14,15 +13,15 @@ import EmployeeRecommendedJobs from './pages/EmployeeRecommendedJobs'
 import EmployerAuth from './pages/EmployerAuth'
 import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployerProfile from './pages/EmployerProfile'
+import JobDetailsPage from './pages/JobDetailsPage'
+import JobFormPage from './pages/JobFormPage'
 import LandingPage from './pages/LandingPage'
-import JobFormPage from './pages/JobFormPage';
-import JobDetailsPage from './pages/JobDetailsPage';
+import NewLandingPage from './pages/newLandingPage'
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
         {/* Auth Callback */}
         <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInAuthCallback />} />
@@ -106,8 +105,8 @@ function App() {
           }
         />
         {/* Fallback to landing for unknown routes */}
-        <Route path="*" element={<LandingPage />} />
-        <Route path="/home" element={<NewLandingPage />} />
+        <Route path="/home" element={<LandingPage />} />
+        <Route path="/" element={<NewLandingPage />} />
       </Routes>
       <Toaster />
     </>

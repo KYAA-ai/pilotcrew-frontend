@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const TESTIMONIALS = [
   {
@@ -42,27 +42,33 @@ export default function TestimonialsCarousel({ quoteIcon }: { quoteIcon: ReactNo
   // Control CSS transitions
   const [disableTransition, setDisableTransition] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const transitionIndexRef = useRef(index);
 
   // Handlers
   const movePrev = () => {
     if (animating) return;
-    setIndex((i) => i - 1);
+    const newIndex = index - 1;
+    transitionIndexRef.current = newIndex;
+    setIndex(newIndex);
     setAnimating(true);
   };
   const moveNext = () => {
     if (animating) return;
-    setIndex((i) => i + 1);
+    const newIndex = index + 1;
+    transitionIndexRef.current = newIndex;
+    setIndex(newIndex);
     setAnimating(true);
   };
 
   // After each CSS transition, jump back into the center copy if needed
   const handleTransitionEnd = () => {
     setAnimating(false);
-    if (index >= 2 * baseLen) {
+    const transitionIndex = transitionIndexRef.current;
+    if (transitionIndex >= 2 * baseLen) {
       // Moved past end of middle copy
       setDisableTransition(true);
       setIndex(baseLen);
-    } else if (index < baseLen) {
+    } else if (transitionIndex < baseLen) {
       // Moved before start of middle copy
       setDisableTransition(true);
       setIndex(2 * baseLen - 1);
@@ -84,21 +90,31 @@ export default function TestimonialsCarousel({ quoteIcon }: { quoteIcon: ReactNo
       {/* Prev button */}
       <button
         onClick={movePrev}
-        aria-label="Prev"
-        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 z-10"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
+        aria-label="Previous"
       >
-        ‹
+        <svg width="24" height="24" fill="none">
+          <path
+            d="M15 18l-6-6 6-6"
+            stroke="#fff"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
 
       {/* Carousel track */}
-      <div className="relative w-full overflow-hidden py-4">
+      <div 
+        className="relative w-full overflow-hidden py-4"
+        onTransitionEnd={handleTransitionEnd}
+      >
         <div
           className="flex gap-[32px] justify-start items-stretch"
           style={{
             transform: `translateX(${offset}px)`,
             transition: disableTransition ? "none" : "transform 0.3s ease",
           }}
-          onTransitionEnd={handleTransitionEnd}
         >
           {extended.map((t, idx) =>
             t ? (
@@ -128,10 +144,18 @@ export default function TestimonialsCarousel({ quoteIcon }: { quoteIcon: ReactNo
       {/* Next button */}
       <button
         onClick={moveNext}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
         aria-label="Next"
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 z-10"
       >
-        ›
+        <svg width="24" height="24" fill="none">
+          <path
+            d="M9 6l6 6-6 6"
+            stroke="#fff"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
     </section>
   );

@@ -65,7 +65,7 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     >
       {/* Heading above everything */}
       <div className="w-full">
-        <h2 className="font-[Italiana,serif] text-4xl text-white mt-12 mb-15 text-center w-full">Why Pilotcrew.ai?</h2>
+        <h2 className="font-eudoxus-bold text-4xl text-white mt-12 mb-15 text-center w-full">Why Pilotcrew.ai?</h2>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', position: 'relative' }} className="justify-center w-full flex">
           {/* Vertical line at left, starts after heading */}
           <div style={{ width: 40, height: lineHeight, position: 'relative' }}>

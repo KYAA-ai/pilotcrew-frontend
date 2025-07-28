@@ -129,7 +129,7 @@ export default function WhyPilotcrew({ cards }: { cards: Card[] }) {
       ref={sectionRef}
       className="w-full max-w-6xl mx-auto mt-32 px-4 relative overflow-visible"
     >
-      <h2 className="text-center font-[Italiana,serif] text-5xl text-white mb-12">
+      <h2 className="text-center font-eudoxus-bold text-5xl text-white mb-12">
         {"Why Pilotcrew.ai?"}
       </h2>
       {/* Progress line + markers */}

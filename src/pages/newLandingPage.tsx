@@ -6,10 +6,10 @@ import TestimonialsCarousel from "@/components/new-ui/TestimonialsCarousel";
 import WhyPilotcrew from "@/components/new-ui/WhyPilotcrew";
 import WhyPilotcrewMobile from "@/components/new-ui/WhyPilotecrewMobile";
 import { useState } from "react";
-import agent from "../assets/agent.svg";
-import expert from "../assets/expert.svg";
-import flowchart from "../assets/flowchart.svg";
+import agent from "../assets/agent.png";
+import expert from "../assets/expert.png";
 import butterfly from "../assets/logo.png";
+import matchingJobs from "../assets/matching-jobs.png";
 import quoteUp from "../assets/quote-up.png";
 
 export default function NewLandingPage() {
@@ -26,39 +26,47 @@ export default function NewLandingPage() {
   return (
     <div className="relative min-h-screen w-full bg-[#040713] overflow-x-hidden">
       {/* Top “spheres” */}
-      <div className="absolute -top-16 -left-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] z-1" />
-      <div className="absolute -top-16 -right-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] z-1" />
+      <div className="absolute -top-16 -left-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] -z-10" />
+      <div className="absolute -top-16 -right-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] -z-10" />
 
       {/* Navbars */}
       <FloatingNavbar
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
         desktopWrapperClassName="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[80vw] max-w-6xl"
-        mobileWrapperClassName="lg:hidden sticky top-0 z-30"
+        mobileWrapperClassName="lg:hidden sticky top-0 z-50"
       />
 
-      {/* Spacer for fixed navbar */}
-      <div className="hidden lg:block h-24" aria-hidden />
+      {/* Hero Section with Video Background and Text Overlay */}
+      <div className="relative w-full h-[100vh] flex items-center justify-center">
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            style={{ opacity: 0.9 }}
+          >
+            <source src="/src/assets/backdrop-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
 
-      {/* Headline & tagline */}
-      <div className="w-full flex flex-col items-center mt-20 md:mt-28 px-8">
-        <h1 className="font-eudoxus-extrabold text-center text-5xl md:text-6xl text-white leading-tight max-w-5xl">
-          Validate Your AI with{" "}
-          <span className="bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text">
-            Real Human Expertise.
-          </span>
-        </h1>
-        <p className="mt-8 text-center text-white text-lg md:text-xl font-inter max-w-2xl">
-          Pilotcrew.ai connects businesses building AI systems with qualified human reviewers
-          to ensure accuracy, safety, and compliance.
-        </p>
-        <img
-          src={flowchart}
-          alt="Flowchart"
-          className="mt-14 w-full max-w-4xl mx-auto h-auto"
-          draggable={false}
-          style={{ userSelect: "none" }}
-        />
+        {/* Text Overlay */}
+        <div className="relative z-10 flex flex-col items-center px-8 text-center">
+          <h1 className="font-eudoxus-extrabold text-5xl md:text-6xl text-white leading-tight max-w-5xl">
+            Validate Your AI with{" "}
+            <span className="text-[#e9a855]">
+              Real Human Expertise.
+            </span>
+          </h1>
+          <p className="mt-8 text-white text-lg md:text-xl font-inter max-w-2xl">
+            Pilotcrew.ai connects businesses building AI systems with qualified human reviewers
+            to ensure accuracy, safety, and compliance.
+          </p>
+        </div>
       </div>
 
       {/* Clients & Experts */}
@@ -79,7 +87,7 @@ export default function NewLandingPage() {
             <img
               src={agent}
               alt="Agent"
-              className="w-3/4 h-3/4 object-contain"
+              className="w-full h-full object-contain"
               draggable={false}
             />
           </div>
@@ -100,7 +108,8 @@ export default function NewLandingPage() {
             <img
               src={expert}
               alt="Expert"
-              className="w-3/4 h-3/4 object-contain"
+              className="w-full h-full object-contain"
+              style={{ transform: 'scaleX(-1)' }}
               draggable={false}
             />
           </div>
@@ -121,18 +130,25 @@ export default function NewLandingPage() {
       </div>
 
       {/* Matching & Oversight System */}
-      <section className="w-full max-w-6xl mx-auto mt-20 mb-10 md:mt-32 px-8 md:px-4 flex flex-col md:flex-row items-start gap-12">
-        <div className="flex-1">
-          <h2 className="font-eudoxus-bold text-4xl text-white mb-6 text-center md:text-left">
-            Matching &amp; Oversight System
-          </h2>
-          <p className="text-white text-lg text-center md:text-left">
-            We use AI‑driven matching + human QA oversight to route tasks to the best
-            validators.
-          </p>
+      <section className="w-full max-w-8xl mx-auto mt-20 mb-10 md:mt-32 px-8 md:px-4 flex flex-col md:flex-row-reverse items-stretch gap-12">
+        <div className="flex-1 md:w-1/4 md:flex md:items-center">
+          <div>
+            <h2 className="font-eudoxus-bold text-4xl text-white mb-6 text-center md:text-left">
+              Matching &amp; Oversight System
+            </h2>
+            <p className="text-white text-lg text-center md:text-left">
+              We use AI‑driven matching + human QA oversight to route tasks to the best
+              validators.
+            </p>
+          </div>
         </div>
-        <div className="flex-1 items-center justify-center hidden md:flex">
-          <div className="w-full max-w-[500px] aspect-[16/9] border border-[#338AFF] rounded-xl" />
+        <div className="flex-1 md:w-3/4 flex items-center justify-center hidden md:flex">
+          <img
+            src={matchingJobs}
+            alt="Matching Jobs"
+            className="w-full h-auto object-contain"
+            draggable={false}
+          />
         </div>
       </section>
 
@@ -195,7 +211,7 @@ export default function NewLandingPage() {
             <li>AI Safety &amp; HITL Guidelines</li>
             <li>EU AI Act Explained</li>
             <li>RLHF vs. RLAIF</li>
-            <li>Webinars, whitepapers</li>
+            <li>Webinars & Whitepapers</li>
           </ul>
         </div>
       </section>

@@ -1,9 +1,15 @@
 // components/new-ui/FloatingNavbar.tsx
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import menuIcon from "../../assets/menu_icon.png";
 import styles from "../../styles/GradientNavbar.module.css";
 
-const NAV_LINKS = ["Home", "How it Works", "Domains", "Resources", "About us"];
+const navLinks = [
+  { label: "Home", to: "/" },
+  { label: "Platform", to: "/home" },
+  { label: "AutoEval", to: "/autoeval" },
+  { label: "About Us", to: "/about" },
+];
 
 type Props = {
   mobileOpen: boolean;
@@ -20,6 +26,7 @@ export default function FloatingNavbar({
   desktopWrapperClassName = "",
   mobileWrapperClassName = "",
 }: Props) {
+  const location = useLocation();
   return (
     <>
       {/* DESKTOP NAVBAR (wrapper classes come from parent) */}
@@ -40,20 +47,28 @@ export default function FloatingNavbar({
         >
           <div className="flex items-center gap-1 z-10">
             <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
-            <span className="font-[Italiana,serif] text-white text-2xl tracking-wide">
+            <span className="font-eudoxus-medium text-white text-xl tracking-wide">
               Pilotcrew.ai
             </span>
           </div>
-          <div className="flex gap-12 ml-auto z-10">
-            {NAV_LINKS.map((tab) => (
-              <span
-                key={tab}
-                className="font-eudoxus-medium text-white font-medium cursor-pointer hover:opacity-80 transition"
-              >
-                {tab}
-              </span>
-            ))}
-          </div>
+          <nav className="flex gap-12 ml-auto z-30">
+            <ul className="flex gap-12 items-center">
+              {navLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
+                    className={`cursor-pointer font-eudoxus-medium font-medium transition px-2 py-1 rounded-sm text-white hover:opacity-80 ${
+                      location.pathname === link.to || (link.to === "/" && location.pathname === "/home")
+                        ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
+                        : ""
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </div>
 
@@ -70,7 +85,7 @@ export default function FloatingNavbar({
         >
           <div className="flex items-center gap-2">
             <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
-            <span className="font-[Italiana,serif] text-white text-2xl tracking-wide">
+            <span className="font-eudoxus-medium text-white text-2xl tracking-wide">
               Pilotcrew.ai
             </span>
           </div>
@@ -93,15 +108,23 @@ export default function FloatingNavbar({
               "
               style={{ borderRadius: 0 }}
             >
-              {NAV_LINKS.map((tab) => (
-                <span
-                  key={tab}
-                  className="px-8 py-4 text-white text-lg font-inter font-medium hover:bg-[#181d36] cursor-pointer text-left border-b border-white/10 last:border-b-0"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {tab}
-                </span>
-              ))}
+              <ul className="flex flex-col">
+                {navLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.to}
+                      className={`px-8 py-4 text-white text-lg font-inter font-medium hover:bg-[#181d36] cursor-pointer text-left border-b border-white/10 last:border-b-0 ${
+                        location.pathname === link.to || (link.to === "/" && location.pathname === "/home")
+                          ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
+                          : ""
+                      }`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

@@ -20,7 +20,7 @@ export default function Footer() {
               className="w-10 h-10"
               style={{ filter: "drop-shadow(0 0 10px rgba(233,168,85,0.6))" }}
             />
-            <span className="font-[Italiana,serif] text-3xl">Pilotcrew.ai</span>
+            <span className="font-eudoxus-medium text-2xl">Pilotcrew.ai</span>
           </div>
           <div className="space-y-2">
             <div className="text-lg font-inter">Subscribe to our newsletter!</div>
@@ -47,12 +47,12 @@ export default function Footer() {
         {/* Right: Company links + social */}
         <div className="flex-1 space-y-6">
           <div>
-            <h3 className="font-[Italiana,serif] text-2xl mb-4">Company</h3>
+            <h3 className="font-eudoxus-bold text-xl mb-4">Company</h3>
             <ul className="space-y-2 font-inter text-lg">
               {["About", "Contact Us", "Blog", "Terms", "Privacy"].map((item) => (
-                <li key={item} className="hover:underline cursor-pointer">
+                <a key={item} href="#" className="block hover:underline cursor-pointer transition-all duration-200">
                   {item}
-                </li>
+                </a>
               ))}
             </ul>
           </div>
