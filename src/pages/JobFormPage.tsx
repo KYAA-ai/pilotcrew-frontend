@@ -1,100 +1,122 @@
 import React from "react";
-import { JobForm } from "@/components/jobs/JobFormDialog";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { useState } from "react";
+import GenericForm, { type FormField } from "@/components/form";
+import { toast } from "sonner";
 import api from "@/lib/api";
 
 export default function JobFormPage() {
   const [jobCreated, setJobCreated] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [instructions, setInstructions] = React.useState<string>(
-    `# 🚀 Getting Started with [Your Product Name]\n\nWelcome! This guide will help you get up and running with **[Your Product Name]**.\n\n---\n\n## 📦 Installation\n\n\`\`\`bash\nnpm install your-product\n# or\nyarn add your-product\`\`\`\n\n---\n\n## ✨ Usage Example\n\n\`\`\`jsx\nimport { YourProduct } from 'your-product';\n\nfunction App() {\n  return <YourProduct />;\n}\`\`\`\n\n---\n\n## 📝 Features\n\n- 🌒 **Dark mode** support out of the box.\n- 🏋️‍♂️ **Easy integration** with React.\n- 🍭 **GitHub-style** markdown rendering.\n- 🐝 **Automatic code block highlighting**.\n\n---\n\n## 💡 Tips\n\n> [!TIP]\n> You can use markdown to format your instructions, including **bold**, _italic_, and \`inline code\`.\n\n---\n\n## ❓ FAQ\n\n**Q:** How do I enable dark mode?  
-**A:** Dark mode is enabled automatically based on your system settings.\n\n**Q:** Where can I find more documentation?  
-**A:** Visit [our docs](https://yourproduct.com/docs).\n\n---\n\n## ⚠️ Alerts\n\n> [!NOTE]\n> Useful information that users should know, even when skimming content.\n\n> [!IMPORTANT]\n> Key information users need to know to achieve their goal.\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n> [!CAUTION]\n> Advises about risks or negative outcomes of certain actions.\n\n---\n\n## 📬 Need Help?\n\nFor more help, contact [support@yourproduct.com](mailto:support@yourproduct.com) or visit our [GitHub Issues](https://github.com/yourorg/yourproduct/issues).\n\n---\n\nHappy building! 🚀`
+    `# 🚀 Getting Started with [Your Product Name]\n\nWelcome! This guide will help you get up and running with **[Your Product Name]**.\n\n---\n\n## 📦 Installation\n\n\`\`\`bash\nnpm install your-product\n# or\nyarn add your-product\n\`\`\`\n\n---\n\n## ✨ Usage Example\n\n\`\`\`jsx\nimport { YourProduct } from 'your-product';\n\nfunction App() {\n  return <YourProduct />;\n}\n\`\`\`\n\n---\n\n## 📝 Features\n\n- 🌒 **Dark mode** support out of the box.\n- 🏋️‍♂️ **Easy integration** with React.\n- 🍭 **GitHub-style** markdown rendering.\n- 🐝 **Automatic code block highlighting**.\n\n---\n\n## 💡 Tips\n\n> [!TIP]\n> You can use markdown to format your instructions, including **bold**, _italic_, and \`inline code\`.\n\n---\n\n## ❓ FAQ\n\n**Q:** How do I enable dark mode?  \n**A:** Dark mode is enabled automatically based on your system settings.\n\n**Q:** Where can I find more documentation?  \n**A:** Visit [our docs](https://yourproduct.com/docs).\n\n---\n\n## ⚠️ Alerts\n\n> [!NOTE]\n> Useful information that users should know, even when skimming content.\n\n> [!IMPORTANT]\n> Key information users need to know to achieve their goal.\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n> [!CAUTION]\n> Advises about risks or negative outcomes of certain actions.\n\n---\n\n## 📬 Need Help?\n\nFor more help, contact [support@yourproduct.com](mailto:support@yourproduct.com) or visit our [GitHub Issues](https://github.com/yourorg/yourproduct/issues).\n\n---\n\nHappy building! 🚀`
   );
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [features, setFeatures] = React.useState("");
-  const [requirements, setRequirements] = React.useState("");
-  const [location, setLocation] = React.useState("");
-  const [type, setType] = React.useState("CONTRACT");
-  const [startDate, setStartDate] = React.useState("");
-  const [durationValue, setDurationValue] = React.useState<number | "">("");
-  const [durationUnit, setDurationUnit] = React.useState("MONTHS");
-  const [salaryMin, setSalaryMin] = React.useState<number | "">("");
-  const [salaryMax, setSalaryMax] = React.useState<number | "">("");
-  const [currency, setCurrency] = React.useState("USD");
-  const [categories, setCategories] = React.useState<string[]>([]);
-  const [submitting, setSubmitting] = React.useState(false);
+  const [tab, setTab] = useState<'edit' | 'preview'>('edit');
 
-  const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setFeatures("");
-    setRequirements("");
-    setLocation("");
-    setType("CONTRACT");
-    setStartDate("");
-    setDurationValue("");
-    setDurationUnit("MONTHS");
-    setSalaryMin("");
-    setSalaryMax("");
-    setCurrency("USD");
-    setCategories([]);
-    setInstructions(`# 🚀 Getting Started with [Your Product Name]\n\nWelcome! This guide will help you get up and running with **[Your Product Name]**.\n\n---\n\n## 📦 Installation\n\n\`\`\`bash\nnpm install your-product\n# or\nyarn add your-product\`\`\`\n\n---\n\n## ✨ Usage Example\n\n\`\`\`jsx\nimport { YourProduct } from 'your-product';\n\nfunction App() {\n  return <YourProduct />;\n}\`\`\`\n\n---\n\n## 📝 Features\n\n- 🌒 **Dark mode** support out of the box.\n- 🏋️‍♂️ **Easy integration** with React.\n- 🍭 **GitHub-style** markdown rendering.\n- 🐝 **Automatic code block highlighting**.\n\n---\n\n## 💡 Tips\n\n> [!TIP]\n> You can use markdown to format your instructions, including **bold**, _italic_, and \`inline code\`.\n\n---\n\n## ❓ FAQ\n\n**Q:** How do I enable dark mode?  
-**A:** Dark mode is enabled automatically based on your system settings.\n\n**Q:** Where can I find more documentation?  
-**A:** Visit [our docs](https://yourproduct.com/docs).\n\n---\n\n## ⚠️ Alerts\n\n> [!NOTE]\n> Useful information that users should know, even when skimming content.\n\n> [!IMPORTANT]\n> Key information users need to know to achieve their goal.\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n> [!CAUTION]\n> Advises about risks or negative outcomes of certain actions.\n\n---\n\n## 📬 Need Help?\n\nFor more help, contact [support@yourproduct.com](mailto:support@yourproduct.com) or visit our [GitHub Issues](https://github.com/yourorg/yourproduct/issues).\n\n---\n\nHappy building! 🚀`);
-  };
+  // Category options copied from backend enum
+  const categoryOptions = [
+    { value: "Administration & Office Support", label: "Administration & Office Support" },
+    { value: "Arts, Design & Creative", label: "Arts, Design & Creative" },
+    { value: "Business & Management", label: "Business & Management" },
+    { value: "Customer Service", label: "Customer Service" },
+    { value: "Education & Training", label: "Education & Training" },
+    { value: "Engineering", label: "Engineering" },
+    { value: "Finance & Accounting", label: "Finance & Accounting" },
+    { value: "Healthcare & Medical", label: "Healthcare & Medical" },
+    { value: "Hospitality & Tourism", label: "Hospitality & Tourism" },
+    { value: "Human Resources", label: "Human Resources" },
+    { value: "Software Engineering", label: "Software Engineering" },
+    { value: "Information Technology (IT)", label: "Information Technology (IT)" },
+    { value: "Legal", label: "Legal" },
+    { value: "Manufacturing & Production", label: "Manufacturing & Production" },
+    { value: "Marketing & Advertising", label: "Marketing & Advertising" },
+    { value: "Media & Communications", label: "Media & Communications" },
+    { value: "Operations & Logistics", label: "Operations & Logistics" },
+    { value: "Retail & Sales", label: "Retail & Sales" },
+    { value: "Science & Research", label: "Science & Research" },
+    { value: "Skilled Trades & Technical", label: "Skilled Trades & Technical" },
+    { value: "Social Services & Nonprofit", label: "Social Services & Nonprofit" },
+    { value: "Transportation & Warehousing", label: "Transportation & Warehousing" },
+  ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !description) {
-      toast.error("Title and description are required");
-      return;
-    }
+  const jobFields: FormField[] = [
+    { name: "title", label: "Title", type: "text", required: true },
+    { name: "description", label: "Description", type: "textarea", required: true },
+    { name: "features", label: "Features (one per line)", type: "textarea", required: true },
+    { name: "requirements", label: "Requirements (one per line)", type: "textarea", required: true },
+    { name: "location", label: "Location", type: "text", required: true },
+    {
+      name: "categories",
+      label: "Categories",
+      type: "select",
+      required: false,
+      options: categoryOptions,
+      multiple: true,
+    },
+    { name: "type", label: "Type", type: "select", required: true, options: [
+      { value: "API", label: "API" },
+      { value: "LLM", label: "LLM" },
+      { value: "AIAGENT", label: "AI Agent" },
+    ] },
+    { name: "startDate", label: "Start Date", type: "date", required: true, placeholder: "YYYY-MM-DD" },
+    { name: "durationValue", label: "Duration Value", type: "number", required: true },
+    { name: "durationUnit", label: "Duration Unit", type: "select", required: true, options: [
+      { value: "DAYS", label: "Days" },
+      { value: "WEEKS", label: "Weeks" },
+      { value: "MONTHS", label: "Months" },
+      { value: "YEARS", label: "Years" },
+      { value: "PERMANENT", label: "Permanent" },
+    ] },
+    { name: "salaryMin", label: "Salary Min", type: "number", required: true },
+    { name: "salaryMax", label: "Salary Max", type: "number", required: true },
+    { name: "currency", label: "Currency", type: "select", required: true, options: [
+      { value: "USD", label: "USD" },
+      { value: "EUR", label: "EUR" },
+      { value: "GBP", label: "GBP" },
+    ] },
+    { name: "numExpertsRequired", label: "Number of Experts Required", type: "number", required: true },
+  ];
+
+  // 2. Handle form submission
+  const handleJobSubmit = async (data: Record<string, string | string[]>) => {
+    setIsSubmitting(true);
     const payload = {
-      title,
-      description,
-      features: features
-        .split(/\n/)
-        .map((feature) => feature.trim())
-        .filter(Boolean),
-      requirements: requirements
-        .split(/\n/)
-        .map((req) => req.trim())
-        .filter(Boolean),
-      location,
-      type,
-      startDate,
+      title: data.title,
+      description: data.description,
+      features: typeof data.features === 'string' ? data.features.split("\n").map(f => f.trim()).filter(Boolean) : [],
+      requirements: typeof data.requirements === 'string' ? data.requirements.split("\n").map(r => r.trim()).filter(Boolean) : [],
+      location: data.location,
+      type: data.type,
+      startDate: data.startDate,
       duration: {
-        value: durationValue ? Number(durationValue) : undefined,
-        unit: durationUnit,
+        value: data.durationValue ? Number(data.durationValue) : undefined,
+        unit: data.durationUnit,
       },
       salary: {
-        min: salaryMin ? Number(salaryMin) : undefined,
-        max: salaryMax ? Number(salaryMax) : undefined,
-        currency,
+        min: data.salaryMin ? Number(data.salaryMin) : undefined,
+        max: data.salaryMax ? Number(data.salaryMax) : undefined,
+        currency: data.currency,
       },
-      categories,
-      instructions,
+      categories: Array.isArray(data.categories) ? data.categories : typeof data.categories === 'string' && data.categories ? [data.categories] : [],
+      numExpertsRequired: data.numExpertsRequired ? Number(data.numExpertsRequired) : 1,
+      instructions, // merge from markdown editor state
     };
+
     try {
-      setSubmitting(true);
       await api.post("/v1/jobs", payload);
       setJobCreated(true);
-      toast.success("Job posted successfully");
-    } catch {
-      toast.error("Failed to create job");
+    } catch (error) {
+      toast.error("Failed to create job", {
+        description: error instanceof Error ? error.message : String(error),
+      });
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
-
-  const [tab, setTab] = useState<'edit' | 'preview'>('edit');
 
   return (
     <SidebarProvider
@@ -115,24 +137,7 @@ export default function JobFormPage() {
               <span>/</span>
               <span className="text-foreground font-semibold">Post a Job</span>
             </nav>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="px-4 py-2 rounded border border-input bg-background text-foreground hover:bg-muted transition"
-                onClick={resetForm}
-                disabled={submitting}
-              >
-                Clear
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? "Posting..." : "Post Job"}
-              </button>
-            </div>
+            {/* Removed Post Job button from top right */}
           </div>
           <h1 className="text-2xl font-bold">Post a Job</h1>
           {jobCreated ? (
@@ -149,10 +154,7 @@ export default function JobFormPage() {
                 </div>
                 <div className="flex gap-4 justify-center">
                   <button
-                    onClick={() => {
-                      setJobCreated(false);
-                      resetForm();
-                    }}
+                    onClick={() => setJobCreated(false)}
                     className="px-6 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition"
                   >
                     Create Another Job
@@ -168,40 +170,15 @@ export default function JobFormPage() {
             </div>
           ) : (
             <div className="flex gap-8 items-start flex-1 min-h-0 h-0">
-              {/* Left: Job Form */}
               <div className="flex-1 min-w-0 h-full overflow-auto">
-                <JobForm
-                  title={title}
-                  onTitleChange={setTitle}
-                  description={description}
-                  onDescriptionChange={setDescription}
-                  features={features}
-                  onFeaturesChange={setFeatures}
-                  requirements={requirements}
-                  onRequirementsChange={setRequirements}
-                  location={location}
-                  onLocationChange={setLocation}
-                  type={type}
-                  onTypeChange={setType}
-                  startDate={startDate}
-                  onStartDateChange={setStartDate}
-                  durationValue={durationValue}
-                  onDurationValueChange={setDurationValue}
-                  durationUnit={durationUnit}
-                  onDurationUnitChange={setDurationUnit}
-                  salaryMin={salaryMin}
-                  onSalaryMinChange={setSalaryMin}
-                  salaryMax={salaryMax}
-                  onSalaryMaxChange={setSalaryMax}
-                  currency={currency}
-                  onCurrencyChange={setCurrency}
-                  categories={categories}
-                  onCategoriesChange={setCategories}
-                  instructions={instructions}
-                  onSubmit={handleSubmit}
+                <GenericForm
+                  fields={jobFields}
+                  submitButtonText={isSubmitting ? "Submitting..." : undefined}
+                  onSubmit={handleJobSubmit}
+                  isLoading={isSubmitting}
                 />
               </div>
-              {/* Right: Markdown Editor with Tabs */}
+              {/* Markdown Preview for Instructions */}
               <div className="flex-1 min-w-0 bg-muted/30 rounded-lg p-4 border border-muted-foreground/20 shadow-sm flex flex-col h-full overflow-auto" style={{height: '100%'}}>
                 <div className="mb-2 font-semibold text-muted-foreground">Product Instructions (Markdown)</div>
                 <div className="flex gap-2 mb-4">

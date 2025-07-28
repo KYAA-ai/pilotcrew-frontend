@@ -41,10 +41,16 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   const { setProfile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (data: Record<string, string>) => {
+  const handleSubmit = async (data: Record<string, string | string[]>) => {
     try {
       setIsLoading(true);
-      const response = await apiClient.post('/v1/employer/login', data);
+      // Keep arrays as arrays, strings as strings
+      const normalizedData: Record<string, string | string[]> = {};
+      Object.entries(data).forEach(([key, value]) => {
+        normalizedData[key] = value;
+      });
+
+      const response = await apiClient.post('/v1/employer/login', normalizedData);
       setIsLoading(false);
       
       toast.success("Login successful! Redirecting to dashboard...");
