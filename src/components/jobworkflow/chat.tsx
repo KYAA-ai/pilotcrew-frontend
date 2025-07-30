@@ -1,7 +1,7 @@
 import { useChat } from "@ai-sdk/react";
 import type { Attachment, Message } from "ai";
 import { ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -65,12 +65,65 @@ export function Chat({
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<AgenticsEvaluationForm>();
+  const fetchWithLogging = async (
+    input: RequestInfo | URL,
+    init?: RequestInit
+  ): Promise<Response> => {
+    const res = await fetch(input, init);
+    if (!res.body) return res;
+
+    // tee the body so we can log *and* forward it
+    const [logStream, forwardStream] = res.body.tee();
+    const reader = logStream.getReader();
+    const decoder = new TextDecoder();
+
+    // async‐log loop (no need to await this)
+    (async () => {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        console.log("SSE chunk:", decoder.decode(value, { stream: true }));
+      }
+    })();
+
+    // hand the second stream back to the SDK
+    return new Response(forwardStream, {
+      status: res.status,
+      headers: res.headers,
+    });
+  };
+
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
       id,
+      api: "http://localhost:3000/api/v1/employee/streamChat",
+      fetch: fetchWithLogging,
       body: { id },
       initialMessages,
       maxSteps: 10,
+      onResponse: (res) => {
+      const reader = res.body?.getReader();
+      if (!reader) return;
+
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      (async () => {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) {
+            if (accumulated.length > 0) {
+              // If there's any accumulated text, append it as the final message
+              append({ role: "assistant", content: accumulated });
+            }
+            break;
+          }
+
+          // decode and accumulate
+          accumulated += decoder.decode(value, { stream: true });
+        }
+      })();
+    },
       onFinish: () => {
         window.history.replaceState({}, "", `/chat/${id}`);
       },
@@ -80,7 +133,6 @@ export function Chat({
     useScrollToBottom<HTMLDivElement>();
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-  const [stream, setStream] = useState<EventSource | null>(null);
 
   const onSubmitForm = (data: AgenticsEvaluationForm) => {
     console.log('Form submitted:', data);
@@ -93,28 +145,6 @@ export function Chat({
     setShowSuccessModal(false);
     navigate("/employee/recommended-jobs");
   };
-
-  const eventSource = useCallback(() => {
-    return new EventSource(`http://localhost:3000/api/v1/employee/streamChat?userInput=${input}`);
-  }, [input]);
-
-  if (stream) {
-    console.log("Stream is active")
-  }
-
-  useEffect(() => {
-    const source = eventSource();
-    setStream(source);
-
-    source.onmessage = (event: { data: string; }) => {
-      const message = JSON.parse(event.data);
-      append(message);
-    };
-
-    return () => {
-      source.close();
-    };
-  }, [eventSource]);
 
   return (
     <div className={`flex h-dvh bg-background transition-all duration-500 ease-in-out ${isSplitScreen ? 'flex-row' : 'flex-row justify-center pb-4 md:pb-8 relative'}`}>

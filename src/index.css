@@ -75,7 +75,8 @@
 
 .dark {
   /* --background: linear-gradient(135deg, #0f172a, #1e3a8a, #1e40af); */
-  --background: linear-gradient(to bottom, #08214e, #040713);
+  /* --background: linear-gradient(to bottom, #08214e, #040713); */
+  --background: radial-gradient(ellipse at top, #0a1a3a 0%, #040713 70%);
   --foreground: oklch(0.8150 0.0157 273.8065);
   --card: oklch(0.2200 0.0037 286.1514);
   /* --card: #1f2b45; */
