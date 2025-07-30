@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/jobworkflow/navbar";
-import { Chat } from "../components/jobworkflow/chat";
 import { generateUUID } from "@/lib/utils";
+import { Chat } from "../components/jobworkflow/chat";
 
 export default function Page() {
   const id = generateUUID();

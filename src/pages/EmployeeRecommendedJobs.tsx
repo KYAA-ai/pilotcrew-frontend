@@ -1,8 +1,8 @@
-import { EmployeeLayout } from "@/components/layout/EmployeeLayout"
-import { Filter } from '@/components/SimpleIcons'
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch";
+import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
+import { RecommendedJobsView } from "@/components/recommended-jobs";
+import { Filter } from '@/components/SimpleIcons';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -10,14 +10,14 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { useProfile } from '@/contexts/ProfileContext'
-import { type ColumnDef } from "@tanstack/react-table"
-import { useState, useRef, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
+} from "@/components/ui/dialog";
 import { SearchBar } from "@/components/ui/search-bar";
-import { RecommendedJobsView } from "@/components/recommended-jobs"
+import { Switch } from "@/components/ui/switch";
+import { useProfile } from '@/contexts/ProfileContext';
+import { type ColumnDef } from "@tanstack/react-table";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type SkillCategory = { category?: string; keywords?: string[] };
 
@@ -331,9 +331,9 @@ export default function EmployeeRecommendedJobs() {
 
   return (
     <EmployeeLayout>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pb-8">
         {/* Header Section */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-8 lg:px-16">
           <div>
             <h1 className="text-3xl font-bold">Marketplace</h1>
             <p className="text-muted-foreground">
@@ -341,11 +341,6 @@ export default function EmployeeRecommendedJobs() {
             </p>
           </div>
         </div>
-
-
-        <button onClick={() => navigate("/employee/chat")}>
-          Go to Chat
-        </button>
 
         {/* Recommended Jobs Table */}
         <RecommendedJobsView

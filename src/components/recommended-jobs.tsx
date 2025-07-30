@@ -1,32 +1,32 @@
 import {
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
-    DotsVertical,
-    // Add a refresh icon if available, fallback to Loader
-    Loader as RefreshIcon,
-    MapPin,
-    Building,
-  } from "@/components/SimpleIcons"
-  import {
-    type ColumnDef,
-  } from "@tanstack/react-table"
-  import * as React from "react"
-  import { toast } from "sonner"
-  import { useNavigate } from "react-router-dom";
+  Building,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  DotsVertical,
+  MapPin,
+  // Add a refresh icon if available, fallback to Loader
+  Loader as RefreshIcon,
+} from "@/components/SimpleIcons";
+import {
+  type ColumnDef,
+} from "@tanstack/react-table";
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
   
-  import { Badge } from "@/components/ui/badge"
-  import { Button } from "@/components/ui/button"
-  import { Skeleton } from "@/components/ui/skeleton"
-  import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-  import api from "@/lib/api"
+  import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import api from "@/lib/api";
 
   // Card component for displaying items
   function DataCard({ 
@@ -265,7 +265,7 @@ import {
 
     return (
       <div className="w-full flex-col justify-start gap-6">
-        <div className="flex items-center justify-between px-4 lg:px-6">
+        <div className="flex items-center justify-between px-8 lg:px-16">
           {searchBarElement && (
             <div className="flex-1 max-w-3/4 mr-4">
               {searchBarElement}
@@ -286,7 +286,7 @@ import {
             {customActionElement && customActionElement(fetchData)}
           </div>
         </div>
-        <div className="px-4 lg:px-6">
+        <div className="px-8 lg:px-16">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (

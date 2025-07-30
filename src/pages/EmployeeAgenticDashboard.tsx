@@ -1,5 +1,5 @@
 import botIcon from '@/assets/bot.png';
-import reviewIcon from '@/assets/review-icon.png';
+import logo from '@/assets/logo.png';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -158,7 +158,6 @@ import {
   Bookmark,
   Briefcase,
   DotsVertical,
-  InnerShadowTop,
   Logout,
   Search,
   Settings,
@@ -296,10 +295,10 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
                 <a href="/">
-                  <InnerShadowTop className="!size-5" />
-                  <div className="text-2xl font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                  <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+                  <span className="font-eudoxus-medium text-white text-xl tracking-wide">
                     Pilotcrew.ai
-                  </div>
+                  </span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -337,10 +336,10 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
                   className="data-[slot=sidebar-menu-button]:!p-1.5"
                 >
                   <a href="/">
-                    <img src={reviewIcon} alt="Review Icon" style={{ width: 24, height: 24, marginRight: 8 }} />
-                    <div className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                    <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+                    <span className="font-eudoxus-medium text-white text-xl tracking-wide">
                       Pilotcrew.ai
-                    </div>
+                    </span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -374,7 +373,7 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
           }
         >
           <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarGroupContent className="flex flex-col">
               <SidebarMenu>
                 {employeeNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
@@ -394,7 +393,7 @@ function AgenticSidebar(props: React.ComponentProps<typeof Sidebar>) {
             </SidebarGroupContent>
           </SidebarGroup>
           <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2 mt-auto">
+            <SidebarGroupContent className="flex flex-col mt-auto">
               <SidebarMenu>
                 {employeeSecondaryItems.map((item) => (
                   <SidebarMenuItem key={item.title}>

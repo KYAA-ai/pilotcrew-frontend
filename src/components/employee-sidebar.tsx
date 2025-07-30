@@ -1,12 +1,11 @@
 import {
-  InnerShadowTop,
   Search,
-  User,
+  User
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
 
-import reviewIcon from '@/assets/review-icon.png'
+import logo from '@/assets/logo.png'
 import {
   Avatar,
   AvatarFallback,
@@ -14,6 +13,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -93,11 +93,11 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 asChild
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
-                <a href="/">
-                  <InnerShadowTop className="!size-5" />
-                  <div className="text-2xl font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
+                <a href="/" className="flex items-center">
+                  <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                  <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                     Pilotcrew.ai
-                  </div>
+                  </span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -135,11 +135,11 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   asChild
                   className="data-[slot=sidebar-menu-button]:!p-1.5"
                 >
-                  <a href="/">
-                    <img src={reviewIcon} alt="Review Icon" style={{ width: 24, height: 24, marginRight: 8 }} />
-                    <div className="text-lg font-extrabold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary-foreground)] bg-clip-text text-transparent drop-shadow-sm select-none">
-                    Pilotcrew.ai
-                  </div>
+                  <a href="/" className="flex items-center">
+                    <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                    <span className="font-eudoxus-medium text-white text-lg tracking-wide">
+                      Pilotcrew.ai
+                    </span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -158,29 +158,8 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                       className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                     >
                       <a href={item.url}>
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2 mt-auto">
-              <SidebarMenu>
-                {employeeSecondaryItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      tooltip={item.title}
-                      className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
-                    >
-                      <a href={item.url}>
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
+                        <item.icon className="size-3" />
+                        <span className="text-sm">{item.title}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -189,6 +168,25 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        
+        <SidebarFooter>
+          <SidebarMenu>
+            {employeeSecondaryItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
+                >
+                  <a href={item.url}>
+                    <item.icon className="size-3" />
+                    <span className="text-sm">{item.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarFooter>
         {/* <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>

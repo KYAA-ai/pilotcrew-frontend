@@ -1,10 +1,12 @@
-import type { Attachment, Message } from "ai";
 import { useChat } from "@ai-sdk/react";
+import type { Attachment, Message } from "ai";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Message as PreviewMessage } from "./message";
 import { useScrollToBottom } from "./use-scroll-to-bottom";
 
+import { Button } from "@/components/ui/button";
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 
@@ -15,6 +17,7 @@ export function Chat({
   id: string;
   initialMessages: Array<Message>;
 }) {
+  const navigate = useNavigate();
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
       id,
@@ -55,7 +58,7 @@ export function Chat({
   }, [eventSource]);
 
   return (
-    <div className="flex flex-row justify-center pb-4 md:pb-8 h-dvh bg-background">
+    <div className="flex flex-row justify-center pb-4 md:pb-8 h-dvh bg-background relative">
       <div className="flex flex-col justify-between items-center gap-4">
         <div
           ref={messagesContainerRef}
@@ -94,6 +97,15 @@ export function Chat({
           />
         </form>
       </div>
+      
+      {/* Go back to jobs page button */}
+      <Button
+        onClick={() => navigate("/employee/recommended-jobs")}
+        className="absolute bottom-8 left-6 bg-primary hover:bg-primary/90 text-primary-foreground"
+        size="sm"
+      >
+        Go back to Jobs
+      </Button>
     </div>
   );
 }

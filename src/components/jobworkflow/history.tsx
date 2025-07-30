@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { fetcher, getTitleFromChat } from "@/lib/utils";
 import type { Chat, User } from "../../lib/utils";
 
+import { PanelLeftIcon } from "lucide-react";
 import { useLocation, useParams } from "react-router-dom";
 import {
   AlertDialog,
@@ -30,7 +31,6 @@ import {
 } from "../ui/sheet";
 import {
   InfoIcon,
-  MenuIcon,
   MoreHorizontalIcon,
   PencilEditIcon,
   TrashIcon,
@@ -88,7 +88,7 @@ export const History = ({ user }: { user: User | undefined }) => {
           setIsHistoryVisible(true);
         }}
       >
-        <MenuIcon />
+        <PanelLeftIcon className="h-4 w-4" />
       </Button>
 
       <Sheet
