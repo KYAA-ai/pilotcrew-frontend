@@ -151,7 +151,7 @@ export default function EmployeeRecommendedJobs() {
   const [tableRequestBody, setTableRequestBody] = useState<{
     skillsByCategory: Record<string, string[]>;
     keywords: string[];
-    categories: string[];
+    categories: string[]; 
     accuraSearch: boolean;
     field?: string;
     searchQuery?: string;
@@ -341,6 +341,11 @@ export default function EmployeeRecommendedJobs() {
             </p>
           </div>
         </div>
+
+
+        <button onClick={() => navigate("/employee/chat")}>
+          Go to Chat
+        </button>
 
         {/* Recommended Jobs Table */}
         <RecommendedJobsView
