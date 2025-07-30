@@ -1,19 +1,12 @@
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import cx from "classnames";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-import type { Chat, User } from "../../lib/utils";
 import { fetcher, getTitleFromChat } from "@/lib/utils";
+import type { Chat, User } from "../../lib/utils";
 
-import {
-  InfoIcon,
-  MenuIcon,
-  MoreHorizontalIcon,
-  PencilEditIcon,
-  TrashIcon,
-} from "./icons";
+import { useLocation, useParams } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,12 +26,15 @@ import {
 } from "../ui/dropdown-menu";
 import {
   Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
+  SheetContent
 } from "../ui/sheet";
-import { useParams, useLocation } from "react-router-dom";
+import {
+  InfoIcon,
+  MenuIcon,
+  MoreHorizontalIcon,
+  PencilEditIcon,
+  TrashIcon,
+} from "./icons";
 
 export const History = ({ user }: { user: User | undefined }) => {
   const { id } = useParams();
@@ -102,16 +98,16 @@ export const History = ({ user }: { user: User | undefined }) => {
         }}
       >
         <SheetContent side="left" className="p-3 w-80 bg-muted">
-          <SheetHeader>
+          {/* <SheetHeader>
             <VisuallyHidden.Root>
               <SheetTitle className="text-left">History</SheetTitle>
               <SheetDescription className="text-left">
                 {history === undefined ? "loading" : history.length} chats
               </SheetDescription>
             </VisuallyHidden.Root>
-          </SheetHeader>
+          </SheetHeader> */}
 
-          <div className="text-sm flex flex-row items-center justify-between">
+          <div className="text-sm flex flex-row items-center justify-between mb-4">
             <div className="flex flex-row gap-2">
               <div className="dark:text-zinc-300">History</div>
 
@@ -121,10 +117,10 @@ export const History = ({ user }: { user: User | undefined }) => {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col">
+          <div className="flex flex-col h-full">
             {user && (
               <Button
-                className="font-normal text-sm flex flex-row justify-between text-white"
+                className="font-normal text-sm flex flex-row justify-between text-white mb-4"
                 asChild
               >
                 <a href="/">
@@ -134,19 +130,18 @@ export const History = ({ user }: { user: User | undefined }) => {
               </Button>
             )}
 
-            <div className="flex flex-col overflow-y-scroll p-1 h-[calc(100dvh-124px)]">
-
+            <div className="flex flex-col overflow-y-auto flex-1">
               {!isLoading && history?.length === 0 && user ? (
-                <div className="text-zinc-500 h-dvh w-full flex flex-row justify-center items-center text-sm gap-2">
+                <div className="text-zinc-500 h-full w-full flex flex-row justify-center items-center text-sm gap-2">
                   <InfoIcon />
                   <div>No chats found</div>
                 </div>
               ) : null}
 
               {isLoading && user ? (
-                <div className="flex flex-col">
+                <div className="flex flex-col space-y-2">
                   {[44, 32, 28, 52].map((item) => (
-                    <div key={item} className="p-2 my-[2px]">
+                    <div key={item} className="p-2">
                       <div
                         className={`w-${item} h-[20px] rounded-md bg-zinc-200 dark:bg-zinc-600 animate-pulse`}
                       />
@@ -160,20 +155,20 @@ export const History = ({ user }: { user: User | undefined }) => {
                   <div
                     key={chat.id}
                     className={cx(
-                      "flex flex-row items-center gap-6 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-md pr-2",
+                      "flex flex-row items-center gap-2 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-md p-1 mb-1",
                       { "bg-zinc-200 dark:bg-zinc-700": chat.id === id },
                     )}
                   >
                     <Button
                       variant="ghost"
                       className={cx(
-                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-0 text-sm font-normal flex flex-row items-center gap-2 pr-2 w-full transition-none",
+                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 w-full transition-none",
                       )}
                       asChild
                     >
                       <a
                         href={`employee/chat/${chat.id}`}
-                        className="text-ellipsis overflow-hidden text-left py-2 pl-2 rounded-lg outline-zinc-900"
+                        className="text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900"
                       >
                         {getTitleFromChat(chat)}
                       </a>
@@ -182,7 +177,7 @@ export const History = ({ user }: { user: User | undefined }) => {
                     <DropdownMenu modal={true}>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="p-0 h-fit font-normal text-zinc-500 transition-none hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                          className="p-1 h-fit font-normal text-zinc-500 transition-none hover:bg-zinc-200 dark:hover:bg-zinc-700"
                           variant="ghost"
                         >
                           <MoreHorizontalIcon />
