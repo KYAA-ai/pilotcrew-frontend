@@ -17,6 +17,7 @@ import JobDetailsPage from './pages/JobDetailsPage'
 import JobFormPage from './pages/JobFormPage'
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
+import EmployerJobDetailsPage from './pages/EmployerJobDetailsPage';
 
 function App() {
   return (
@@ -76,6 +77,14 @@ function App() {
           element={
             <EmployerAuthGuard>
               <EmployerDashboardPage />
+            </EmployerAuthGuard>
+          }
+        />
+        <Route
+          path="/employer/jobs/:jobId"
+          element={
+            <EmployerAuthGuard>
+              <EmployerJobDetailsPage />
             </EmployerAuthGuard>
           }
         />

@@ -41,7 +41,7 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
   const { setProfile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (data: Record<string, string>) => {
+    const handleSubmit = async (data: Record<string, string | string[]>) => {
     setIsLoading(true);
     try {
       const response = await apiClient.post('/v1/employee/login', data);

@@ -60,6 +60,8 @@ export interface JobFormProps {
   onCategoriesChange: (v: string[]) => void;
   instructions?: string;
   onSubmit: (e: React.FormEvent) => void;
+  numExpertsRequired: number | "";
+  onNumExpertsRequiredChange: (v: number | "") => void;
 }
 
 export function JobForm(props: JobFormProps) {
@@ -133,11 +135,9 @@ export function JobForm(props: JobFormProps) {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FULL_TIME">Full Time</SelectItem>
-                  <SelectItem value="PART_TIME">Part Time</SelectItem>
-                  <SelectItem value="CONTRACT">Contract</SelectItem>
-                  <SelectItem value="TEMPORARY">Temporary</SelectItem>
-                  <SelectItem value="INTERN">Intern</SelectItem>
+                  <SelectItem value="API">API</SelectItem>
+                  <SelectItem value="LLM">LLM</SelectItem>
+                  <SelectItem value="AIAGENT">AI Agent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -199,6 +199,18 @@ export function JobForm(props: JobFormProps) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="numExpertsRequired">Number of Experts Required</Label>
+              <Input
+                id="numExpertsRequired"
+                type="number"
+                min={1}
+                value={props.numExpertsRequired as number | undefined}
+                onChange={e => props.onNumExpertsRequiredChange(e.target.value ? Number(e.target.value) : "")}
+                placeholder="Enter number of experts"
+                required
+              />
             </div>
           </div>
         </form>
