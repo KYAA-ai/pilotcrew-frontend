@@ -34,7 +34,7 @@ export default function NewLandingPage() {
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
         desktopWrapperClassName="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[80vw] max-w-6xl"
-        mobileWrapperClassName="lg:hidden sticky top-0 z-50"
+        mobileWrapperClassName="lg:hidden w-full bg-transparent"
       />
 
       {/* Hero Section with Video Background and Text Overlay */}
@@ -49,7 +49,7 @@ export default function NewLandingPage() {
             className="w-full h-full object-cover"
             style={{ opacity: 0.9 }}
           >
-            <source src="/src/assets/backdrop-video.mp4" type="video/mp4" />
+            <source src="/src/assets/backdrop-video-compressed.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
