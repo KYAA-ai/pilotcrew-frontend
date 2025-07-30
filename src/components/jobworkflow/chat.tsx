@@ -1,7 +1,7 @@
 import { useChat } from "@ai-sdk/react";
 import type { Attachment, Message } from "ai";
 import { ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
