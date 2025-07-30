@@ -56,7 +56,7 @@ import api from "@/lib/api";
 
     return (
       <Card
-        className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-border h-full flex flex-col cursor-pointer"
+        className="group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-border/50 hover:border-border h-full flex flex-col cursor-pointer"
         onClick={() => {
           const id = item.id || item._id;
           if (id) {
