@@ -11,6 +11,7 @@ import expert from "../assets/expert.png";
 import butterfly from "../assets/logo.png";
 import matchingJobs from "../assets/matching-jobs.png";
 import quoteUp from "../assets/quote-up.png";
+import backdropVideo from "../assets/backdrop-video-compressed.mp4";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function NewLandingPage() {
             className="w-full h-full object-cover"
             style={{ opacity: 0.9 }}
           >
-            <source src="/src/assets/backdrop-video-compressed.mp4" type="video/mp4" />
+            <source src={backdropVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
