@@ -73,7 +73,7 @@ function App() {
           }
         />
         <Route
-          path="/employee/chat"
+          path="/employee/workflow"
           element={
             <EmployeeAuthGuard>
               <EmployeeJobWorkflowChatScreen />
