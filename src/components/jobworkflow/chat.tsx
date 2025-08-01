@@ -125,7 +125,7 @@ export function Chat({
   const { messages, handleSubmit, input, setInput, append, status, stop } =
     useChat({
       id,
-      api: `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/streamChat/${jobId}`,
+      api: `${import.meta.env.VITE_API_URL}/v1/employee/streamChat/${jobId}`,
       fetch: fetchWithLogging,
       body: { id },
       initialMessages: initialMessages,
