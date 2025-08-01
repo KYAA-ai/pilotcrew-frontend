@@ -78,9 +78,14 @@ export function Chat({
 
   useEffect(() => {
     const chatId = id;
-    getChatHistoryByChatId(chatId).then((msgs) => {
-      setInitialMessages(msgs.messages);
-    });
+    if (chatId) {
+      getChatHistoryByChatId(chatId).then((msgs) => {
+        if (!msgs || !msgs.messages) {
+          return;
+        }
+        setInitialMessages(msgs.messages);
+      });
+    }
   }, []);
 
   const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
@@ -160,7 +165,7 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   useEffect(() => {
-    if (messages.length === 0 || messages.length === initialMessages.length) {
+    if (messages.length === 0 || (initialMessages && messages.length === initialMessages.length)) {
       return;
     }
     const latestMessage = messages[messages.length - 1];
@@ -172,7 +177,7 @@ export function Chat({
       userId: "123",
     };
     updateChatHistoryWithLatestMessages(chat);
-  }, [id, initialMessages.length, messages]);
+  }, [id, initialMessages, messages]);
 
   const onSubmitForm = async (data: AgenticsEvaluationForm) => {
     const submission = agenticsEvaluationQuestions.map((question) => {
