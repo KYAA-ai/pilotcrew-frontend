@@ -84,11 +84,8 @@ export function Chat({
   const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
     try {
       const res = await apiClient.post("/v1/employee/updateChatHistory", chat);
-      console.log("Chat history update response:", res);
       if (!res.status.toString().startsWith("2")) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      } else {
-        console.log("Chat history updated successfully.");
       }
     } catch (error) {
       console.error("Failed to save chat history:", error);
@@ -103,18 +100,18 @@ export function Chat({
     if (!res.body) return res;
 
     // tee the body so we can log *and* forward it
-    const [logStream, forwardStream] = res.body.tee();
-    const reader = logStream.getReader();
-    const decoder = new TextDecoder();
+    const forwardStream = res.body;
+    // const reader = logStream.getReader();
+    // const decoder = new TextDecoder();
 
-    // async‐log loop (no need to await this)
-    (async () => {
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        console.log("SSE chunk:", decoder.decode(value, { stream: true }));
-      }
-    })();
+    // // async‐log loop (no need to await this)
+    // (async () => {
+    //   while (true) {
+    //     const { value, done } = await reader.read();
+    //     if (done) break;
+    //     console.log("SSE chunk:", decoder.decode(value, { stream: true }));
+    //   }
+    // })();
 
     // hand the second stream back to the SDK
     return new Response(forwardStream, {
@@ -175,11 +172,25 @@ export function Chat({
     updateChatHistoryWithLatestMessages(chat);
   }, [id, initialMessages.length, messages]);
 
-  const onSubmitForm = (data: AgenticsEvaluationForm) => {
-    console.log('Form submitted:', data);
+  const onSubmitForm = async (data: AgenticsEvaluationForm) => {
+    const submission = agenticsEvaluationQuestions.map((question) => {
+      return {
+        questionId: question.id,
+        question: question.question,
+        answer: data[question.id as keyof AgenticsEvaluationForm],
+      };
+    });
     // Handle form submission here
+    try {
+      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submit`, { submission: submission, status: 'COMPLETE' });
+      if (!res.status.toString().startsWith("2")) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      setShowSuccessModal(true);
+    } catch (error) {
+      console.error("Failed to submit job:", error);
+    }
     // Show success modal
-    setShowSuccessModal(true);
   };
 
   const handleCloseModal = () => {
@@ -200,11 +211,9 @@ export function Chat({
           {messages.map((message) => (
             <PreviewMessage
               key={message.id}
-              chatId={id}
               role={message.role}
               content={message.content}
               attachments={message.experimental_attachments}
-              toolInvocations={message.toolInvocations}
             />
           ))}
 

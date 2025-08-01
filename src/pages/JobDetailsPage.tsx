@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import api from "@/lib/api";
+import { generateUUID } from "@/lib/utils";
 
 interface JobDetails {
   id: string;
@@ -67,7 +68,8 @@ export default function JobDetailsPage() {
   }, [jobId, jobDetails]);
 
   const handleApply = async () => {
-      toast.success("Coming soon");
+    const chatId = generateUUID();
+    navigate(`/employee/workflow?jobId=${jobId}&chatId=${chatId}`);
   };
 
   if (loading) {

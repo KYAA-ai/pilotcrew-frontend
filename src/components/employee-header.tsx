@@ -2,14 +2,12 @@
 // import { Button } from '@/components/ui/button';
 // import { Input } from '@/components/ui/input';
 // import { Search, Bell, Settings } from '@/components/SimpleIcons';
-import { Button } from '@/components/ui/button';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { NavUser } from './nav-user';
 import { SidebarTrigger } from './ui/sidebar';
 
 export function EmployeeHeader() {
   const location = useLocation();
-  const navigate = useNavigate();
   const hideNavUser = location.pathname === '/employee/agentic-dashboard';
 
   return (
@@ -20,12 +18,6 @@ export function EmployeeHeader() {
       <div className="flex items-center gap-2 px-4 ml-auto">
         {!hideNavUser && (
           <>
-            <Button 
-              onClick={() => navigate("/employee/workflow?jobId=&chatId=")}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground h-10"
-            >
-              Chat with our Agent
-            </Button>
             <NavUser />
           </>
         )}

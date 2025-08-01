@@ -34,7 +34,7 @@ export function generateUUID(): string {
 }
 
 export const fetcher = async (url: string) => {
-  console.log("Fetching data from:", url);
+  // console.log("Fetching data from:", url);
   const res = await apiClient.get(url);
 
   if (!res.status.toString().startsWith("2")) {

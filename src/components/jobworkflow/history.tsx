@@ -45,11 +45,9 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
     data: history,
     isLoading,
     mutate,
-  } = useSWR<Array<Chat>>(user ? `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/getChatHistory` : null, fetcher, {
+  } = useSWR<Array<Chat>>(user ? `/v1/employee/getChatHistory` : null, fetcher, {
     fallbackData: [],
   });
-
-  console.log("History data:", history);
 
   useEffect(() => {
     mutate();

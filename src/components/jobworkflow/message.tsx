@@ -1,6 +1,6 @@
 "use client";
 
-import type { Attachment, ToolInvocation } from "ai";
+import type { Attachment } from "ai";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
@@ -9,23 +9,20 @@ import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 
 export const Message = ({
-  chatId,
   role,
   content,
   attachments,
 }: {
-  chatId: string;
   role: string;
   content: string | ReactNode;
-  toolInvocations: Array<ToolInvocation> | undefined;
   attachments?: Array<Attachment>;
 }) => {
-  console.log("Message component rendered", {
-    chatId,
-    role,
-    content,
-    attachments,
-  });
+  // console.log("Message component rendered", {
+  //   chatId,
+  //   role,
+  //   content,
+  //   attachments,
+  // });
   return (
     <motion.div
       className={`flex flex-row gap-4 px-4 w-full md:w-[500px] md:px-0 first-of-type:pt-20`}

@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 
 export default function EmployeeJobWorkflowChatScreen() {
   const [searchParams, setSearchParams] = useSearchParams();
-  let jobId = searchParams.get("jobId");
+  const jobId = searchParams.get("jobId");
   let chatId = searchParams.get("chatId");
   let changed = false;
 
@@ -15,9 +15,7 @@ export default function EmployeeJobWorkflowChatScreen() {
   }
 
   if (!jobId) {
-    jobId = "6864ae18e83d46f093c5bec3";
-    changed = true;
-    // return <div>Job ID is required</div>;
+    return <div>Job ID is required</div>;
   }
 
   if (changed)
