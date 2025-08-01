@@ -1,12 +1,13 @@
 import { useChat } from "@ai-sdk/react";
 import type { Attachment, Message } from "ai";
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Message as PreviewMessage } from "./message";
 import { useScrollToBottom } from "./use-scroll-to-bottom";
+import type { Chat } from "../../lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
+import apiClient from "@/lib/api";
 
 interface AgenticsEvaluationForm {
   question1: string;
@@ -65,6 +67,21 @@ export function Chat({
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<AgenticsEvaluationForm>();
+
+  const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
+    try {
+      const res = await apiClient.post("/v1/employee/updateChatHistory", chat);
+      console.log("Chat history update response:", res);
+      if (!res.status.toString().startsWith("2")) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      } else {
+        console.log("Chat history updated successfully.");
+      }
+    } catch (error) {
+      console.error("Failed to save chat history:", error);
+    }
+  };
+
   const fetchWithLogging = async (
     input: RequestInfo | URL,
     init?: RequestInit
@@ -96,43 +113,54 @@ export function Chat({
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
       id,
-      api: "http://localhost:3000/api/v1/employee/streamChat",
+      api: `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/streamChat`,
       fetch: fetchWithLogging,
       body: { id },
       initialMessages,
       maxSteps: 10,
       onResponse: (res) => {
-      const reader = res.body?.getReader();
-      if (!reader) return;
+        const clone = res.clone();
+        const reader = clone.body?.getReader();
+        if (!reader) return;
 
-      const decoder = new TextDecoder();
-      let accumulated = "";
+        const decoder = new TextDecoder();
+        let accumulated = "";
 
-      (async () => {
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) {
-            if (accumulated.length > 0) {
-              // If there's any accumulated text, append it as the final message
-              append({ role: "assistant", content: accumulated });
+        (async () => {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              if (accumulated.length > 0) {
+                append({ role: "assistant", content: accumulated });
+              }
+              break;
             }
-            break;
+            // decode and accumulate
+            accumulated += decoder.decode(value, { stream: true });
           }
-
-          // decode and accumulate
-          accumulated += decoder.decode(value, { stream: true });
-        }
-      })();
-    },
-      onFinish: () => {
-        window.history.replaceState({}, "", `/chat/${id}`);
-      },
+        })();
+      }
     });
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      return;
+    }
+    const latestMessage = messages[messages.length - 1];
+    const chat: Chat = {
+      id: id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      messages: [latestMessage],
+      userId: "123",
+    };
+    updateChatHistoryWithLatestMessages(chat);
+  }, [id, messages]);
 
   const onSubmitForm = (data: AgenticsEvaluationForm) => {
     console.log('Form submitted:', data);
