@@ -6,19 +6,19 @@ import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
-import EmployeeJobWorkflowChatScreen from './pages/EmployeeJobWorkflowChatScreen'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeDashboardPage from './pages/EmployeeDashboard'
+import EmployeeJobWorkflowChatScreen from './pages/EmployeeJobWorkflowChatScreen'
 import EmployeeProfile from './pages/EmployeeProfile'
 import EmployeeRecommendedJobs from './pages/EmployeeRecommendedJobs'
 import EmployerAuth from './pages/EmployerAuth'
 import EmployerDashboardPage from './pages/EmployerDashboard'
+import EmployerJobDetailsPage from './pages/EmployerJobDetailsPage'
 import EmployerProfile from './pages/EmployerProfile'
 import JobDetailsPage from './pages/JobDetailsPage'
 import JobFormPage from './pages/JobFormPage'
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
-import EmployerJobDetailsPage from './pages/EmployerJobDetailsPage';
 
 function App() {
   return (
@@ -123,7 +123,7 @@ function App() {
           }
         />
         {/* Fallback to landing for unknown routes */}
-        <Route path="/home" element={<LandingPage />} />
+        <Route path="/platform" element={<LandingPage />} />
         <Route path="/" element={<NewLandingPage />} />
       </Routes>
       <Toaster />

@@ -6,7 +6,7 @@ import styles from "../../styles/GradientNavbar.module.css";
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "Platform", to: "/home" },
+  { label: "Platform", to: "/platform" },
   { label: "AutoEval", to: "/autoeval" },
   { label: "About Us", to: "/about" },
 ];
@@ -58,7 +58,7 @@ export default function FloatingNavbar({
                   <Link
                     to={link.to}
                     className={`cursor-pointer font-eudoxus-medium font-medium transition px-2 py-1 rounded-sm text-white hover:opacity-80 ${
-                      location.pathname === link.to || (link.to === "/" && location.pathname === "/home")
+                      location.pathname === link.to || (link.to === "/" && location.pathname === "/platform")
                         ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
                         : ""
                     }`}
@@ -101,7 +101,7 @@ export default function FloatingNavbar({
                     <Link
                       to={link.to}
                       className={`block w-full px-8 py-3 text-white text-lg font-inter font-medium hover:bg-[#181d36] cursor-pointer text-left ${
-                        location.pathname === link.to || (link.to === "/" && location.pathname === "/home")
+                        location.pathname === link.to || (link.to === "/" && location.pathname === "/platform")
                           ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
                           : ""
                       }`}

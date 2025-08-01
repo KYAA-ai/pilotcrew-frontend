@@ -1,6 +1,7 @@
+import logo from "@/assets/logo.png";
+import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/layout/Header";
 // import { ContextTest } from "@/components/ContextTest";
 
 export default function LandingPage() {
@@ -10,6 +11,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[var(--background)] flex flex-col">
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center text-center px-4">
+        <div className="mb-3">
+          <img src={logo} alt="Pilotcrew.ai Logo" className="w-20 h-20 md:w-24 md:h-24 mx-auto" />
+        </div>
         <h1 className="text-4xl md:text-6xl font-eudoxus-bold mb-4">
           Your entire hiring journey.<br />
           <span className="text-[var(--primary)]">Powered by one profile.</span>
