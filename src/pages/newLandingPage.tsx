@@ -34,8 +34,8 @@ export default function NewLandingPage() {
   return (
     <div className="relative min-h-screen w-full bg-[#040713] overflow-x-hidden">
       {/* Top “spheres” */}
-      <div className="absolute -top-16 -left-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] -z-10" />
-      <div className="absolute -top-16 -right-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] -z-10" />
+      <div className="absolute -top-16 -left-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] z-0" />
+      <div className="absolute -top-16 -right-16 w-[400px] h-[400px] rounded-full bg-[#006FFF] blur-[550px] z-0" />
 
       {/* Navbars */}
       <FloatingNavbar
@@ -48,13 +48,13 @@ export default function NewLandingPage() {
       {/* Hero Section with Video Background and Text Overlay */}
       <div className="relative w-full h-[100vh] flex items-center justify-center">
         {/* Video Background */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none">
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}
           <img
             src={fallbackImage}
             alt="Background"
             className={`w-full h-full object-cover transition-opacity duration-1000 ${
-              videoLoaded ? 'opacity-0' : 'opacity-90'
+              videoLoaded ? 'opacity-0' : 'opacity-70'
             }`}
             style={{ zIndex: 1 }}
           />
