@@ -1,4 +1,4 @@
-import { type Message, generateId } from "ai";
+import { type Message } from "ai";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import apiClient from "./api";
@@ -51,37 +51,8 @@ export const fetcher = async (url: string) => {
   return res.data.history;
 };
 
-export function convertToUIMessages(
-  messages: Array<Message>,
-): Array<Message> {
-  return messages.reduce((chatMessages: Array<Message>, message) => {
-
-    let textContent = "";
-
-    if (typeof message.content === "string") {
-      textContent = message.content;
-    // } else if (Array.isArray(message.content)) {
-    //   for (const content of message.content) {
-    //     if (content.type === "text") {
-    //       textContent += content.text;
-    //     }
-    //   }
-    }
-
-    chatMessages.push({
-      id: generateId(),
-      role: message.role,
-      content: textContent,
-    });
-
-    return chatMessages;
-  }, []);
-}
-
-
 export function getTitleFromChat(chat: Chat) {
-  const messages = convertToUIMessages(chat.messages as Array<Message>);
-  const firstMessage = messages[0];
+  const firstMessage = chat.messages[0];
 
   if (!firstMessage) {
     return "Untitled";

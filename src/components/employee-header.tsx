@@ -21,7 +21,7 @@ export function EmployeeHeader() {
         {!hideNavUser && (
           <>
             <Button 
-              onClick={() => navigate("/employee/chat")}
+              onClick={() => navigate("/employee/workflow?jobId=&chatId=")}
               className="bg-primary hover:bg-primary/90 text-primary-foreground h-10"
             >
               Chat with our Agent

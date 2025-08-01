@@ -58,15 +58,28 @@ const agenticsEvaluationQuestions = [
 
 export function Chat({
   id,
-  initialMessages,
+  jobId,
 }: {
   id: string;
-  initialMessages: Array<Message>;
+  jobId: string;
 }) {
   const navigate = useNavigate();
+  const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<AgenticsEvaluationForm>();
+
+  const getChatHistoryByChatId = (chatId: string) => {
+    const res = apiClient.get(`/v1/employee/getChatHistoryByChatId/${chatId}`);
+    return res.then((response) => response.data);
+  }
+
+  useEffect(() => {
+    const chatId = id;
+    getChatHistoryByChatId(chatId).then((msgs) => {
+      setInitialMessages(msgs.messages);
+    });
+  }, []);
 
   const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
     try {
@@ -113,10 +126,10 @@ export function Chat({
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
       id,
-      api: `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/streamChat`,
+      api: `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/streamChat/${jobId}`,
       fetch: fetchWithLogging,
       body: { id },
-      initialMessages,
+      initialMessages: initialMessages,
       maxSteps: 10,
       onResponse: (res) => {
         const clone = res.clone();
@@ -148,7 +161,7 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   useEffect(() => {
-    if (messages.length === 0) {
+    if (messages.length === 0 || messages.length === initialMessages.length) {
       return;
     }
     const latestMessage = messages[messages.length - 1];
@@ -160,7 +173,7 @@ export function Chat({
       userId: "123",
     };
     updateChatHistoryWithLatestMessages(chat);
-  }, [id, messages]);
+  }, [id, initialMessages.length, messages]);
 
   const onSubmitForm = (data: AgenticsEvaluationForm) => {
     console.log('Form submitted:', data);

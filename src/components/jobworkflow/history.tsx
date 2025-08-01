@@ -7,7 +7,7 @@ import { fetcher, getTitleFromChat } from "@/lib/utils";
 import type { Chat, User } from "../../lib/utils";
 
 import { PanelLeftIcon } from "lucide-react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +36,7 @@ import {
   TrashIcon,
 } from "./icons";
 
-export const History = ({ user }: { user: User | undefined }) => {
+export const History = ({ user, jobId }: { user: User | undefined, jobId: string }) => {
   const { id } = useParams();
   const pathname = useLocation();
 
@@ -57,6 +57,12 @@ export const History = ({ user }: { user: User | undefined }) => {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const navigate = useNavigate();
+
+  const [currentParams] = useSearchParams();
+  const currentJobId = currentParams.get('jobId');
+  const currentChatId = currentParams.get('chatId');
 
   const handleDelete = async () => {
     const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
@@ -122,11 +128,14 @@ export const History = ({ user }: { user: User | undefined }) => {
               <Button
                 className="font-normal text-sm flex flex-row justify-between text-white mb-4"
                 asChild
+                onClick={() => {
+                  navigate(`/employee/workflow?jobId=${jobId}&chatId=`);
+                }}
               >
-                <a href="/">
+                <span>
                   <div>Start a new chat</div>
                   <PencilEditIcon size={14} />
-                </a>
+                </span>
               </Button>
             )}
 
@@ -162,16 +171,18 @@ export const History = ({ user }: { user: User | undefined }) => {
                     <Button
                       variant="ghost"
                       className={cx(
-                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 w-full transition-none",
+                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 w-full transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
                       )}
                       asChild
+                      onClick={() => {
+                        if (currentJobId !== jobId || currentChatId !== chat.id) {
+                          navigate(`/employee/workflow?jobId=${jobId}&chatId=${chat.id}`);
+                        }
+                      }}
                     >
-                      <a
-                        href={`employee/chat/${chat.id}`}
-                        className="text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900"
-                      >
+                      <div>
                         {getTitleFromChat(chat)}
-                      </a>
+                      </div>
                     </Button>
 
                     <DropdownMenu modal={true}>

@@ -8,7 +8,7 @@ import {
 import type { User } from "@/lib/utils";
 import { useProfile } from "@/contexts/ProfileContext";
 
-export const Navbar = () => {
+export const Navbar = ({ jobId }: { jobId: string }) => {
   const { profile } = useProfile();
   const user: User = {
     id: profile?.id || "",
@@ -18,7 +18,7 @@ export const Navbar = () => {
     <>
       <div className="bg-background absolute top-0 left-0 w-dvw py-2 px-3 justify-between flex flex-row items-center z-30">
         <div className="flex flex-row gap-3 items-center">
-          <History user={user} />
+          <History user={user} jobId={jobId} />
           <div className="flex flex-row gap-2 items-center">
             <div className="text-zinc-500">
               <SlashIcon size={16} />
