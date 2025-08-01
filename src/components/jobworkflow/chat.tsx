@@ -223,7 +223,7 @@ export function Chat({
           />
         </div>
 
-        <form className={`flex flex-row gap-2 relative items-end transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-full max-w-none px-4' : 'w-full md:max-w-[500px] max-w-[calc(100dvw-32px) px-4 md:px-0'}`}>
+        <form className={`flex flex-row gap-2 relative items-end transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-full max-w-none px-4' : 'w-full md:max-w-[750px] max-w-[calc(100dvw-32px) px-4 md:px-0'}`}>
           <MultimodalInput
             input={input}
             setInput={setInput}
