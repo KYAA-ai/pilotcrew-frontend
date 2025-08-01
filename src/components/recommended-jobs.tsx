@@ -1,16 +1,16 @@
 import {
-  Building,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  DotsVertical,
-  MapPin,
-  // Add a refresh icon if available, fallback to Loader
-  Loader as RefreshIcon,
+    Building,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    DotsVertical,
+    MapPin,
+    // Add a refresh icon if available, fallback to Loader
+    Loader as RefreshIcon,
 } from "@/components/SimpleIcons";
 import {
-  type ColumnDef,
+    type ColumnDef,
 } from "@tanstack/react-table";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +20,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
@@ -203,6 +203,7 @@ import api from "@/lib/api";
     }>
     customActionElement?: (refreshTable: () => void) => React.ReactNode
     searchBarElement?: React.ReactNode
+    filterTagsElement?: React.ReactNode
     /**
      * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
      */
@@ -220,6 +221,7 @@ import api from "@/lib/api";
     ],
     customActionElement,
     searchBarElement,
+    filterTagsElement,
     requestBody
   }: GenericDataTableProps) {
     const [data, setData] = React.useState<Record<string, unknown>[]>([])
@@ -286,6 +288,11 @@ import api from "@/lib/api";
             {customActionElement && customActionElement(fetchData)}
           </div>
         </div>
+        {filterTagsElement && (
+          <div className="px-8 lg:px-16">
+            {filterTagsElement}
+          </div>
+        )}
         <div className="px-8 lg:px-16">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -27,7 +27,7 @@ export default function LandingPage() {
             className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-800)] text-base font-eudoxus-bold"
             onClick={() => navigate("/auth/employer")}
           >
-            I'm an Employer
+            I'm a Client
           </Button>
           <Button
             size="lg"
@@ -35,7 +35,7 @@ export default function LandingPage() {
             className="w-60 border-[var(--secondary)] hover:bg-[var(--secondary-800)] text-base font-eudoxus-bold"
             onClick={() => navigate("/auth/employee")}
           >
-            I'm an Employee
+            I'm an Expert
           </Button>
         </div>
         <div className="text-[var(--foreground)]/60 text-sm font-eudoxus-medium mb-8">

@@ -1,8 +1,8 @@
+import { useProfile } from "@/contexts/ProfileContext";
+import apiClient from "@/lib/api";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { toast } from "sonner";
-import apiClient from "@/lib/api";
-import { useProfile } from "@/contexts/ProfileContext";
 
 interface EmployerAuthGuardProps {
   children: React.ReactElement;
@@ -94,7 +94,7 @@ export function EmployerAuthGuard({ children }: EmployerAuthGuardProps) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
           <p className="mt-2 text-sm">
-            {isProfileLoading ? "Loading profile..." : "Validating Employer Session..."}
+            {isProfileLoading ? "Loading profile..." : "Validating Client Session..."}
           </p>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmployeeLogin from "@/components/auth/EmployeeLogin";
 import EmployeeSignup from "@/components/auth/EmployeeSignup";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function EmployeeAuth() {
   return (
@@ -9,7 +9,7 @@ export default function EmployeeAuth() {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">
-            Employee Access
+            Expert Access
           </CardTitle>
         </CardHeader>
         <CardContent>

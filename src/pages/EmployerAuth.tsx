@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmployerLogin from "@/components/auth/EmployerLogin";
 import EmployerSignup from "@/components/auth/EmployerSignup";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function EmployerAuth() {
   return (
@@ -9,7 +9,7 @@ export default function EmployerAuth() {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">
-            Employer Access
+            Client Access
           </CardTitle>
         </CardHeader>
         <CardContent>

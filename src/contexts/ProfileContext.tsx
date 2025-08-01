@@ -130,3 +130,4 @@ function useProfile<T extends Profile = Profile>() {
 // Export the generic hook
 // eslint-disable-next-line react-refresh/only-export-components
 export { useProfile };
+

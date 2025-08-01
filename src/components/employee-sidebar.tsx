@@ -1,6 +1,5 @@
 import {
-  Search,
-  User
+  Search
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
@@ -40,7 +39,7 @@ interface EmployeeProfile {
 
 const employeeNavItems = [
   {
-    title: "Recommended Products",
+    title: "Recommended Jobs",
     url: "/employee/recommended-jobs",
     icon: Search,
   },
@@ -56,12 +55,16 @@ const employeeNavItems = [
   // },
 ]
 
-const employeeSecondaryItems = [
-  {
-    title: "Profile",
-    url: "/employee/profile",
-    icon: User,
-  },
+const employeeSecondaryItems: Array<{
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
+  // {
+  //   title: "Profile",
+  //   url: "/employee/profile",
+  //   icon: User,
+  // },
   // {
   //   title: "Settings",
   //   url: "/employee/settings",
@@ -86,7 +89,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
   if (!profile) {
     return (
       <Sidebar collapsible="offcanvas" {...props}>
-        <SidebarHeader>
+        <SidebarHeader className="pt-4">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
@@ -127,7 +130,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
   return (
     <>
       <Sidebar collapsible="offcanvas" {...props}>
-        <SidebarHeader>
+        <SidebarHeader className="pt-6">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -148,7 +151,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarGroupContent className="flex flex-col gap-2 pt-1">
               <SidebarMenu>
                 {employeeNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>

@@ -2,15 +2,15 @@ import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import {
     Award,
     Briefcase,
+    Building,
+    Calendar,
     FileText,
     Globe,
+    GraduationCap,
     Mail,
+    MapPin,
     Phone,
     User,
-    MapPin,
-    Calendar,
-    GraduationCap,
-    Building,
 } from "@/components/SimpleIcons";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -153,7 +153,7 @@ export default function EmployeeProfile() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Employee Profile</h1>
+                            <h1 className="text-3xl font-bold">Expert Profile</h1>
             <p className="text-muted-foreground mt-1">
               Manage your professional information and preferences
             </p>

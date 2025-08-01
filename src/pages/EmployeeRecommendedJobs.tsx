@@ -1,3 +1,4 @@
+import { FilterTags } from '@/components/FilterTags';
 import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import { RecommendedJobsView } from "@/components/recommended-jobs";
 import { Filter } from '@/components/SimpleIcons';
@@ -5,11 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Switch } from "@/components/ui/switch";
@@ -147,6 +148,7 @@ export default function EmployeeRecommendedJobs() {
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [accuraSearch, setAccuraSearch] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
   const [tableRequestBody, setTableRequestBody] = useState<{
     skillsByCategory: Record<string, string[]>;
@@ -188,6 +190,55 @@ export default function EmployeeRecommendedJobs() {
       console.log(`Action: ${action}`, row)
     }
   }
+
+  // Filter removal handlers
+  const handleRemoveSkill = (skillToRemove: string) => {
+    const updatedSkills = selectedSkills.filter(skill => skill !== skillToRemove);
+    setSelectedSkills(updatedSkills);
+    
+    // Check if all filters are removed
+    if (updatedSkills.length === 0 && !accuraSearch) {
+      setIsSearchActive(false);
+    }
+    
+    // Update table request body
+    const newSkillsByCategory: Record<string, string[]> = {};
+    updatedSkills.forEach(skill => {
+      const skillLower = skill.toLowerCase();
+      const cat = skillsData.find((cat: SkillCategory) => cat.keywords?.some(k => k.toLowerCase() === skillLower));
+      if (cat && cat.category) {
+        const catLower = cat.category.toLowerCase();
+        if (!newSkillsByCategory[catLower]) {
+          newSkillsByCategory[catLower] = [];
+        }
+        if (!newSkillsByCategory[catLower].includes(skillLower)) {
+          newSkillsByCategory[catLower].push(skillLower);
+        }
+      }
+    });
+    const keywords = Array.from(new Set(updatedSkills.map(s => s.toLowerCase())));
+    const categories = Array.from(new Set(Object.keys(newSkillsByCategory)));
+    setTableRequestBody({
+      skillsByCategory: newSkillsByCategory,
+      keywords,
+      categories,
+      accuraSearch
+    });
+  };
+
+  const handleRemoveAccuraSearch = () => {
+    setAccuraSearch(false);
+    
+    // Check if all filters are removed
+    if (selectedSkills.length === 0) {
+      setIsSearchActive(false);
+    }
+    
+    setTableRequestBody(prev => ({
+      ...prev,
+      accuraSearch: false
+    }));
+  };
 
   // Custom columns configuration for jobs
   const jobColumns: ColumnDef<Record<string, unknown>>[] = [
@@ -358,6 +409,15 @@ export default function EmployeeRecommendedJobs() {
               placeholder="Search jobs..."
             />
           }
+          filterTagsElement={
+            <FilterTags
+              selectedSkills={selectedSkills}
+              accuraSearch={accuraSearch}
+              onRemoveSkill={handleRemoveSkill}
+              onRemoveAccuraSearch={handleRemoveAccuraSearch}
+              isSearchActive={isSearchActive}
+            />
+          }
           customActionElement={() => {
             return (
               <>
@@ -376,6 +436,7 @@ export default function EmployeeRecommendedJobs() {
                   onSubmit={(skills, accura) => {
                     setSelectedSkills(skills);
                     setAccuraSearch(accura);
+                    setIsSearchActive(true); // Mark search as active when user submits
                     const newSkillsByCategory: Record<string, string[]> = {};
                     skills.forEach(skill => {
                       const skillLower = skill.toLowerCase();

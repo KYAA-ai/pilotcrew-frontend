@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import { useProfile } from '@/contexts/ProfileContext';
-import { toast } from 'sonner';
-import apiClient from '@/lib/api';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+    Building,
+    Edit,
+    Globe,
+    Mail,
+    Save,
+    User,
+    X,
+} from '@/components/SimpleIcons';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  X,
-  Mail,
-  Building,
-  Globe,
-  User,
-  Edit,
-  Save,
-} from '@/components/SimpleIcons';
+import { useProfile } from '@/contexts/ProfileContext';
+import apiClient from '@/lib/api';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface EmployerProfile {
   id: string;
@@ -115,9 +115,9 @@ export function EmployerProfileModal({ isOpen, onClose }: EmployerProfileModalPr
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-xl">Employer Profile Settings</DialogTitle>
+              <DialogTitle className="text-xl">Client Profile Settings</DialogTitle>
               <DialogDescription>
-                Manage your employer account information
+                                  Manage your client account information
               </DialogDescription>
             </div>
             {!isEditing ? (

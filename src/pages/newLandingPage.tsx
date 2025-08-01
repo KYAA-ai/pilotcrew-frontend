@@ -81,7 +81,7 @@ export default function NewLandingPage() {
         <div className="relative z-10 flex flex-col items-center px-8 text-center">
           <h1 className="font-eudoxus-extrabold text-5xl md:text-6xl text-white leading-tight max-w-5xl">
             Validate Your AI with{" "}
-            <span className="text-[#e9a855]">
+            <span className="text-[#e9a855] font-eudoxus-extrabold">
               Real Human Expertise.
             </span>
           </h1>
