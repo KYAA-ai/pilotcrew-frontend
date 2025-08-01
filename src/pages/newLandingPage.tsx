@@ -5,16 +5,19 @@ import Footer from "@/components/new-ui/Footer";
 import TestimonialsCarousel from "@/components/new-ui/TestimonialsCarousel";
 import WhyPilotcrew from "@/components/new-ui/WhyPilotcrew";
 import WhyPilotcrewMobile from "@/components/new-ui/WhyPilotecrewMobile";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import agent from "../assets/agent.png";
+import backdropVideo from "../assets/backdrop-video-compressed.mp4";
 import expert from "../assets/expert.png";
+import fallbackImage from "../assets/fallback-image.png";
 import butterfly from "../assets/logo.png";
 import matchingJobs from "../assets/matching-jobs.png";
 import quoteUp from "../assets/quote-up.png";
-import backdropVideo from "../assets/backdrop-video-compressed.mp4";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // ——— Slider section state & refs ———
   const cards = [
@@ -23,6 +26,10 @@ export default function NewLandingPage() {
     { title: "API Integration", subtitle: "Integrate via API for validation feedback" },
     { title: "GDPR Compliant",  subtitle: "Enterprise‑ready data handling" },
   ];
+
+  const handleVideoLoad = () => {
+    setVideoLoaded(true);
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-[#040713] overflow-x-hidden">
@@ -42,15 +49,28 @@ export default function NewLandingPage() {
       <div className="relative w-full h-[100vh] flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none">
+          {/* Fallback Image */}
+          <img
+            src={fallbackImage}
+            alt="Background"
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${
+              videoLoaded ? 'opacity-0' : 'opacity-90'
+            }`}
+            style={{ zIndex: 1 }}
+          />
+          {/* Video */}
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              videoLoaded ? 'opacity-90' : 'opacity-0'
+            }`}
             preload="auto"
-            poster="/fallback-image.png"
-            style={{ opacity: 0.9 }}
+            onLoadedData={handleVideoLoad}
+            style={{ zIndex: 2 }}
           >
             <source src={backdropVideo} type="video/mp4" />
             Your browser does not support the video tag.
