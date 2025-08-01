@@ -48,6 +48,8 @@ export default function NewLandingPage() {
             muted
             playsInline
             className="w-full h-full object-cover"
+            preload="auto"
+            poster="/fallback-image.png"
             style={{ opacity: 0.9 }}
           >
             <source src={backdropVideo} type="video/mp4" />
