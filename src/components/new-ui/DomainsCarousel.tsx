@@ -63,8 +63,10 @@ export function DomainsCarousel() {
   // Triple‑clone for infinite loop
   const extended = [...base, ...base, ...base];
 
-  // Current index into `extended`. Start at the beginning of the middle copy
-  const [index, setIndex] = useState(baseLen);
+
+
+  // Current index into `extended`. Start at the beginning
+  const [index, setIndex] = useState(0);
 
   // Control CSS transitions
   const [disableTransition, setDisableTransition] = useState(false);
@@ -89,10 +91,10 @@ export function DomainsCarousel() {
       // Moved past end of middle copy
       setDisableTransition(true);
       setIndex(baseLen);
-    } else if (index < baseLen) {
-      // Moved before start of middle copy
+    } else if (index < 0) {
+      // Moved before start of first copy
       setDisableTransition(true);
-      setIndex(2 * baseLen - 1);
+      setIndex(baseLen - 1);
     }
   };
 
@@ -108,28 +110,49 @@ export function DomainsCarousel() {
 
   return (
     <section className="w-full flex flex-col items-center mt-24 px-4">
-      <h2 className="text-center font-eudoxus-bold text-4xl md:text-5xl text-white mb-16">
-        Domains we serve
-      </h2>
+      <div className="flex items-baseline justify-center w-full max-w-[90vw] mb-16 gap-8">
+        <h2 className="text-center font-eudoxus-bold text-4xl md:text-5xl text-white">
+          Domains we serve
+        </h2>
+        
+        <div className="flex gap-2">
+          {/* Prev */}
+          <button
+            onClick={movePrev}
+            className="w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
+            aria-label="Previous"
+          >
+            <svg width="24" height="24" fill="none">
+              <path
+                d="M15 18l-6-6 6-6"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
 
-      <div className="relative w-full max-w-[90vw] mx-auto overflow-hidden">
-        {/* Prev */}
-        <button
-          onClick={movePrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
-          aria-label="Previous"
-        >
-          <svg width="24" height="24" fill="none">
-            <path
-              d="M15 18l-6-6 6-6"
-              stroke="#fff"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+          {/* Next */}
+          <button
+            onClick={moveNext}
+            className="w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
+            aria-label="Next"
+          >
+            <svg width="24" height="24" fill="none">
+              <path
+                d="M9 6l6 6-6 6"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
 
+      <div className="relative w-[70vw] mx-auto overflow-hidden">
         {/* Track */}
         <div
           onTransitionEnd={handleTransitionEnd}
@@ -169,23 +192,6 @@ export function DomainsCarousel() {
             )
           )}
         </div>
-
-        {/* Next */}
-        <button
-          onClick={moveNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
-          aria-label="Next"
-        >
-          <svg width="24" height="24" fill="none">
-            <path
-              d="M9 6l6 6-6 6"
-              stroke="#fff"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
       </div>
     </section>
   );

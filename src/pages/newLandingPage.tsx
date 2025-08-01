@@ -97,7 +97,7 @@ export default function NewLandingPage() {
         {/* For Clients */}
         <div className="flex flex-col md:flex-row md:justify-between gap-12 px-0">
           <div className="flex-1 flex flex-col justify-center">
-            <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text">
+            <h2 className="font-eudoxus-bold text-3xl mb-6 text-[#e9a855]">
               For Clients
             </h2>
             <ul className="text-white text-lg font-inter list-disc pl-4 space-y-3">
@@ -118,7 +118,7 @@ export default function NewLandingPage() {
         {/* For Experts */}
         <div className="flex flex-col md:flex-row-reverse md:justify-between gap-12 px-0">
           <div className="flex-1 flex flex-col justify-center items-start text-left">
-            <h2 className="font-eudoxus-bold text-3xl mb-6 bg-gradient-to-r from-[#e9c188] to-[#e9a855] text-transparent bg-clip-text inline-block">
+            <h2 className="font-eudoxus-bold text-3xl mb-6 text-[#e9a855]">
               For Experts
             </h2>
             <ul className="text-white text-lg font-inter list-disc pl-4 space-y-3">
@@ -176,15 +176,17 @@ export default function NewLandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="w-full max-w-6xl mx-auto mt-32 px-4">
-        <h2 className="font-eudoxus-bold text-center text-4xl text-white mb-8">
+      <section className="w-full max-w-6xl mx-auto mt-32 px-4 py-16">
+        <h2 className="font-eudoxus-bold text-center text-4xl text-white mb-16">
           Testimonials
         </h2>
-        <TestimonialsCarousel quoteIcon={<img src={quoteUp} alt="Quote" className="w-14 h-14 ml-0" />} />
+        <div>
+          <TestimonialsCarousel quoteIcon={<img src={quoteUp} alt="Quote" className="w-14 h-14 ml-0" />} />
+        </div>
       </section>
 
       {/* Metrics & Impact */}
-      <section className="w-full max-w-6xl mx-auto mt-32 px-4 flex flex-col-reverse md:flex-row items-center gap-12">
+      <section className="w-full max-w-6xl mx-auto mt-18 px-4 flex flex-col-reverse md:flex-row items-center gap-12">
         {/* Left: 2×2 grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
           <div className="border border-white/20 rounded-xl p-8">
@@ -226,7 +228,7 @@ export default function NewLandingPage() {
         <div
           className="w-full flex justify-center items-center"
           style={{
-            background: "radial-gradient(ellipse at center, #FFD886 0%, #040713 100%)",
+            background: "radial-gradient(ellipse at center, rgba(255, 216, 134, 0.3) 0%, #040713 100%)",
             minHeight: "260px",
           }}
         >
