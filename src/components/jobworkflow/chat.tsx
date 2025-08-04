@@ -22,7 +22,7 @@ import apiClient from "@/lib/api";
 import { BotIcon } from "./icons";
 import { Markdown } from "./markdown";
 
-interface AgenticsEvaluationForm {
+interface EvaluationForm {
   question1: string;
   question2: string;
   question3: string;
@@ -30,33 +30,19 @@ interface AgenticsEvaluationForm {
   question5: string;
 }
 
-const agenticsEvaluationQuestions = [
-  {
-    id: "question1",
-    question: "How effectively did the AI agent understand and respond to your queries?",
-    placeholder: "Describe the agent's understanding and response quality..."
-  },
-  {
-    id: "question2", 
-    question: "How would you rate the agent's problem-solving capabilities?",
-    placeholder: "Evaluate the agent's analytical and problem-solving skills..."
-  },
-  {
-    id: "question3",
-    question: "How well did the agent maintain context throughout the conversation?",
-    placeholder: "Assess the agent's ability to maintain conversation context..."
-  },
-  {
-    id: "question4",
-    question: "How would you rate the agent's communication clarity and helpfulness?",
-    placeholder: "Evaluate the clarity and helpfulness of the agent's responses..."
-  },
-  {
-    id: "question5",
-    question: "Overall, how satisfied are you with the AI agent's performance?",
-    placeholder: "Provide your overall assessment and satisfaction level..."
-  }
-];
+type EvaluationQuestion = {
+  id: string;
+  question: string;
+  placeholder: string;
+};
+
+const getEvaluationQuestions = (jobId: string) => {
+  const res = apiClient.get(`/v1/employee/workflow/${jobId}/getEvaluationQuestions`);
+  return res.then((response) => {
+    console.log("Evaluation questions fetched:", response.data);
+    return response.data['evaluationQuestions'];
+  });
+}
 
 export function Chat({
   id,
@@ -67,9 +53,10 @@ export function Chat({
 }) {
   const navigate = useNavigate();
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
+  const [evaluationQuestions, setEvaluationQuestions] = useState<EvaluationQuestion[]>([]);
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<AgenticsEvaluationForm>();
+  const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<EvaluationForm>();
 
   const getChatHistoryByChatId = (chatId: string) => {
     const res = apiClient.get(`/v1/employee/getChatHistoryByChatId/${chatId}`);
@@ -86,7 +73,22 @@ export function Chat({
         setInitialMessages(msgs.messages);
       });
     }
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    if (jobId) {
+      getEvaluationQuestions(jobId)
+        .then((questions) => {
+
+          if (questions && Array.isArray(questions) && questions.length > 0) {
+            setEvaluationQuestions(questions);
+          }
+        })
+        .catch(() => {
+          setEvaluationQuestions([]); // fallback to empty if API fails
+        });
+    }
+  }, [jobId]);
 
   const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
     try {
@@ -179,12 +181,12 @@ export function Chat({
     updateChatHistoryWithLatestMessages(chat);
   }, [id, initialMessages, messages]);
 
-  const onSubmitForm = async (data: AgenticsEvaluationForm) => {
-    const submission = agenticsEvaluationQuestions.map((question) => {
+  const onSubmitForm = async (data: EvaluationForm) => {
+    const submission = evaluationQuestions.map((question) => {
       return {
         questionId: question.id,
         question: question.question,
-        answer: data[question.id as keyof AgenticsEvaluationForm],
+        answer: data[question.id as keyof EvaluationForm],
       };
     });
     // Handle form submission here
@@ -281,20 +283,20 @@ export function Chat({
               </div>
 
               {/* Dynamic Questions */}
-              {agenticsEvaluationQuestions.map((questionData, index) => (
+              {evaluationQuestions.map((questionData, index) => (
                 <div key={questionData.id} className="space-y-3">
                   <label className="block text-base font-eudoxus-medium text-white">
                     {index + 1}. {questionData.question}
                   </label>
                                       <textarea
-                      {...register(questionData.id as keyof AgenticsEvaluationForm, { required: "This field is required" })}
+                      {...register(questionData.id as keyof EvaluationForm, { required: "This field is required" })}
                       className="w-full p-4 font-eudoxus-medium bg-gray-700 border border-gray-600 rounded-3xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       rows={3}
                       placeholder={questionData.placeholder}
                     />
-                  {errors[questionData.id as keyof AgenticsEvaluationForm] && (
+                  {errors[questionData.id as keyof EvaluationForm] && (
                     <p className="text-red-400 text-sm">
-                      {errors[questionData.id as keyof AgenticsEvaluationForm]?.message}
+                      {errors[questionData.id as keyof EvaluationForm]?.message}
                     </p>
                   )}
                 </div>
