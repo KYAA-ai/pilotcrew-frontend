@@ -2,7 +2,7 @@ import {
   Search
 } from "@/components/SimpleIcons"
 import * as React from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, Link } from "react-router-dom"
 
 import logo from '@/assets/logo.png'
 import {
@@ -96,12 +96,12 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 asChild
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
-                <a href="/" className="flex items-center">
+                <Link to="/" className="flex items-center">
                   <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
                   <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                     Pilotcrew.ai
                   </span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -138,12 +138,12 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   asChild
                   className="data-[slot=sidebar-menu-button]:!p-1.5"
                 >
-                  <a href="/" className="flex items-center">
+                  <Link to="/" className="flex items-center">
                     <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
                     <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                       Pilotcrew.ai
                     </span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -160,10 +160,10 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                       tooltip={item.title}
                       className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                     >
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon className="size-3" />
                         <span className="text-sm">{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -181,10 +181,10 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   tooltip={item.title}
                   className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                 >
-                  <a href={item.url}>
+                  <Link to={item.url}>
                     <item.icon className="size-3" />
                     <span className="text-sm">{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

@@ -1,11 +1,11 @@
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface EmployerJobDetails {
   _id?: string;
@@ -40,7 +40,7 @@ export default function EmployerJobDetailsPage() {
   if (!job) {
     return (
       <SidebarProvider defaultOpen={false}>
-        <AppSidebar variant="inset" />
+        <EmployerSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
@@ -59,7 +59,7 @@ export default function EmployerJobDetailsPage() {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <AppSidebar variant="inset" />
+      <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="m-4 w-full px-8 min-h-screen flex flex-col">

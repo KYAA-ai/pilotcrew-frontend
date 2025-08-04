@@ -1,18 +1,18 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/employer-header"
-import { GenericDataTable } from "@/components/generic-data-table"
-import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { SiteHeader } from "@/components/employer-header";
+import { EmployerSidebar } from "@/components/employer-sidebar";
+import { GenericDataTable } from "@/components/generic-data-table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     SidebarInset,
     SidebarProvider,
-} from "@/components/ui/sidebar"
-import { useProfile } from '@/contexts/ProfileContext'
-import { type ColumnDef } from "@tanstack/react-table"
+} from "@/components/ui/sidebar";
+import { useProfile } from '@/contexts/ProfileContext';
+import { type ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 // import { useState } from "react"
-import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function EmployerDashboard() {
   const { profile } = useProfile()
@@ -178,7 +178,7 @@ export default function EmployerDashboard() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

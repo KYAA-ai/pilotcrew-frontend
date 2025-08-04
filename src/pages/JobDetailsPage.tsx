@@ -1,15 +1,15 @@
-import React from "react";
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { toast } from "sonner";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import MarkdownPreview from '@uiw/react-markdown-preview';
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import api from "@/lib/api";
 import { generateUUID } from "@/lib/utils";
+import MarkdownPreview from '@uiw/react-markdown-preview';
+import React from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface JobDetails {
   id: string;
@@ -81,7 +81,7 @@ export default function JobDetailsPage() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties}
       >
-        <AppSidebar variant="inset" />
+        <EmployerSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
@@ -106,7 +106,7 @@ export default function JobDetailsPage() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties}
       >
-        <AppSidebar variant="inset" />
+        <EmployerSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
@@ -133,7 +133,7 @@ export default function JobDetailsPage() {
         "--header-height": "calc(var(--spacing) * 12)",
       } as React.CSSProperties}
     >
-      <AppSidebar variant="inset" />
+      <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="m-4 w-full px-8 min-h-screen flex flex-col">

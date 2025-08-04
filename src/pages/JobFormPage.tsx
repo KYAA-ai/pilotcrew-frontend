@@ -1,13 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import MarkdownPreview from '@uiw/react-markdown-preview';
-import { useState } from "react";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import GenericForm, { type FormField } from "@/components/form";
-import { toast } from "sonner";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import api from "@/lib/api";
+import MarkdownPreview from '@uiw/react-markdown-preview';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function JobFormPage() {
   const [jobCreated, setJobCreated] = React.useState(false);
@@ -126,7 +125,7 @@ export default function JobFormPage() {
         "--header-height": "calc(var(--spacing) * 12)",
       } as React.CSSProperties}
     >
-      <AppSidebar variant="inset" />
+      <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="w-full px-8 min-h-screen flex flex-col">
