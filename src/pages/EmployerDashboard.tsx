@@ -54,11 +54,9 @@ function JobsContent() {
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           {/* Header with title and action button */}
           <div 
-            className={`flex items-center justify-between transition-all duration-200 ease-linear ${
-              state === "expanded" ? "px-6" : "mx-auto"
-            }`}
+            className="flex items-center justify-between mx-auto"
             style={{ 
-              minWidth: state === "expanded" ? "auto" : minWidth
+              minWidth: minWidth
             }}
           >
             <h1 className="text-2xl font-bold">Jobs</h1>
@@ -71,11 +69,9 @@ function JobsContent() {
 
           {/* Job Cards View */}
           <div 
-            className={`transition-all duration-200 ease-linear ${
-              state === "expanded" ? "px-6" : "mx-auto"
-            }`}
+            className="mx-auto"
             style={{ 
-              minWidth: state === "expanded" ? "auto" : minWidth
+              minWidth: minWidth
             }}
           >
             {loading ? (
