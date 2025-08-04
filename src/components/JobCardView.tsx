@@ -2,7 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, CheckCircle, Clock, MapPin } from 'lucide-react';
+import { Calendar, CheckCircle, ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
+import { useCallback, useState } from 'react';
 
 interface JobCardViewProps {
   jobs: Array<{
@@ -19,6 +20,21 @@ interface JobCardViewProps {
 }
 
 export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 7;
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  
+  // Calculate the jobs to show on current page
+  const startIndex = (currentPage - 1) * jobsPerPage;
+  const endIndex = startIndex + jobsPerPage;
+  const currentJobs = jobs.slice(startIndex, endIndex);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+    // Smooth scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const getJobTypeLabel = (type: string) => {
     switch (type) {
       case 'FULL_TIME':
@@ -65,13 +81,13 @@ export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
       return <span className="text-sm text-muted-foreground">No features specified</span>;
     }
 
-    // Show first 3 features, then "+X more" if there are more
-    const maxVisible = 3;
+    // Show first 4 features, then "+X more" if there are more
+    const maxVisible = 4;
     const visibleFeatures = features.slice(0, maxVisible);
     const remainingCount = features.length - maxVisible;
 
     return (
-      <div className="flex items-center gap-2 overflow-hidden">
+      <div className="flex items-center gap-2 overflow-hidden w-full">
         {visibleFeatures.map((feature, index) => (
           <Badge key={index} variant="outline" className="text-xs flex-shrink-0">
             {feature.length > 15 ? feature.substring(0, 15) + "..." : feature}
@@ -86,14 +102,47 @@ export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
     );
   };
 
+  const PaginationControls = () => (
+    <div className="flex items-center justify-between">
+      <div className="text-sm text-muted-foreground">
+        Showing {startIndex + 1} to {Math.min(endIndex, jobs.length)} of {jobs.length} jobs
+      </div>
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <div className="text-sm">
+          Page {currentPage} of {totalPages}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
-      {jobs.map((job) => (
+      {/* Top Pagination */}
+      <PaginationControls />
+      
+      {/* Job Cards */}
+      {currentJobs.map((job) => (
         <Card key={job._id} className="w-full">
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-4">
             <div className="flex gap-6">
               {/* Main Content - 70% width */}
-              <div className="flex-1">
+              <div className="w-[70%] flex flex-col px-2">
                 {/* Company Name */}
                 <div className="text-sm text-muted-foreground mb-2">
                   Company: {job.companyName}
@@ -132,30 +181,31 @@ export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
                 <Separator className="my-4" />
 
                 {/* Features */}
-                <div className="mb-4">
-                  <div className="text-sm font-medium text-foreground mb-2">
-                    Features:
-                  </div>
-                  {renderFeatures(job.features)}
+                <div className="text-sm font-medium text-foreground mb-2">
+                  Features:
                 </div>
+                {renderFeatures(job.features)}
               </div>
 
               {/* Actions Container - 30% width */}
-              <div className="w-[30%] flex flex-col items-end justify-start">
+              <div className="w-[30%] flex flex-col items-center justify-start">
                 <div className="text-sm font-medium text-foreground mb-3">
                   Actions
                 </div>
                 <Button 
                   onClick={() => onJobAction('view', job)}
-                  className="w-full"
+                  className="w-40 mt-6 py-6"
                 >
-                  Apply now
+                  View in Detail
                 </Button>
               </div>
             </div>
           </CardContent>
         </Card>
       ))}
+      
+      {/* Bottom Pagination */}
+      <PaginationControls />
     </div>
   );
 } 
