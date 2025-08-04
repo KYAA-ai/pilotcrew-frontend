@@ -1,162 +1,107 @@
 import { SiteHeader } from "@/components/employer-header";
 import { EmployerSidebar } from "@/components/employer-sidebar";
-import { GenericDataTable } from "@/components/generic-data-table";
-import { Badge } from "@/components/ui/badge";
+import { JobCardView } from "@/components/JobCardView";
 import { Button } from "@/components/ui/button";
 import {
     SidebarInset,
     SidebarProvider,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
-import { type ColumnDef } from "@tanstack/react-table";
-import { Link } from "react-router-dom";
-// import { useState } from "react"
-import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export default function EmployerDashboard() {
-  const { profile } = useProfile()
-  // Removed unused selectedJob, isModalOpen, isDescriptionExpanded
+function JobsContent() {
+  const { state } = useSidebar();
   const navigate = useNavigate();
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleJobAction = (action: string, row: Record<string, unknown>) => {
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/v1/jobs');
+      setJobs(response.data.jobs || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      toast.error('Failed to fetch jobs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleJobAction = (action: string, job: Record<string, unknown>) => {
     if (action === "view") {
-      navigate(`/employer/jobs/${row._id}`, { state: { job: row } });
+      navigate(`/employer/jobs/${job._id}`, { state: { job } });
     } else {
-      toast.info(`Job action: ${action} for ${row.title}`)
-      console.log(`Action: ${action}`, row)
+      toast.info(`Job action: ${action} for ${job.title}`)
+      console.log(`Action: ${action}`, job)
     }
   }
 
-  // Custom columns configuration for jobs
-  const jobColumns: ColumnDef<Record<string, unknown>>[] = [
-    {
-      accessorKey: "title",
-      header: "Job Title",
-      cell: ({ row }) => (
-        <div className="font-medium text-foreground">
-          {String(row.getValue("title"))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "companyName",
-      header: "Company",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {String(row.getValue("companyName"))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "location",
-      header: "Location",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-xs">
-          {String(row.getValue("location"))}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "type",
-      header: "Job Type",
-      cell: ({ row }) => {
-        const type = String(row.getValue("type"))
-        const variant = type === "FULL_TIME" ? "default" : "secondary"
-        const label = type === "FULL_TIME" ? "Full Time" : type === "PART_TIME" ? "Part Time" : type
-        
-        return (
-          <Badge variant={variant} className="text-xs">
-            {label}
-          </Badge>
-        )
-      },
-    },
-    // {
-    //   accessorKey: "salary",
-    //   header: "Salary Range",
-    //   cell: ({ row }) => {
-    //     const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
-    //     if (salary?.min && salary?.max) {
-    //       return (
-    //         <div className="text-sm font-medium text-default">
-    //           {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
-    //         </div>
-    //       )
-    //     }
-    //     return <span className="text-muted-foreground">-</span>
-    //   },
-    // },
-    {
-      accessorKey: "duration",
-      header: "Duration",
-      cell: ({ row }) => {
-        const duration = row.getValue("duration") as { value: number; unit: string } | null
-        if (duration?.value && duration?.unit) {
-          return (
-            <Badge variant="outline" className="text-xs">
-              {duration.value} {duration.unit.toLowerCase()}
-            </Badge>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = String(row.getValue("status"))
-        const variant = status === "PUBLISHED" ? "default" : "secondary"
-        const label = status === "PUBLISHED" ? "Published" : status === "DRAFT" ? "Draft" : status
-        
-        return (
-          <Badge variant={variant} className="text-xs">
-            {label}
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: "features",
-      header: "Features",
-      cell: ({ row }) => {
-        const features = row.getValue("features") as string[] | null
-        if (Array.isArray(features) && features.length > 0) {
-          return (
-            <div className="flex flex-wrap gap-1">
-              {features.slice(0, 2).map((feature, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {feature.length > 20 ? feature.substring(0, 20) + "..." : feature}
-                </Badge>
-              ))}
-              {features.length > 2 && (
-                <Badge variant="outline" className="text-xs">
-                  +{features.length - 2} more
-                </Badge>
-              )}
-            </div>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => handleJobAction("view", row.original)}
+  // Calculate the minimum width based on viewport width
+  const minWidth = "70vw"; // 70% of viewport width
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+          {/* Header with title and action button */}
+          <div 
+            className={`flex items-center justify-between transition-all duration-200 ease-linear ${
+              state === "expanded" ? "px-6" : "mx-auto"
+            }`}
+            style={{ 
+              minWidth: state === "expanded" ? "auto" : minWidth
+            }}
           >
-            View
-          </Button>
+            <h1 className="text-2xl font-bold">Jobs</h1>
+            <Link to="/employer/jobs/new">
+              <Button variant="outline" size="sm">
+                Post a Job
+              </Button>
+            </Link>
+          </div>
+
+          {/* Job Cards View */}
+          <div 
+            className={`transition-all duration-200 ease-linear ${
+              state === "expanded" ? "px-6" : "mx-auto"
+            }`}
+            style={{ 
+              minWidth: state === "expanded" ? "auto" : minWidth
+            }}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                <span className="ml-2 text-sm text-muted-foreground">Loading jobs...</span>
+              </div>
+            ) : jobs.length > 0 ? (
+              <JobCardView 
+                jobs={jobs} 
+                onJobAction={handleJobAction}
+              />
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
+              </div>
+            )}
+          </div>
         </div>
-      ),
-    },
-  ]
+      </div>
+    </div>
+  );
+}
+
+export default function EmployerDashboard() {
+  const { profile } = useProfile();
 
   if (!profile) {
     return (
@@ -181,38 +126,7 @@ export default function EmployerDashboard() {
       <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              {/* <SectionCards /> */}
-              {/* <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div> */}
-              
-              {/* Example of GenericDataTable with custom columns */}
-              <GenericDataTable
-                endpoint="/v1/jobs"
-                dataKey="jobs"
-                title="Jobs"
-                enableSelection={true}
-                customColumns={jobColumns}
-                customActionElement={() => (
-                  <Link to="/employer/jobs/new">
-                    <Button variant="outline" size="sm">
-                      Post a Job
-                    </Button>
-                  </Link>
-                )}
-                onRowAction={handleJobAction}
-                actions={[
-                  { label: "View", value: "view" },
-                  { label: "Edit", value: "edit" },
-                  { label: "Delete", value: "delete", variant: "destructive" }
-                ]}
-              />
-            </div>
-          </div>
-        </div>
+        <JobsContent />
       </SidebarInset>
     </SidebarProvider>
   )
