@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import api from "@/lib/api";
 import { generateUUID } from "@/lib/utils";
+import apiClient from "@/lib/api";
 
 interface JobDetails {
   id: string;
@@ -69,7 +70,13 @@ export default function JobDetailsPage() {
 
   const handleApply = async () => {
     const chatId = generateUUID();
-    navigate(`/employee/workflow?jobId=${jobId}&chatId=${chatId}`);
+    const res = await apiClient.post(`/v1/employee/workflow/${jobId}/startJobWorkflow`);
+    if (!res.status.toString().startsWith("2")) {
+      toast.error("Failed to start job workflow");
+      return;
+    } else {
+      navigate(`/employee/workflow?jobId=${jobId}&chatId=${chatId}`);
+    }
   };
 
   if (loading) {

@@ -189,7 +189,7 @@ export function Chat({
     });
     // Handle form submission here
     try {
-      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submit`, { submission: submission, status: 'COMPLETE' });
+      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submitJobWorkflow`, { submission: submission });
       if (!res.status.toString().startsWith("2")) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
