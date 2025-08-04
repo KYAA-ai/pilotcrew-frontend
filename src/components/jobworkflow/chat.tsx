@@ -19,6 +19,8 @@ import {
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 import apiClient from "@/lib/api";
+import { BotIcon } from "./icons";
+import { Markdown } from "./markdown";
 
 interface AgenticsEvaluationForm {
   question1: string;
@@ -76,9 +78,14 @@ export function Chat({
 
   useEffect(() => {
     const chatId = id;
-    getChatHistoryByChatId(chatId).then((msgs) => {
-      setInitialMessages(msgs.messages);
-    });
+    if (chatId) {
+      getChatHistoryByChatId(chatId).then((msgs) => {
+        if (!msgs || !msgs.messages) {
+          return;
+        }
+        setInitialMessages(msgs.messages);
+      });
+    }
   }, []);
 
   const updateChatHistoryWithLatestMessages = async (chat: Chat): Promise<void> => {
@@ -120,10 +127,10 @@ export function Chat({
     });
   };
 
-  const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
+  const { messages, handleSubmit, input, setInput, append, status, stop } =
     useChat({
       id,
-      api: `${import.meta.env.VITE_API_BASE_URL}/api/v1/employee/streamChat/${jobId}`,
+      api: `${import.meta.env.VITE_API_URL}/v1/employee/streamChat/${jobId}`,
       fetch: fetchWithLogging,
       body: { id },
       initialMessages: initialMessages,
@@ -158,7 +165,7 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   useEffect(() => {
-    if (messages.length === 0 || messages.length === initialMessages.length) {
+    if (messages.length === 0 || (initialMessages && messages.length === initialMessages.length)) {
       return;
     }
     const latestMessage = messages[messages.length - 1];
@@ -170,7 +177,7 @@ export function Chat({
       userId: "123",
     };
     updateChatHistoryWithLatestMessages(chat);
-  }, [id, initialMessages.length, messages]);
+  }, [id, initialMessages, messages]);
 
   const onSubmitForm = async (data: AgenticsEvaluationForm) => {
     const submission = agenticsEvaluationQuestions.map((question) => {
@@ -182,7 +189,7 @@ export function Chat({
     });
     // Handle form submission here
     try {
-      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submit`, { submission: submission, status: 'COMPLETE' });
+      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submitJobWorkflow`, { submission: submission });
       if (!res.status.toString().startsWith("2")) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
@@ -217,6 +224,17 @@ export function Chat({
             />
           ))}
 
+          {status !== "ready" && (
+            <div className="gap-4 px-4 w-full md:w-[750px] md:px-0 first-of-type:pt-20 flex flex-row">
+              <div className="size-[24px] border rounded-sm p-1 flex flex-row items-center shrink-0 text-zinc-500">
+                <BotIcon />
+              </div>
+              <div className="gap-2 w-full text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
+                <Markdown>Typing...</Markdown>
+              </div>
+            </div>
+          )}
+
           <div
             ref={messagesEndRef}
             className="shrink-0 min-w-[24px] min-h-[24px]"
@@ -228,7 +246,7 @@ export function Chat({
             input={input}
             setInput={setInput}
             handleSubmit={handleSubmit}
-            isLoading={isLoading}
+            isLoading={status !== "ready"}
             stop={stop}
             attachments={attachments}
             setAttachments={setAttachments}
