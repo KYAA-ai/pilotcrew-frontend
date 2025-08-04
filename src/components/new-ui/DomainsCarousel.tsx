@@ -5,6 +5,7 @@ import financeIcon from "../../assets/finance.png";
 import healthcareIcon from "../../assets/healthcare.png";
 import legalIcon from "../../assets/legal.png";
 import roboticsIcon from "../../assets/robotics.png";
+import hardwareIcon from "../../assets/hardware.png";
 
 const getCardWidth = () => (typeof window !== 'undefined' && window.innerWidth < 640 ? 160 : 270);
 const CARD_GAP = 32;
@@ -34,6 +35,11 @@ const DOMAINS = [
     name: "Robotics & CV",
     desc: "Validate AI‑generated contracts for legal correctness and bias.",
     icon: roboticsIcon,
+  },
+  {
+    name: "Hardware AI",
+    desc: "Validate AI‑generated contracts for legal correctness and bias.",
+    icon: hardwareIcon,
   },
 ];
 
