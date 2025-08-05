@@ -4,8 +4,7 @@ import { JobCardView } from "@/components/JobCardView";
 import { Button } from "@/components/ui/button";
 import {
     SidebarInset,
-    SidebarProvider,
-    useSidebar,
+    SidebarProvider
 } from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
 import api from "@/lib/api";
@@ -14,7 +13,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function JobsContent() {
-  const { state } = useSidebar();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);

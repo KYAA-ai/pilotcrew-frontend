@@ -4,9 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import api from "@/lib/api";
+import { default as api, default as apiClient } from "@/lib/api";
 import { generateUUID } from "@/lib/utils";
-import apiClient from "@/lib/api";
+import MarkdownPreview from "@uiw/react-markdown-preview";
+import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface JobDetails {
   id: string;
@@ -38,11 +42,11 @@ export default function JobDetailsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const jobFromState = (location.state as { job?: JobDetails } | null)?.job;
-  const [jobDetails, setJobDetails] = React.useState<JobDetails | null>(jobFromState || null);
-  const [loading, setLoading] = React.useState(!jobFromState);
-  const [error, setError] = React.useState<string | null>(null);
+  const [jobDetails, setJobDetails] = useState<JobDetails | null>(jobFromState || null);
+  const [loading, setLoading] = useState(!jobFromState);
+  const [error, setError] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (jobDetails) return;
     const fetchJobDetails = async () => {
       if (!jobId) {
@@ -82,7 +86,7 @@ export default function JobDetailsPage() {
         style={{
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties}
+        } as CSSProperties}
       >
         <EmployerSidebar variant="inset" />
         <SidebarInset>
@@ -107,7 +111,7 @@ export default function JobDetailsPage() {
         style={{
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties}
+        } as CSSProperties}
       >
         <EmployerSidebar variant="inset" />
         <SidebarInset>
@@ -134,7 +138,7 @@ export default function JobDetailsPage() {
       style={{
         "--sidebar-width": "calc(var(--spacing) * 72)",
         "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
+      } as CSSProperties}
     >
       <EmployerSidebar variant="inset" />
       <SidebarInset>
