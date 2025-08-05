@@ -47,8 +47,8 @@ export default function NewLandingPage() {
         mobileWrapperClassName="xl:hidden"
       />
 
-      {/* Hero Section with Video Background and Text Overlay */}
-      <div className="relative w-full h-[55vh] flex items-center justify-center">
+             {/* Hero Section with Video Background and Text Overlay */}
+       <div className="relative w-full h-[40vh] lg:h-[80vh] flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}

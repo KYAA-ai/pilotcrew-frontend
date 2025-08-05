@@ -1,7 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { RadialProgress } from '@/components/ui/radial-progress';
 import { Separator } from '@/components/ui/separator';
+import { getJobCompletionStats, type JobCompletionStats } from '@/data/jobCompletionStats';
 import { Calendar, CheckCircle, ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
@@ -33,6 +35,15 @@ export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
     setCurrentPage(newPage);
     // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleCardClick = useCallback((job: Record<string, unknown>) => {
+    onJobAction('view', job);
+  }, [onJobAction]);
+
+  // Get job completion stats from data frame
+  const getJobStats = useCallback((jobId: string): JobCompletionStats => {
+    return getJobCompletionStats(jobId);
   }, []);
 
   const getJobTypeLabel = (type: string) => {
@@ -137,72 +148,77 @@ export function JobCardView({ jobs, onJobAction }: JobCardViewProps) {
       <PaginationControls />
       
       {/* Job Cards */}
-      {currentJobs.map((job) => (
-        <Card key={job._id} className="w-full">
-          <CardContent className="px-6 py-4">
-            <div className="flex gap-6">
-              {/* Main Content - 70% width */}
-              <div className="w-[70%] flex flex-col px-2">
-                {/* Company Name */}
-                <div className="text-sm text-muted-foreground mb-2">
-                  Company: {job.companyName}
+      {currentJobs.map((job) => {
+        const stats = getJobStats(job._id);
+        return (
+          <Card key={job._id} className="w-full">
+            <CardContent className="px-6 py-4">
+              <div 
+                className="flex gap-6 cursor-pointer transition-all duration-200 hover:bg-muted/50 rounded-lg p-2 -m-2"
+                onClick={() => handleCardClick(job)}
+              >
+                {/* Main Content - 70% width */}
+                <div className="w-[70%] flex flex-col px-2">
+                  {/* Company Name */}
+                  <div className="text-sm text-muted-foreground mb-2">
+                    Company: {job.companyName}
+                  </div>
+
+                  {/* Job Title */}
+                  <h3 className="text-xl font-bold text-foreground mb-4">
+                    {job.title}
+                  </h3>
+
+                  {/* 2x2 Grid for job details */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{job.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{getJobTypeLabel(job.type)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        {job.duration ? `${job.duration.value} ${job.duration.unit.toLowerCase()}` : 'Not specified'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                      <Badge variant={getStatusVariant(job.status)} className="text-xs">
+                        {getStatusLabel(job.status)}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Separator */}
+                  <Separator className="my-4" />
+
+                  {/* Features */}
+                  <div className="text-sm font-medium text-foreground mb-2">
+                    Features:
+                  </div>
+                  {renderFeatures(job.features)}
                 </div>
 
-                {/* Job Title */}
-                <h3 className="text-xl font-bold text-foreground mb-4">
-                  {job.title}
-                </h3>
-
-                {/* 2x2 Grid for job details */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{job.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{getJobTypeLabel(job.type)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      {job.duration ? `${job.duration.value} ${job.duration.unit.toLowerCase()}` : 'Not specified'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    <Badge variant={getStatusVariant(job.status)} className="text-xs">
-                      {getStatusLabel(job.status)}
-                    </Badge>
-                  </div>
+                {/* Stats Container - 30% width */}
+                <div className="w-[30%] flex flex-col items-center justify-center">
+                  <RadialProgress
+                    value={stats.completed}
+                    max={stats.total}
+                    size="lg"
+                    label="jobs completed"
+                    className="mb-2"
+                    strokeWidth={6}
+                  />
                 </div>
-
-                {/* Separator */}
-                <Separator className="my-4" />
-
-                {/* Features */}
-                <div className="text-sm font-medium text-foreground mb-2">
-                  Features:
-                </div>
-                {renderFeatures(job.features)}
               </div>
-
-              {/* Actions Container - 30% width */}
-              <div className="w-[30%] flex flex-col items-center justify-start">
-                <div className="text-sm font-medium text-foreground mb-3">
-                  Actions
-                </div>
-                <Button 
-                  onClick={() => onJobAction('view', job)}
-                  className="w-40 mt-6 py-6"
-                >
-                  View in Detail
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        );
+      })}
       
       {/* Bottom Pagination */}
       <PaginationControls />

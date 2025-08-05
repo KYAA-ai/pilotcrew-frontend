@@ -149,16 +149,16 @@ export function DomainsCarousel() {
 
   return (
     <section className="w-full flex flex-col items-center mt-24 px-4">
-      <div className="flex flex-col items-center w-full max-w-[90vw] mb-8 sm:mb-12 md:mb-16 gap-4 md:gap-8">
+      <div className="flex flex-col items-center w-full max-w-[90vw] mb-9 sm:mb-16 md:mb-20 gap-6 md:gap-8">
         <h2 className="text-center font-eudoxus-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white">
           Domains we serve
         </h2>
         
-        <div className="flex gap-2 mt-4 md:mt-6">
+        <div className="flex gap-3 mt-6 md:mt-8">
           {/* Prev */}
           <button
             onClick={movePrev}
-            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
+            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl transition-all duration-200 hover:scale-105"
             aria-label="Previous"
           >
             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none">
@@ -175,7 +175,7 @@ export function DomainsCarousel() {
           {/* Next */}
           <button
             onClick={moveNext}
-            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl"
+            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-[#12162c] bg-opacity-60 hover:bg-opacity-80 rounded-full shadow-xl transition-all duration-200 hover:scale-105"
             aria-label="Next"
           >
             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none">
@@ -191,27 +191,27 @@ export function DomainsCarousel() {
         </div>
       </div>
 
-      <div className="relative w-[85vw] sm:w-[80vw] md:w-[70vw] mx-auto overflow-hidden">
+      <div className="relative w-[85vw] sm:w-[80vw] md:w-[70vw] mx-auto overflow-hidden pb-4">
         {/* Track */}
-        <div
-          ref={trackRef}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          onTransitionEnd={handleTransitionEnd}
-          className="flex gap-[32px] justify-start items-stretch"
-          style={{
-            transform: `translateX(${offset}px)`,
-            transition: disableTransition ? "none" : "transform 0.3s ease",
-          }}
-        >
+                 <div
+           ref={trackRef}
+           onTouchStart={onTouchStart}
+           onTouchMove={onTouchMove}
+           onTouchEnd={onTouchEnd}
+           onTransitionEnd={handleTransitionEnd}
+           className="flex gap-[32px] justify-start items-stretch py-2"
+           style={{
+             transform: `translateX(${offset}px)`,
+             transition: disableTransition ? "none" : "transform 0.3s ease",
+           }}
+         >
           {extended.map((domain, idx) =>
             domain ? (
-              <div
-                key={`${idx}-${domain.name}`}
-                className="flex-shrink-0 flex flex-col items-center justify-start border border-[#338AFF] rounded-xl p-3 sm:p-4 md:p-8 bg-transparent"
-                style={{ width: cardWidth, gap: "0.75rem" }}
-              >
+                             <div
+                 key={`${idx}-${domain.name}`}
+                 className="flex-shrink-0 flex flex-col items-center justify-start border border-[#338AFF] rounded-xl p-3 sm:p-4 md:p-8 bg-transparent shadow-lg"
+                 style={{ width: cardWidth, gap: "0.75rem", minHeight: "200px" }}
+               >
                 <img
                   src={domain.icon}
                   alt={domain.name}
