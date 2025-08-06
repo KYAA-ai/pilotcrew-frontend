@@ -173,13 +173,15 @@ export function Chat({
     const latestMessage = messages[messages.length - 1];
     const chat: Chat = {
       id: id,
-      createdAt: new Date(),
+      title: '', // Default placeholder. Not updated in backend
+      createdAt: new Date(), // Default placeholder. Not updated in backend
       updatedAt: new Date(),
       messages: [latestMessage],
-      userId: "123",
+      userId: '', // Default placeholder. Not updated in backend
+      jobId: jobId
     };
     updateChatHistoryWithLatestMessages(chat);
-  }, [id, initialMessages, messages]);
+  }, [id, initialMessages, messages, jobId]);
 
   const onSubmitForm = async (data: EvaluationForm) => {
     const submission = evaluationQuestions.map((question) => {
