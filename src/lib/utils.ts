@@ -5,10 +5,12 @@ import apiClient from "./api";
 
 export type Chat = {
   id: string;
+  title: string;
   createdAt: Date;
   updatedAt: Date;
   messages: Array<Message>;
   userId: string;
+  jobId: string;
 };
 
 export type User = {
@@ -58,5 +60,9 @@ export function getTitleFromChat(chat: Chat) {
     return "Untitled";
   }
 
-  return firstMessage.content;
+  if (!chat.title || chat.title.trim() === "") {
+    return firstMessage.content;
+  } else {
+    return chat.title + ' - ' + firstMessage.content;
+  }
 }

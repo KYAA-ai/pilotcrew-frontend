@@ -47,12 +47,15 @@ const getEvaluationQuestions = (jobId: string) => {
 export function Chat({
   id,
   jobId,
+  newChat
 }: {
   id: string;
   jobId: string;
+  newChat: boolean;
 }) {
   const navigate = useNavigate();
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
+  const [lastSavedMessageIdx, setLastSavedMessageIdx] = useState(0);
   const [evaluationQuestions, setEvaluationQuestions] = useState<EvaluationQuestion[]>([]);
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -65,15 +68,16 @@ export function Chat({
 
   useEffect(() => {
     const chatId = id;
-    if (chatId) {
+    if (!newChat) {
       getChatHistoryByChatId(chatId).then((msgs) => {
         if (!msgs || !msgs.messages) {
           return;
         }
         setInitialMessages(msgs.messages);
+        setLastSavedMessageIdx(msgs.messages.length - 1);
       });
     }
-  }, [id]);
+  }, [id, newChat]);
 
   useEffect(() => {
     if (jobId) {
@@ -167,19 +171,22 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   useEffect(() => {
-    if (messages.length === 0 || (initialMessages && messages.length === initialMessages.length)) {
+    if (messages.length === 0 || (initialMessages && messages.length === initialMessages.length) || lastSavedMessageIdx === messages.length - 1) {
       return;
     }
     const latestMessage = messages[messages.length - 1];
+    setLastSavedMessageIdx(messages.length - 1);
     const chat: Chat = {
       id: id,
-      createdAt: new Date(),
+      title: '', // Default placeholder. Not updated in backend
+      createdAt: new Date(), // Default placeholder. Not updated in backend
       updatedAt: new Date(),
       messages: [latestMessage],
-      userId: "123",
+      userId: '', // Default placeholder. Not updated in backend
+      jobId: jobId
     };
     updateChatHistoryWithLatestMessages(chat);
-  }, [id, initialMessages, messages]);
+  }, [messages.length]);
 
   const onSubmitForm = async (data: EvaluationForm) => {
     const submission = evaluationQuestions.map((question) => {
