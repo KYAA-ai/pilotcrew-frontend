@@ -13,6 +13,7 @@ import fallbackImage from "../assets/fallback-image.png";
 import butterfly from "../assets/logo.png";
 import matchingJobs from "../assets/matching-jobs.png";
 import quoteUp from "../assets/quote-up.png";
+import screen1 from "../assets/screen-1.png";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -155,6 +156,45 @@ export default function NewLandingPage() {
               style={{ transform: 'scaleX(-1)' }}
               draggable={false}
             />
+          </div>
+        </div>
+      </div>
+
+      {/* Screen-1 Image Section */}
+      <div className="w-full max-w-6xl mx-auto mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
+        <div className="flex justify-center">
+          <div className="relative w-full max-w-4xl overflow-visible">
+            {/* Light blue radial blur sphere behind the image */}
+            <div 
+              className="absolute rounded-lg"
+              style={{
+                background: 'radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 30%, rgba(59, 130, 246, 0.1) 60%, transparent 80%)',
+                filter: 'blur(60px)',
+                transform: 'translateY(20%) scale(2.5)',
+                zIndex: -1,
+                width: '300%',
+                height: '300%',
+                left: '-100%',
+                top: '-100%',
+                pointerEvents: 'none'
+              }}
+            ></div>
+            
+            {/* Wrapper for image and border with perspective transform */}
+            <div 
+              className="relative"
+              style={{
+                transform: 'perspective(1200px) rotateX(20deg)',
+                transformOrigin: 'center top'
+              }}
+            >
+              <img
+                src={screen1}
+                alt="Screen 1"
+                className="w-full h-auto object-contain rounded-lg relative z-10"
+                draggable={false}
+              />
+            </div>
           </div>
         </div>
       </div>

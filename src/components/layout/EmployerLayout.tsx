@@ -36,6 +36,7 @@ export function EmployerLayout({ children }: EmployerLayoutProps) {
 
   return (
     <SidebarProvider
+      defaultOpen={false}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -43,7 +44,7 @@ export function EmployerLayout({ children }: EmployerLayoutProps) {
         } as React.CSSProperties
       }
     >
-      <EmployerSidebar />
+      <EmployerSidebar collapsible="offcanvas" />
       <SidebarInset>
         <SiteHeader />
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">

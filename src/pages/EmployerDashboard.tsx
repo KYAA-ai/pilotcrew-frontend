@@ -1,11 +1,6 @@
-import { SiteHeader } from "@/components/employer-header";
-import { EmployerSidebar } from "@/components/employer-sidebar";
 import { JobCardView } from "@/components/JobCardView";
+import { EmployerLayout } from "@/components/layout/EmployerLayout";
 import { Button } from "@/components/ui/button";
-import {
-    SidebarInset,
-    SidebarProvider
-} from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
 import api from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -43,52 +38,40 @@ function JobsContent() {
     }
   }
 
-  // Calculate the minimum width based on viewport width
-  const minWidth = "70vw"; // 70% of viewport width
-
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          {/* Header with title and action button */}
-          <div 
-            className="flex items-center justify-between mx-auto"
-            style={{ 
-              minWidth: minWidth
-            }}
-          >
-            <h1 className="text-2xl font-bold">Jobs</h1>
-            <Link to="/employer/jobs/new">
-              <Button variant="outline" size="sm">
-                Post a Job
-              </Button>
-            </Link>
-          </div>
-
-          {/* Job Cards View */}
-          <div 
-            className="mx-auto"
-            style={{ 
-              minWidth: minWidth
-            }}
-          >
-            {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="ml-2 text-sm text-muted-foreground">Loading jobs...</span>
-              </div>
-            ) : jobs.length > 0 ? (
-              <JobCardView 
-                jobs={jobs} 
-                onJobAction={handleJobAction}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
-              </div>
-            )}
-          </div>
+    <div className="flex flex-col gap-6 pb-8">
+      {/* Header Section */}
+      <div className="flex items-center justify-between px-8 lg:px-16 pt-6">
+        <div>
+          <h1 className="text-3xl font-bold">Posted Jobs</h1>
+          <p className="text-muted-foreground">
+            Manage and monitor your job postings
+          </p>
         </div>
+        <Link to="/employer/jobs/new">
+          <Button variant="outline" size="sm">
+            Post a Job
+          </Button>
+        </Link>
+      </div>
+
+      {/* Job Cards View */}
+      <div className="px-8 lg:px-16">
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2 text-sm text-muted-foreground">Loading jobs...</span>
+          </div>
+        ) : jobs.length > 0 ? (
+          <JobCardView 
+            jobs={jobs} 
+            onJobAction={handleJobAction}
+          />
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -109,19 +92,8 @@ export default function EmployerDashboard() {
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <EmployerSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <JobsContent />
-      </SidebarInset>
-    </SidebarProvider>
+    <EmployerLayout>
+      <JobsContent />
+    </EmployerLayout>
   )
 }

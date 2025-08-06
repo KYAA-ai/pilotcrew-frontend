@@ -50,7 +50,7 @@ export function DomainsCarousel() {
   return (
     <section className="w-full flex flex-col items-center mt-24 px-4">
       <div className="flex flex-col items-center w-full max-w-[90vw] mb-9 sm:mb-16 md:mb-20 gap-6 md:gap-8">
-        <h2 className="text-center font-eudoxus-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white">
+        <h2 className="text-center font-eudoxus-bold text-3xl sm:text-3xl md:text-4xl lg:text-5xl text-white">
           Domains we serve
         </h2>
       </div>

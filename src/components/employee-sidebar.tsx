@@ -1,24 +1,24 @@
 import {
-  Search
+    Search
 } from "@/components/SimpleIcons"
 import * as React from "react"
-import { useLocation, Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 import logo from '@/assets/logo.png'
 import {
-  Avatar,
-  AvatarFallback,
+    Avatar,
+    AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
 import { useState } from 'react'

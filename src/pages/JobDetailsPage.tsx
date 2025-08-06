@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/employer-header";
-import { EmployerSidebar } from "@/components/employer-sidebar";
+import { EmployeeHeader } from "@/components/employee-header";
+import { EmployeeSidebar } from "@/components/employee-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -88,9 +88,9 @@ export default function JobDetailsPage() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as CSSProperties}
       >
-        <EmployerSidebar variant="inset" />
+        <EmployeeSidebar variant="inset" />
         <SidebarInset>
-          <SiteHeader />
+          <EmployeeHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -113,9 +113,9 @@ export default function JobDetailsPage() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as CSSProperties}
       >
-        <EmployerSidebar variant="inset" />
+        <EmployeeSidebar variant="inset" />
         <SidebarInset>
-          <SiteHeader />
+          <EmployeeHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -140,9 +140,9 @@ export default function JobDetailsPage() {
         "--header-height": "calc(var(--spacing) * 12)",
       } as CSSProperties}
     >
-      <EmployerSidebar variant="inset" />
+      <EmployeeSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <EmployeeHeader />
         <div className="m-4 w-full px-8 min-h-screen flex flex-col">
           {/* Breadcrumb and Start Review Button */}
           <div className="mt-4 mb-8 flex items-center justify-between">
