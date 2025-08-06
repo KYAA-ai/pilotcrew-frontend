@@ -13,7 +13,7 @@ import fallbackImage from "../assets/fallback-image.png";
 import butterfly from "../assets/logo.png";
 import matchingJobs from "../assets/matching-jobs.png";
 import quoteUp from "../assets/quote-up.png";
-import screen1 from "../assets/screen-1.png";
+import screenPlaceholder from "../assets/screen-placeholder.mp4";
 
 export default function NewLandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,7 +49,7 @@ export default function NewLandingPage() {
       />
 
              {/* Hero Section with Video Background and Text Overlay */}
-       <div className="relative w-full h-[40vh] lg:h-[80vh] flex items-center justify-center">
+       <div className="relative w-full h-[80vh] flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}
@@ -78,6 +78,8 @@ export default function NewLandingPage() {
             <source src={backdropVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
+          {/* Black blur border at the bottom of the video */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20"></div>
         </div>
 
         {/* Text Overlay */}
@@ -92,6 +94,73 @@ export default function NewLandingPage() {
             Pilotcrew.ai connects businesses building AI systems with qualified human reviewers
             to ensure accuracy, safety, and compliance.
           </p>
+        </div>
+      </div>
+
+      {/* Screen-1 Video Section */}
+      <div className="w-full max-w-6xl mx-auto mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
+        {/* Golden line above video */}
+        <div className="flex justify-center mb-8 sm:mb-12 w-full relative">
+          <hr className="w-48 sm:w-64 md:w-80 lg:w-96 h-px bg-[#e9a855] border-0 rounded-full" />
+          {/* Golden radial blur extending downward from top line */}
+          <div 
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-48"
+            style={{
+              background: 'radial-gradient(ellipse at center top, rgba(233, 168, 85, 0.5) 0%, rgba(233, 168, 85, 0.3) 30%, rgba(233, 168, 85, 0.1) 60%, transparent 90%)',
+              filter: 'blur(30px)',
+              zIndex: -1
+            }}
+          ></div>
+        </div>
+        
+        <div className="flex justify-center">
+          <div className="relative w-full max-w-4xl overflow-visible">
+            {/* Light blue radial blur sphere behind the image */}
+            <div 
+              className="absolute rounded-lg"
+              style={{
+                background: 'radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 30%, rgba(59, 130, 246, 0.1) 60%, transparent 80%)',
+                filter: 'blur(60px)',
+                transform: 'translateY(20%) scale(2.5)',
+                zIndex: -1,
+                width: '300%',
+                height: '300%',
+                left: '-100%',
+                top: '-100%',
+                pointerEvents: 'none'
+              }}
+            ></div>
+            
+            {/* Wrapper for video with perspective transform */}
+            <div 
+              className="relative"
+              style={{
+                transform: 'perspective(1200px) rotateX(20deg)',
+                transformOrigin: 'center top'
+              }}
+            >
+              <video
+                src={screenPlaceholder}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto object-contain rounded-lg relative z-10"
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Demo Text Section */}
+      <div className="w-full flex flex-col items-center mt-8 sm:mt-12 md:mt-16">
+        <h2 className="text-center font-eudoxus-bold text-2xl sm:text-3xl md:text-4xl text-white">
+          Explore Agents within seconds using our Agentic Search!
+        </h2>
+        {/* Golden line under demo text */}
+        <div className="flex justify-center mt-6 sm:mt-8 w-full">
+          <hr className="w-full max-w-4xl h-px bg-[#e9a855] border-0 rounded-full" />
         </div>
       </div>
 
@@ -156,45 +225,6 @@ export default function NewLandingPage() {
               style={{ transform: 'scaleX(-1)' }}
               draggable={false}
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Screen-1 Image Section */}
-      <div className="w-full max-w-6xl mx-auto mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
-        <div className="flex justify-center">
-          <div className="relative w-full max-w-4xl overflow-visible">
-            {/* Light blue radial blur sphere behind the image */}
-            <div 
-              className="absolute rounded-lg"
-              style={{
-                background: 'radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 30%, rgba(59, 130, 246, 0.1) 60%, transparent 80%)',
-                filter: 'blur(60px)',
-                transform: 'translateY(20%) scale(2.5)',
-                zIndex: -1,
-                width: '300%',
-                height: '300%',
-                left: '-100%',
-                top: '-100%',
-                pointerEvents: 'none'
-              }}
-            ></div>
-            
-            {/* Wrapper for image and border with perspective transform */}
-            <div 
-              className="relative"
-              style={{
-                transform: 'perspective(1200px) rotateX(20deg)',
-                transformOrigin: 'center top'
-              }}
-            >
-              <img
-                src={screen1}
-                alt="Screen 1"
-                className="w-full h-auto object-contain rounded-lg relative z-10"
-                draggable={false}
-              />
-            </div>
           </div>
         </div>
       </div>
