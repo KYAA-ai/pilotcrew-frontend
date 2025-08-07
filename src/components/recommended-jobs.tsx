@@ -25,6 +25,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
 
@@ -192,56 +193,61 @@ import api from "@/lib/api";
   }
 
   interface GenericDataTableProps {
-    endpoint: string
-    dataKey: string
-    title?: string
-    enableDrag?: boolean
-    enableSelection?: boolean
-    customColumns?: ColumnDef<Record<string, unknown>>[]
-    onRowAction?: (action: string, row: Record<string, unknown>) => void
-    actions?: Array<{
-      label: string
-      value: string
-      variant?: "default" | "destructive"
-    }>
-    customActionElement?: (refreshTable: () => void) => React.ReactNode
-    searchBarElement?: React.ReactNode
-    filterTagsElement?: React.ReactNode
-    /**
-     * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
-     */
-    requestBody?: Record<string, unknown>;
-    /**
-     * Navigation URL template. Use {id} as placeholder for the item ID.
-     * Example: "/employee/jobs/{id}?mode=view"
-     */
-    navigationUrl?: string;
-  }
+  endpoint: string
+  dataKey: string
+  title?: string
+  enableDrag?: boolean
+  enableSelection?: boolean
+  customColumns?: ColumnDef<Record<string, unknown>>[]
+  onRowAction?: (action: string, row: Record<string, unknown>) => void
+  actions?: Array<{
+    label: string
+    value: string
+    variant?: "default" | "destructive"
+  }>
+  customActionElement?: (refreshTable: () => void) => React.ReactNode
+  searchBarElement?: React.ReactNode
+  filterTagsElement?: React.ReactNode
+  /**
+   * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
+   */
+  requestBody?: Record<string, unknown>;
+  /**
+   * Navigation URL template. Use {id} as placeholder for the item ID.
+   * Example: "/employee/jobs/{id}?mode=view"
+   */
+  navigationUrl?: string;
+  /**
+   * Number of items per page. Defaults to 12.
+   */
+  pageSize?: number;
+}
 
   export function RecommendedJobsView({
-    endpoint,
-    dataKey,
-    title = "Recommended Jobs",
-    onRowAction,
-    actions = [
-      { label: "Edit", value: "edit" },
-      { label: "Delete", value: "delete", variant: "destructive" }
-    ],
-    customActionElement,
-    searchBarElement,
-    filterTagsElement,
-    requestBody,
-    navigationUrl
-  }: GenericDataTableProps) {
-    const [data, setData] = React.useState<Record<string, unknown>[]>([])
-    const [loading, setLoading] = React.useState(true)
-    const [error, setError] = React.useState<string | null>(null)
-    const [currentPage, setCurrentPage] = React.useState(1)
-    const [pageSize] = React.useState(12)
-    const [totalPages, setTotalPages] = React.useState(1)
-    const [totalResults, setTotalResults] = React.useState(0)
+  endpoint,
+  dataKey,
+  title = "Recommended Jobs",
+  onRowAction,
+  actions = [
+    { label: "Edit", value: "edit" },
+    { label: "Delete", value: "delete", variant: "destructive" }
+  ],
+  customActionElement,
+  searchBarElement,
+  filterTagsElement,
+  requestBody,
+  navigationUrl,
+  pageSize = 12
+}: GenericDataTableProps) {
+  const [data, setData] = React.useState<Record<string, unknown>[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [currentPageSize, setCurrentPageSize] = React.useState(pageSize)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalResults, setTotalResults] = React.useState(0)
 
-    const fetchData = React.useCallback(async (page = 1, size = pageSize) => {
+    const fetchData = React.useCallback(async (page = 1, size = currentPageSize) => {
       try {
         setLoading(true)
         setError(null)
@@ -270,7 +276,7 @@ import api from "@/lib/api";
       } finally {
         setLoading(false)
       }
-    }, [endpoint, dataKey, requestBody, pageSize])
+    }, [endpoint, dataKey, requestBody, currentPageSize])
 
     // Fetch data from endpoint
     React.useEffect(() => {
@@ -280,7 +286,15 @@ import api from "@/lib/api";
     // Handle page changes
     const handlePageChange = (page: number) => {
       setCurrentPage(page);
-      fetchData(page, pageSize);
+      fetchData(page, currentPageSize);
+    };
+
+    // Handle page size changes
+    const handlePageSizeChange = (newPageSize: string) => {
+      const size = parseInt(newPageSize);
+      setCurrentPageSize(size);
+      setCurrentPage(1); // Reset to first page when changing page size
+      fetchData(1, size);
     };
 
     return (
@@ -296,7 +310,7 @@ import api from "@/lib/api";
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchData(currentPage, pageSize)}
+              onClick={() => fetchData(currentPage, currentPageSize)}
               title="Refresh"
               className="flex items-center gap-1"
             >
@@ -334,6 +348,23 @@ import api from "@/lib/api";
                     navigationUrl={navigationUrl}
                   />
                 ))}
+              </div>
+              {/* Page Size Selector - Always visible when there's data */}
+              <div className="flex items-center justify-end mt-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Show:</span>
+                  <Select value={currentPageSize.toString()} onValueChange={handlePageSizeChange}>
+                    <SelectTrigger className="w-20 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="6">6</SelectItem>
+                      <SelectItem value="12">12</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               {/* Pagination */}
               {totalPages > 1 && (

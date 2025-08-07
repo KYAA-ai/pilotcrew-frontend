@@ -164,6 +164,7 @@ export default function EmployeeCompletedJobs() {
             { label: "View", value: "view" },
           ]}
           navigationUrl="/employee/jobs/{id}?source=complete"
+          pageSize={20}
         />
       </div>
     </EmployeeLayout>

@@ -39,6 +39,11 @@ import {
   SheetContent
 } from "../ui/sheet";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import {
   InfoIcon,
   PencilEditIcon,
   MoreHorizontalIcon,
@@ -159,6 +164,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                     const newChatId = generateUUID();
                     await apiClient.post("/v1/employee/updateChatHistory", {
                       id: newChatId,
+                      jobId,
                       messages: []
                     });
                     
@@ -212,22 +218,29 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                       { "bg-zinc-200 dark:bg-zinc-700": chat.id === id },
                     )}
                   >
-                    <Button
-                      variant="ghost"
-                      className={cx(
-                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 flex-1 transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
-                      )}
-                      asChild
-                      onClick={() => {
-                        if (currentJobId !== jobId || currentChatId !== chat.id) {
-                          navigate(`/employee/workflow?jobId=${jobId}&chatId=${chat.id}`);
-                        }
-                      }}
-                    >
-                      <div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={cx(
+                            "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 flex-1 transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
+                          )}
+                          asChild
+                          onClick={() => {
+                            if (currentJobId !== jobId || currentChatId !== chat.id) {
+                              navigate(`/employee/workflow?jobId=${jobId}&chatId=${chat.id}`);
+                            }
+                          }}
+                        >
+                          <div>
+                            {getTitleFromChat(chat)}
+                          </div>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="max-w-xs">
                         {getTitleFromChat(chat)}
-                      </div>
-                    </Button>
+                      </TooltipContent>
+                    </Tooltip>
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

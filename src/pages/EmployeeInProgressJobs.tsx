@@ -168,6 +168,7 @@ export default function EmployeeInProgressJobs() {
             { label: "View", value: "view" },
           ]}
           navigationUrl="/employee/jobs/{id}?source=in-progress"
+          pageSize={20}
         />
       </div>
     </EmployeeLayout>
