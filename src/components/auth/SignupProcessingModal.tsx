@@ -115,6 +115,9 @@ export function SignupProcessingModal({
                 ) : (
                   <div className="mb-8">
                     <h3 className="text-lg font-semibold mb-2 text-foreground">Select your top 3 categories</h3>
+                    <p className="text-sm text-muted-foreground text-center mb-4">
+                      Only 3 categories can be chosen to go ahead with account creation
+                    </p>
                     <div className="flex flex-wrap gap-2 justify-center mb-4">
                       {categories.map((cat) => (
                         <Button
@@ -160,7 +163,7 @@ export function SignupProcessingModal({
                     <div className="mb-4">
                       <CheckCircle className="w-16 h-16 text-primary mx-auto" />
                     </div>
-                    <h3 className="text-xl font-semiboldmb-2">
+                    <h3 className="text-xl font-semibold mb-2">
                       All set!
                     </h3>
                     <p className="text-muted-foreground mb-6">
