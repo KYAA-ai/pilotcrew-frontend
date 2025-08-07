@@ -5,10 +5,9 @@ import apiClient from "./api";
 
 export type Chat = {
   id: string;
-  title: string;
+  title?: string;
   createdAt: Date;
   updatedAt: Date;
-  title?: string;
   messages: Array<Message>;
   userId: string;
   jobId: string;

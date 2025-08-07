@@ -6,15 +6,13 @@ interface FilterTagsProps {
   accuraSearch: boolean;
   onRemoveSkill: (skill: string) => void;
   onRemoveAccuraSearch: () => void;
-  isSearchActive?: boolean;
 }
 
 export function FilterTags({ 
   selectedSkills, 
   accuraSearch, 
   onRemoveSkill, 
-  onRemoveAccuraSearch,
-  isSearchActive = false
+  onRemoveAccuraSearch
 }: FilterTagsProps) {
   // Show tags if there are selected skills or accura search is enabled
   if (selectedSkills.length === 0 && !accuraSearch) {

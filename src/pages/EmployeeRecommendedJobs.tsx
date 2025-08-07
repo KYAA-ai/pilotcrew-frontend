@@ -148,7 +148,6 @@ export default function EmployeeRecommendedJobs() {
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [accuraSearch, setAccuraSearch] = useState(false);
-  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
   const [tableRequestBody, setTableRequestBody] = useState<{
     skillsByCategory: Record<string, string[]>;
@@ -197,9 +196,7 @@ export default function EmployeeRecommendedJobs() {
     setSelectedSkills(updatedSkills);
     
     // Check if all filters are removed
-    if (updatedSkills.length === 0 && !accuraSearch) {
-      setIsSearchActive(false);
-    }
+    // No action needed when filters are removed
     
     // Update table request body
     const newSkillsByCategory: Record<string, string[]> = {};
@@ -228,11 +225,6 @@ export default function EmployeeRecommendedJobs() {
 
   const handleRemoveAccuraSearch = () => {
     setAccuraSearch(false);
-    
-    // Check if all filters are removed
-    if (selectedSkills.length === 0) {
-      setIsSearchActive(false);
-    }
     
     setTableRequestBody(prev => ({
       ...prev,
@@ -416,7 +408,6 @@ export default function EmployeeRecommendedJobs() {
               accuraSearch={accuraSearch}
               onRemoveSkill={handleRemoveSkill}
               onRemoveAccuraSearch={handleRemoveAccuraSearch}
-              isSearchActive={isSearchActive}
             />
           }
           customActionElement={() => {
@@ -437,7 +428,6 @@ export default function EmployeeRecommendedJobs() {
                   onSubmit={(skills, accura) => {
                     setSelectedSkills(skills);
                     setAccuraSearch(accura);
-                    setIsSearchActive(true); // Mark search as active when user submits
                     const newSkillsByCategory: Record<string, string[]> = {};
                     skills.forEach(skill => {
                       const skillLower = skill.toLowerCase();
