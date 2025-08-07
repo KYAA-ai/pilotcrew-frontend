@@ -352,8 +352,8 @@ export function Chat({
           <div className="flex-1 overflow-y-auto p-12 mx-8 mt-4 mb-8">
             <form onSubmit={handleFormSubmit(onSubmitForm)} className="space-y-8 font-sans">
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-eudoxus-bold text-white mb-3">Agentics Evaluation</h2>
-                <p className="text-gray-300 text-base">Please evaluate the AI agent's performance</p>
+                <h2 className="text-2xl font-eudoxus-bold text-white mb-3">Product Evaluation</h2>
+                <p className="text-gray-300 text-base">Please evaluate the product's performance</p>
               </div>
 
               {/* Dynamic Questions */}
