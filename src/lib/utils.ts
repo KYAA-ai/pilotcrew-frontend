@@ -5,7 +5,7 @@ import apiClient from "./api";
 
 export type Chat = {
   id: string;
-  title: string;
+  title?: string;
   createdAt: Date;
   updatedAt: Date;
   messages: Array<Message>;
@@ -36,7 +36,6 @@ export function generateUUID(): string {
 }
 
 export const fetcher = async (url: string) => {
-  // console.log("Fetching data from:", url);
   const res = await apiClient.get(url);
 
   if (!res.status.toString().startsWith("2")) {
@@ -54,6 +53,9 @@ export const fetcher = async (url: string) => {
 };
 
 export function getTitleFromChat(chat: Chat) {
+  if (chat.title) {
+    return chat.title;
+  }
   const firstMessage = chat.messages[0];
 
   if (!firstMessage) {

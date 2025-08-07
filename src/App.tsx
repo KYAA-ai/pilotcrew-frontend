@@ -14,11 +14,14 @@ import EmployeeRecommendedJobs from './pages/EmployeeRecommendedJobs'
 import EmployerAuth from './pages/EmployerAuth'
 import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployerJobDetailsPage from './pages/EmployerJobDetailsPage'
+import JobResponsesPage from './pages/JobResponsesPage'
 import EmployerProfile from './pages/EmployerProfile'
 import JobDetailsPage from './pages/JobDetailsPage'
 import JobFormPage from './pages/JobFormPage'
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
+import EmployeeInProgressJobs from './pages/EmployeeInProgressJobs'
+import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
 
 function App() {
   return (
@@ -48,14 +51,30 @@ function App() {
             </EmployeeAuthGuard>
           }
         />
-        <Route
-          path="/employee/recommended-jobs"
-          element={
-            <EmployeeAuthGuard>
-              <EmployeeRecommendedJobs />
-            </EmployeeAuthGuard>
-          }
-        />
+          <Route
+            path="/employee/recommended-jobs"
+            element={
+              <EmployeeAuthGuard>
+                <EmployeeRecommendedJobs />
+              </EmployeeAuthGuard>
+            }
+          />
+          <Route
+            path="/employee/in-progress-jobs"
+            element={
+              <EmployeeAuthGuard>
+                <EmployeeInProgressJobs />
+              </EmployeeAuthGuard>
+            }
+          />
+          <Route
+            path="/employee/completed-jobs"
+            element={
+              <EmployeeAuthGuard>
+                <EmployeeCompletedJobs />
+              </EmployeeAuthGuard>
+            }
+          />
         <Route
           path="/employee/jobs/:jobId"
           element={
@@ -94,6 +113,14 @@ function App() {
           element={
             <EmployerAuthGuard>
               <EmployerJobDetailsPage />
+            </EmployerAuthGuard>
+          }
+        />
+        <Route
+          path="/employer/jobs/:jobId/responses"
+          element={
+            <EmployerAuthGuard>
+              <JobResponsesPage />
             </EmployerAuthGuard>
           }
         />
