@@ -1,11 +1,14 @@
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 interface EmployerJobDetails {
   _id?: string;
@@ -33,21 +36,69 @@ interface EmployerJobDetails {
 }
 
 export default function EmployerJobDetailsPage() {
-  const location = useLocation();
+  const { jobId } = useParams();
   const navigate = useNavigate();
-  const job = (location.state as { job?: EmployerJobDetails } | null)?.job;
+  const [job, setJob] = useState<EmployerJobDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!job) {
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      if (!jobId) {
+        setError("Job ID is required");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await api.get(`/v1/employer/jobs/${jobId}`);
+        setJob(response.data.job);
+      } catch (err: unknown) {
+        console.error('Error fetching job details:', err);
+        const errorMessage = err && typeof err === 'object' && 'response' in err 
+          ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+          : 'Failed to fetch job details';
+        setError(errorMessage || 'Failed to fetch job details');
+        toast.error('Failed to fetch job details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobDetails();
+  }, [jobId]);
+
+  if (loading) {
     return (
       <SidebarProvider defaultOpen={false}>
-        <AppSidebar variant="inset" />
+        <EmployerSidebar variant="inset" />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="w-full px-8 min-h-screen flex flex-col">
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold mb-2">Loading...</h2>
+                <p className="text-muted-foreground">Fetching job details...</p>
+              </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  }
+
+  if (error || !job) {
+    return (
+      <SidebarProvider defaultOpen={false}>
+        <EmployerSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
-                <p className="text-muted-foreground mb-4">Job not found or no data passed.</p>
+                <p className="text-muted-foreground mb-4">{error || "Job not found or no data passed."}</p>
                 <Button onClick={() => navigate("/employer/jobs")}>Back to Jobs</Button>
               </div>
             </div>
@@ -59,18 +110,30 @@ export default function EmployerJobDetailsPage() {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <AppSidebar variant="inset" />
+      <EmployerSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="m-4 w-full px-8 min-h-screen flex flex-col">
-          {/* Breadcrumb and Back Button */}
+          {/* Back Button and View Responses */}
           <div className="mt-4 mb-8 flex items-center justify-between">
-            <nav className="text-sm text-muted-foreground flex gap-2 items-center">
-              <Link to="/employer/jobs" className="hover:underline">Jobs</Link>
-              <span>/</span>
-              <span className="text-foreground font-semibold">{job.title}</span>
-            </nav>
-            <Button size="lg" onClick={() => navigate("/employer/jobs")}>Back to Jobs</Button>
+            <Link 
+              to="/employer/jobs" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Jobs
+            </Link>
+            <Button 
+              onClick={() => navigate(`/employer/jobs/${job._id}/responses`)}
+              className="flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              View Responses
+            </Button>
           </div>
 
           <div className="flex gap-8 items-start flex-1 min-h-0 h-0">
@@ -79,7 +142,14 @@ export default function EmployerJobDetailsPage() {
               <div className="space-y-6">
                 {/* Header */}
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+                  <div className="flex items-center gap-4 mb-2">
+                    <h1 className="text-3xl font-bold">{job.title}</h1>
+                    {job.numExpertsRequired && (
+                      <Badge variant="default" className="text-sm font-bold px-3 py-1">
+                        {job.numExpertsRequired} Expert{job.numExpertsRequired !== 1 ? 's' : ''} Required
+                      </Badge>
+                    )}
+                  </div>
                   <div className="flex gap-2 mb-4">
                     <Badge variant="outline">{job.location}</Badge>
                     <Badge variant={job.type === "FULL_TIME" ? "default" : "secondary"}>
@@ -205,10 +275,6 @@ export default function EmployerJobDetailsPage() {
                     <div>
                       <label className="font-medium text-muted-foreground">Created</label>
                       <p>{job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "-"}</p>
-                    </div>
-                    <div>
-                      <label className="font-medium text-muted-foreground">Number of Experts Required</label>
-                      <p>{job.numExpertsRequired ?? "-"}</p>
                     </div>
                   </div>
                 </div>

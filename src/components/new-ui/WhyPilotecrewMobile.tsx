@@ -15,22 +15,39 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
   useEffect(() => {
     const onScroll = () => {
       if (!sectionRef.current) return;
+      
+      const sectionRect = sectionRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Only process if section is in view
+      if (sectionRect.bottom < 0 || sectionRect.top > viewportHeight) return;
+      
       let found = 0;
+      let minDistance = Infinity;
+      
       for (let i = 0; i < cards.length; i++) {
         const card = cardRefs.current[i];
         if (card) {
           const rect = card.getBoundingClientRect();
-          if (rect.top + rect.height / 2 > 56) { // 56px for nav
+          const cardCenter = rect.top + rect.height / 2;
+          const viewportCenter = viewportHeight / 2;
+          const distance = Math.abs(cardCenter - viewportCenter);
+          
+          if (distance < minDistance) {
+            minDistance = distance;
             found = i;
-            break;
           }
         }
       }
-      setActiveIdx(found);
+      
+      if (found !== activeIdx) {
+        setActiveIdx(found);
+      }
     };
+    
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [cards.length]);
+  }, [cards.length, activeIdx]);
 
   // Update line height to match cards stack
   useEffect(() => {
@@ -44,17 +61,19 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     return () => window.removeEventListener("resize", updateLineHeight);
   }, [cards.length]);
 
-  // Compute butterfly top position: use card height and start of the line
+  // Compute butterfly top position: use actual card positions
   const getButterflyTop = () => {
-    if (!cardRefs.current[0]) return 0;
-    const cardHeight = cardRefs.current[0].offsetHeight;
-    if (!cardHeight) return 0;
-    // The offset from the top of the line to the center of the first card
-    const start = cardHeight / 2;
-    // The offset between each card center
-    const step = cardHeight + 32; // 32px gap-8
-    // Subtract half the butterfly's height (h-20 = 80px, so 40px)
-    return start + step * activeIdx - 40;
+    if (!cardRefs.current[activeIdx] || !cardsContainerRef.current) return 0;
+    
+    const activeCard = cardRefs.current[activeIdx];
+    
+    // Get the position of the active card relative to the container
+    const cardTop = activeCard.offsetTop;
+    const cardHeight = activeCard.offsetHeight;
+    const cardCenter = cardTop + cardHeight / 2;
+    
+    // Adjust for the butterfly's own height (80px = 40px offset)
+    return cardCenter - 40;
   };
 
   return (
@@ -65,7 +84,7 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     >
       {/* Heading above everything */}
       <div className="w-full">
-        <h2 className="font-eudoxus-bold text-4xl text-white mt-12 mb-15 text-center w-full">Why Pilotcrew.ai?</h2>
+        <h2 className="font-eudoxus-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mt-12 mb-15 text-center w-full">Why Pilotcrew.ai?</h2>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', position: 'relative' }} className="justify-center w-full flex">
           {/* Vertical line at left, starts after heading */}
           <div style={{ width: 40, height: lineHeight, position: 'relative' }}>

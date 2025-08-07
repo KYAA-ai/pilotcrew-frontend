@@ -4,6 +4,10 @@ import logo from "../../assets/logo.png";
 import menuIcon from "../../assets/menu_icon.png";
 import styles from "../../styles/GradientNavbar.module.css";
 
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Platform", to: "/platform" },
@@ -57,6 +61,7 @@ export default function FloatingNavbar({
                 <li key={link.label}>
                   <Link
                     to={link.to}
+                    onClick={link.label === "Home" ? scrollToTop : undefined}
                     className={`cursor-pointer font-eudoxus-medium font-medium transition px-2 py-1 rounded-sm text-white hover:opacity-80 ${
                       location.pathname === link.to || (link.to === "/" && location.pathname === "/platform")
                         ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
@@ -75,7 +80,7 @@ export default function FloatingNavbar({
       {/* MOBILE NAVBAR (wrapper classes come from parent) */}
       <div className={mobileWrapperClassName}>
         <div
-          className="sticky top-0 z-50 w-full flex items-center justify-between bg-[rgba(24,29,54,0.7)] px-6 py-2 border-b border-b-[3px] border-b-[#59A2FF] sm:border-b-[#005BCD] rounded-t-none rounded-b-none shadow-[0_2px_20px_rgba(0,46,103,0.45)]"
+          className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between bg-[rgba(24,29,54,0.95)] backdrop-blur-md px-6 py-3 border-b border-b-[3px] border-b-[#59A2FF]/80 sm:border-b-[#005BCD]/80 shadow-[0_2px_20px_rgba(0,46,103,0.45)]"
         >
           <div className="flex items-center gap-2">
             <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
@@ -93,7 +98,7 @@ export default function FloatingNavbar({
 
           {mobileOpen && (
             <div
-              className="absolute left-0 top-full w-full bg-black/70 flex flex-col z-40 animate-fadeIn"
+              className="absolute left-0 top-full w-full bg-black/90 flex flex-col z-40 animate-fadeIn"
             >
               <ul className="flex flex-col w-full">
                 {navLinks.map((link) => (
@@ -105,7 +110,12 @@ export default function FloatingNavbar({
                           ? "bg-[#e9a855] text-[#181d36] md:bg-transparent md:text-[#e9a855]"
                           : ""
                       }`}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => {
+                        setMobileOpen(false);
+                        if (link.label === "Home") {
+                          scrollToTop();
+                        }
+                      }}
                     >
                       {link.label}
                     </Link>

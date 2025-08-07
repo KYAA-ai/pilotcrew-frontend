@@ -20,10 +20,10 @@ export default function Footer() {
               className="w-10 h-10"
               style={{ filter: "drop-shadow(0 0 10px rgba(233,168,85,0.6))" }}
             />
-            <span className="font-eudoxus-medium text-2xl">Pilotcrew.ai</span>
+            <span className="font-eudoxus-medium text-xl sm:text-2xl">Pilotcrew.ai</span>
           </div>
           <div className="space-y-2">
-            <div className="text-lg font-inter">Subscribe to our newsletter!</div>
+            <div className="text-base sm:text-lg font-inter">Subscribe to our newsletter!</div>
             <form className="flex w-full md:w-3/4 h-12">
               <input
                 type="email"
@@ -47,8 +47,8 @@ export default function Footer() {
         {/* Right: Company links + social */}
         <div className="flex-1 space-y-6">
           <div>
-            <h3 className="font-eudoxus-bold text-xl mb-4">Company</h3>
-            <ul className="space-y-2 font-inter text-lg">
+            <h3 className="font-eudoxus-bold text-lg sm:text-xl mb-4">Company</h3>
+            <ul className="space-y-2 font-inter text-base sm:text-lg">
               {["About", "Contact Us", "Blog", "Terms", "Privacy"].map((item) => (
                 <a key={item} href="#" className="block hover:underline cursor-pointer transition-all duration-200">
                   {item}
@@ -65,7 +65,7 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="mt-8">
-        <div className="max-w-6xl mx-auto px-4 border-t border-white/20 pt-4 flex flex-col md:flex-row justify-between text-gray-500 text-sm space-y-2 md:space-y-0">
+        <div className="max-w-6xl mx-auto px-4 border-t border-white/20 pt-4 flex flex-col md:flex-row justify-between text-gray-500 text-xs sm:text-sm space-y-2 md:space-y-0">
           <span className="font-inter">Pilotcrew.ai</span>
           <span className="font-inter">
             Privacy Policy | Terms of Service | ISO 27001, GDPR compliant

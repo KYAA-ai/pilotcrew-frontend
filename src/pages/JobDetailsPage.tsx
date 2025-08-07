@@ -1,15 +1,15 @@
-import React from "react";
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { toast } from "sonner";
-import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/employer-header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { EmployeeHeader } from "@/components/employee-header";
+import { EmployeeSidebar } from "@/components/employee-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import MarkdownPreview from '@uiw/react-markdown-preview';
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import api from "@/lib/api";
 import { generateUUID } from "@/lib/utils";
+import React, { type CSSProperties } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 interface JobDetails {
   id: string;
@@ -40,13 +40,15 @@ export default function JobDetailsPage() {
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const jobFromState = (location.state as { job?: JobDetails } | null)?.job;
-  const [jobDetails, setJobDetails] = React.useState<JobDetails | null>(jobFromState || null);
-  const [loading, setLoading] = React.useState(!jobFromState);
+  const [jobDetails, setJobDetails] = React.useState<JobDetails | null>(null);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  // Get the source from URL params or default to 'apply'
+  const searchParams = new URLSearchParams(location.search);
+  const source = searchParams.get('source') || 'apply';
+  
   React.useEffect(() => {
-    if (jobDetails) return;
     const fetchJobDetails = async () => {
       if (!jobId) {
         setError("Job ID is required");
@@ -55,9 +57,10 @@ export default function JobDetailsPage() {
       }
       try {
         setLoading(true);
-        const response = await api.get(`/v1/jobs/${jobId}`);
-        setJobDetails(response.data);
-      } catch {
+        const response = await api.get(`/v1/employee/job/${jobId}`);
+        setJobDetails(response.data.job);
+      } catch (error) {
+        console.error("Failed to load job details:", error);
         setError("Failed to load job details");
         toast.error("Failed to load job details");
       } finally {
@@ -65,11 +68,27 @@ export default function JobDetailsPage() {
       }
     };
     fetchJobDetails();
-  }, [jobId, jobDetails]);
+  }, [jobId]);
 
   const handleApply = async () => {
-    const chatId = generateUUID();
-    navigate(`/employee/workflow?jobId=${jobId}&chatId=${chatId}`);
+    try {
+      const workflowResponse = await api.post("/v1/employee/workflow/startJobWorkflow", {
+        jobId: jobId
+      });
+      
+      if (workflowResponse.status.toString().startsWith("2")) {
+        const chatId = generateUUID();
+        navigate(`/employee/workflow?jobId=${jobId}&chatId=${chatId}`);
+      }
+    } catch (error) {
+      console.error("Failed to create job workflow:", error);
+      const errorStr = String(error);
+      if (errorStr.includes('400') || errorStr.includes('completed')) {
+        toast.error("Job is completed, cannot be started again.");
+      } else {
+        toast.error("Failed to start job. Please try again.");
+      }
+    }
   };
 
   if (loading) {
@@ -79,11 +98,11 @@ export default function JobDetailsPage() {
         style={{
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties}
+        } as CSSProperties}
       >
-        <AppSidebar variant="inset" />
+        <EmployeeSidebar variant="inset" />
         <SidebarInset>
-          <SiteHeader />
+          <EmployeeHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -104,11 +123,11 @@ export default function JobDetailsPage() {
         style={{
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties}
+        } as CSSProperties}
       >
-        <AppSidebar variant="inset" />
+        <EmployeeSidebar variant="inset" />
         <SidebarInset>
-          <SiteHeader />
+          <EmployeeHeader />
           <div className="w-full px-8 min-h-screen flex flex-col">
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -131,22 +150,30 @@ export default function JobDetailsPage() {
       style={{
         "--sidebar-width": "calc(var(--spacing) * 72)",
         "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
+      } as CSSProperties}
     >
-      <AppSidebar variant="inset" />
+      <EmployeeSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <EmployeeHeader />
         <div className="m-4 w-full px-8 min-h-screen flex flex-col">
           {/* Breadcrumb and Start Review Button */}
           <div className="mt-4 mb-8 flex items-center justify-between">
-            <nav className="text-sm text-muted-foreground flex gap-2 items-center">
-              <Link to="/employee/recommended-jobs" className="hover:underline">Jobs</Link>
-              <span>/</span>
-              <span className="text-foreground font-semibold">{jobDetails.title}</span>
-            </nav>
-            <Button size="lg" onClick={handleApply}>
-              Start Job
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+            >
+              ← Back
             </Button>
+            {source !== 'complete' && (
+              <Button 
+                size="lg" 
+                onClick={source === 'in-progress' ? () => navigate(`/employee/workflow?jobId=${jobId}&chatId=${generateUUID()}`) : handleApply}
+              >
+                {source === 'apply' ? 'Start Job' : source === 'in-progress' ? 'Continue Job' : 'Start Job'}
+              </Button>
+            )}
           </div>
 
           <div className="flex gap-8 items-start flex-1 min-h-0 h-0">
@@ -159,8 +186,8 @@ export default function JobDetailsPage() {
                   <p className="text-xl text-muted-foreground mb-4">{jobDetails.companyName}</p>
                   <div className="flex gap-2 mb-4">
                     <Badge variant="outline">{jobDetails.location}</Badge>
-                    <Badge variant={jobDetails.type === "FULL_TIME" ? "default" : "secondary"}>
-                      {jobDetails.type === "FULL_TIME" ? "Full Time" : jobDetails.type === "PART_TIME" ? "Part Time" : jobDetails.type}
+                    <Badge variant="default">
+                      {jobDetails.type === "API" ? "API" : jobDetails.type === "AIAGENT" ? "AI Agent" : jobDetails.type === "LLM" ? "LLM" : jobDetails.type}
                     </Badge>
                     <Badge variant={jobDetails.status === "PUBLISHED" ? "default" : "secondary"}>
                       {jobDetails.status === "PUBLISHED" ? "Published" : jobDetails.status === "DRAFT" ? "Draft" : jobDetails.status}

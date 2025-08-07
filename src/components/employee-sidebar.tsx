@@ -1,24 +1,26 @@
 import {
-  Search
+  Search,
+  CirclePlusFilled,
+  Bookmark
 } from "@/components/SimpleIcons"
 import * as React from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 import logo from '@/assets/logo.png'
 import {
-  Avatar,
-  AvatarFallback,
+    Avatar,
+    AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useProfile } from '@/contexts/ProfileContext'
 import { useState } from 'react'
@@ -42,6 +44,16 @@ const employeeNavItems = [
     title: "Recommended Jobs",
     url: "/employee/recommended-jobs",
     icon: Search,
+  },
+  {
+    title: "In Progress Jobs",
+    url: "/employee/in-progress-jobs",
+    icon: Bookmark,
+  },
+  {
+    title: "Completed Jobs",
+    url: "/employee/completed-jobs",
+    icon: CirclePlusFilled,
   },
   // {
   //   title: "My Applications",
@@ -96,12 +108,12 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 asChild
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
-                <a href="/" className="flex items-center">
+                <Link to="/" className="flex items-center">
                   <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
                   <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                     Pilotcrew.ai
                   </span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -138,12 +150,12 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   asChild
                   className="data-[slot=sidebar-menu-button]:!p-1.5"
                 >
-                  <a href="/" className="flex items-center">
+                  <Link to="/" className="flex items-center">
                     <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
                     <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                       Pilotcrew.ai
                     </span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -151,8 +163,8 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2 pt-1">
-              <SidebarMenu>
+            <SidebarGroupContent className="flex flex-col gap-4 pt-1">
+              <SidebarMenu className="space-y-2">
                 {employeeNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -160,10 +172,10 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                       tooltip={item.title}
                       className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                     >
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon className="size-3" />
                         <span className="text-sm">{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -181,10 +193,10 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   tooltip={item.title}
                   className={isActive(item.url) ? "bg-primary text-primary-foreground" : ""}
                 >
-                  <a href={item.url}>
+                  <Link to={item.url}>
                     <item.icon className="size-3" />
                     <span className="text-sm">{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

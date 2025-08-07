@@ -1,11 +1,11 @@
-import React from 'react';
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/employer-header";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import {
-  SidebarInset,
-  SidebarProvider,
+    SidebarInset,
+    SidebarProvider,
 } from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
+import React from 'react';
 
 interface EmployerProfile {
   id: string;
@@ -36,6 +36,7 @@ export function EmployerLayout({ children }: EmployerLayoutProps) {
 
   return (
     <SidebarProvider
+      defaultOpen={false}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -43,7 +44,7 @@ export function EmployerLayout({ children }: EmployerLayoutProps) {
         } as React.CSSProperties
       }
     >
-      <AppSidebar />
+      <EmployerSidebar collapsible="offcanvas" />
       <SidebarInset>
         <SiteHeader />
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">

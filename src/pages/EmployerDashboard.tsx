@@ -1,162 +1,167 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/employer-header"
-import { GenericDataTable } from "@/components/generic-data-table"
-import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-    SidebarInset,
-    SidebarProvider,
-} from "@/components/ui/sidebar"
-import { useProfile } from '@/contexts/ProfileContext'
-import { type ColumnDef } from "@tanstack/react-table"
-// import { useState } from "react"
-import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
+import { JobCardView } from "@/components/JobCardView";
+import { Button } from "@/components/ui/button";
+import { useProfile } from '@/contexts/ProfileContext';
+import api from "@/lib/api";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import {  Loader } from "@/components/SimpleIcons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { EmployerSidebar } from "@/components/employer-sidebar";
+import { SiteHeader } from "@/components/employer-header";
 
-export default function EmployerDashboard() {
-  const { profile } = useProfile()
-  // Removed unused selectedJob, isModalOpen, isDescriptionExpanded
+function JobsContent() {
   const navigate = useNavigate();
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleJobAction = (action: string, row: Record<string, unknown>) => {
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalJobs, setTotalJobs] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const fetchJobs = async (page = 1, size = pageSize) => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/v1/jobs?page=${page}&limit=${size}`);
+      setJobs(response.data.jobs || []);
+      setCurrentPage(response.data.pagination.currentPage);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalJobs(response.data.pagination.totalJobs);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      toast.error('Failed to fetch jobs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setLoading(true); // Also set loading to show skeleton
+    try {
+      const response = await api.get(`/v1/jobs?page=${currentPage}&limit=${pageSize}`);
+      setJobs(response.data.jobs || []);
+      setCurrentPage(response.data.pagination.currentPage);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalJobs(response.data.pagination.totalJobs);
+      toast.success('Jobs refreshed successfully');
+    } catch (error) {
+      console.error('Error refreshing jobs:', error);
+      toast.error('Failed to refresh jobs');
+    } finally {
+      setRefreshing(false);
+      setLoading(false); // Also reset loading
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchJobs(page);
+  };
+
+  const handlePageSizeChange = (newPageSize: string) => {
+    const size = parseInt(newPageSize);
+    setPageSize(size);
+    setCurrentPage(1); // Reset to first page when changing page size
+    fetchJobs(1, size);
+  };
+
+  const handleJobAction = (action: string, job: Record<string, unknown>) => {
     if (action === "view") {
-      navigate(`/employer/jobs/${row._id}`, { state: { job: row } });
+      navigate(`/employer/jobs/${job._id}`, { state: { job } });
     } else {
-      toast.info(`Job action: ${action} for ${row.title}`)
-      console.log(`Action: ${action}`, row)
+      toast.info(`Job action: ${action} for ${job.title}`)
+      console.log(`Action: ${action}`, job)
     }
   }
 
-  // Custom columns configuration for jobs
-  const jobColumns: ColumnDef<Record<string, unknown>>[] = [
-    {
-      accessorKey: "title",
-      header: "Job Title",
-      cell: ({ row }) => (
-        <div className="font-medium text-foreground">
-          {String(row.getValue("title"))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "companyName",
-      header: "Company",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {String(row.getValue("companyName"))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "location",
-      header: "Location",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-xs">
-          {String(row.getValue("location"))}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "type",
-      header: "Job Type",
-      cell: ({ row }) => {
-        const type = String(row.getValue("type"))
-        const variant = type === "FULL_TIME" ? "default" : "secondary"
-        const label = type === "FULL_TIME" ? "Full Time" : type === "PART_TIME" ? "Part Time" : type
-        
-        return (
-          <Badge variant={variant} className="text-xs">
-            {label}
-          </Badge>
-        )
-      },
-    },
-    // {
-    //   accessorKey: "salary",
-    //   header: "Salary Range",
-    //   cell: ({ row }) => {
-    //     const salary = row.getValue("salary") as { min: number; max: number; currency: string } | null
-    //     if (salary?.min && salary?.max) {
-    //       return (
-    //         <div className="text-sm font-medium text-default">
-    //           {salary.currency} {salary.min.toLocaleString()} - {salary.max.toLocaleString()}
-    //         </div>
-    //       )
-    //     }
-    //     return <span className="text-muted-foreground">-</span>
-    //   },
-    // },
-    {
-      accessorKey: "duration",
-      header: "Duration",
-      cell: ({ row }) => {
-        const duration = row.getValue("duration") as { value: number; unit: string } | null
-        if (duration?.value && duration?.unit) {
-          return (
-            <Badge variant="outline" className="text-xs">
-              {duration.value} {duration.unit.toLowerCase()}
-            </Badge>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = String(row.getValue("status"))
-        const variant = status === "PUBLISHED" ? "default" : "secondary"
-        const label = status === "PUBLISHED" ? "Published" : status === "DRAFT" ? "Draft" : status
-        
-        return (
-          <Badge variant={variant} className="text-xs">
-            {label}
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: "features",
-      header: "Features",
-      cell: ({ row }) => {
-        const features = row.getValue("features") as string[] | null
-        if (Array.isArray(features) && features.length > 0) {
-          return (
-            <div className="flex flex-wrap gap-1">
-              {features.slice(0, 2).map((feature, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {feature.length > 20 ? feature.substring(0, 20) + "..." : feature}
-                </Badge>
-              ))}
-              {features.length > 2 && (
-                <Badge variant="outline" className="text-xs">
-                  +{features.length - 2} more
-                </Badge>
-              )}
-            </div>
-          )
-        }
-        return <span className="text-muted-foreground">-</span>
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => handleJobAction("view", row.original)}
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+          {/* Header with title and action buttons */}
+          <div 
+            className="flex items-center justify-between mx-auto"
+            style={{ 
+              minWidth: "70vw"
+            }}
           >
-            View
-          </Button>
+            <h1 className="text-2xl font-bold">Jobs</h1>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="flex items-center gap-2"
+              >
+                <Loader className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
+              </Button>
+              <Link to="/employer/jobs/new">
+                <Button variant="outline" size="sm">
+                  Post a Job
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Job Cards View */}
+          <div 
+            className="mx-auto"
+            style={{ 
+              minWidth: "70vw"
+            }}
+          >
+            <JobCardView 
+              jobs={jobs} 
+              onJobAction={handleJobAction}
+              loading={loading}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalJobs={totalJobs}
+              onPageChange={handlePageChange}
+            />
+            {!loading && jobs.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
+              </div>
+            )}
+            
+            {/* Page Size Selector - Bottom */}
+            {!loading && jobs.length > 0 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <span className="text-sm text-muted-foreground">Show:</span>
+                <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
+                  <SelectTrigger className="w-20 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">per page</span>
+              </div>
+            )}
+          </div>
         </div>
-      ),
-    },
-  ]
+      </div>
+    </div>
+  );
+}
+
+export default function EmployerDashboard() {
+  const { profile } = useProfile();
 
   if (!profile) {
     return (
@@ -171,6 +176,7 @@ export default function EmployerDashboard() {
 
   return (
     <SidebarProvider
+      defaultOpen={false}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -178,41 +184,10 @@ export default function EmployerDashboard() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <EmployerSidebar/>
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              {/* <SectionCards /> */}
-              {/* <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div> */}
-              
-              {/* Example of GenericDataTable with custom columns */}
-              <GenericDataTable
-                endpoint="/v1/jobs"
-                dataKey="jobs"
-                title="Jobs"
-                enableSelection={true}
-                customColumns={jobColumns}
-                customActionElement={() => (
-                  <Link to="/employer/jobs/new">
-                    <Button variant="outline" size="sm">
-                      Post a Job
-                    </Button>
-                  </Link>
-                )}
-                onRowAction={handleJobAction}
-                actions={[
-                  { label: "View", value: "view" },
-                  { label: "Edit", value: "edit" },
-                  { label: "Delete", value: "delete", variant: "destructive" }
-                ]}
-              />
-            </div>
-          </div>
-        </div>
+        <JobsContent />
       </SidebarInset>
     </SidebarProvider>
   )

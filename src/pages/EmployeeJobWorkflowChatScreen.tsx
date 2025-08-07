@@ -7,10 +7,10 @@ export default function EmployeeJobWorkflowChatScreen() {
   const [searchParams, setSearchParams] = useSearchParams();
   const jobId = searchParams.get("jobId");
   let chatId = searchParams.get("chatId");
-  let changed = false;
+  let newChat = false;
 
   if (!chatId) {
-    changed = true;
+    newChat = true;
     chatId = generateUUID();
   }
 
@@ -18,11 +18,11 @@ export default function EmployeeJobWorkflowChatScreen() {
     return <div>Job ID is required</div>;
   }
 
-  if (changed)
+  if (newChat)
   setSearchParams({ jobId: jobId, chatId: chatId });
   
   return <div>
     <Navbar jobId={jobId} />
-    <Chat key={chatId} id={chatId} jobId={jobId}/>
+    <Chat key={chatId} id={chatId} jobId={jobId} newChat={newChat}/>
   </div>;
 }
