@@ -1,5 +1,7 @@
 import {
-    Search
+  Search,
+  CirclePlusFilled,
+  Bookmark
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
@@ -42,6 +44,16 @@ const employeeNavItems = [
     title: "Recommended Jobs",
     url: "/employee/recommended-jobs",
     icon: Search,
+  },
+  {
+    title: "In Progress Jobs",
+    url: "/employee/in-progress-jobs",
+    icon: Bookmark,
+  },
+  {
+    title: "Completed Jobs",
+    url: "/employee/completed-jobs",
+    icon: CirclePlusFilled,
   },
   // {
   //   title: "My Applications",
@@ -151,8 +163,8 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent className="flex flex-col gap-2 pt-1">
-              <SidebarMenu>
+            <SidebarGroupContent className="flex flex-col gap-4 pt-1">
+              <SidebarMenu className="space-y-2">
                 {employeeNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton

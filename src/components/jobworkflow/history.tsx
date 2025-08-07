@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-import { fetcher, getTitleFromChat } from "@/lib/utils";
+import { fetcher, getTitleFromChat, generateUUID } from "@/lib/utils";
+import apiClient from "@/lib/api";
 import type { Chat, User } from "../../lib/utils";
 
 import { PanelLeftIcon } from "lucide-react";
@@ -18,6 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -25,15 +32,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Input } from "../ui/input";
+
 import {
   Sheet,
   SheetContent
 } from "../ui/sheet";
 import {
   InfoIcon,
-  MoreHorizontalIcon,
   PencilEditIcon,
-  TrashIcon,
+  MoreHorizontalIcon,
 } from "./icons";
 
 export const History = ({ user, jobId }: { user: User | undefined, jobId: string }) => {
@@ -55,6 +63,9 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [renameChatId, setRenameChatId] = useState<string | null>(null);
+  const [newChatName, setNewChatName] = useState("");
 
   const navigate = useNavigate();
 
@@ -63,16 +74,14 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
   const currentChatId = currentParams.get('chatId');
 
   const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-      method: "DELETE",
-    });
+    const deletePromise = apiClient.delete(`/v1/employee/chat/${deleteId}`);
 
     toast.promise(deletePromise, {
       loading: "Deleting chat...",
       success: () => {
         mutate((history) => {
           if (history) {
-            return history.filter((h) => h.id !== id);
+            return history.filter((h) => h.id !== deleteId);
           }
         });
         return "Chat deleted successfully";
@@ -81,6 +90,25 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
     });
 
     setShowDeleteDialog(false);
+  };
+
+  const handleRename = async () => {
+    const renamePromise = apiClient.put(`/v1/employee/chat/${renameChatId}/rename`, {
+      title: newChatName
+    });
+
+    toast.promise(renamePromise, {
+      loading: "Renaming chat...",
+      success: () => {
+        // Refresh the chat history
+        mutate();
+        setShowRenameDialog(false);
+        setRenameChatId(null);
+        setNewChatName("");
+        return "Chat renamed successfully";
+      },
+      error: "Failed to rename chat",
+    });
   };
 
   return (
@@ -126,8 +154,26 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
               <Button
                 className="font-normal text-sm flex flex-row justify-between text-white mb-4"
                 asChild
-                onClick={() => {
-                  navigate(`/employee/workflow?jobId=${jobId}&chatId=`);
+                onClick={async () => {
+                  const createChatPromise = (async () => {
+                    const newChatId = generateUUID();
+                    await apiClient.post("/v1/employee/updateChatHistory", {
+                      id: newChatId,
+                      messages: []
+                    });
+                    
+                    // Navigate to the new chat
+                    navigate(`/employee/workflow?jobId=${jobId}&chatId=${newChatId}`);
+                    
+                    // Refresh the history
+                    mutate();
+                  })();
+
+                  toast.promise(createChatPromise, {
+                    loading: "Creating new chat...",
+                    success: "New chat created successfully",
+                    error: "Failed to create new chat",
+                  });
                 }}
               >
                 <span>
@@ -169,7 +215,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                     <Button
                       variant="ghost"
                       className={cx(
-                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 w-full transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
+                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 flex-1 transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
                       )}
                       asChild
                       onClick={() => {
@@ -183,28 +229,28 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                       </div>
                     </Button>
 
-                    <DropdownMenu modal={true}>
+                    <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="p-1 h-fit font-normal text-zinc-500 transition-none hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                          className="p-2 h-fit font-normal text-zinc-500 transition-none hover:bg-zinc-200 dark:hover:bg-zinc-700"
                           variant="ghost"
                         >
-                          <MoreHorizontalIcon />
+                          <MoreHorizontalIcon size={14} />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent side="left" className="z-[60]">
-                        <DropdownMenuItem asChild>
-                          <Button
-                            className="flex flex-row gap-2 items-center justify-start w-full h-fit font-normal p-1.5 rounded-sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setDeleteId(chat.id);
-                              setShowDeleteDialog(true);
-                            }}
-                          >
-                            <TrashIcon />
-                            <div>Delete</div>
-                          </Button>
+                        <DropdownMenuItem onClick={() => {
+                          setRenameChatId(chat.id);
+                          setNewChatName(getTitleFromChat(chat));
+                          setShowRenameDialog(true);
+                        }}>
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setDeleteId(chat.id);
+                          setShowDeleteDialog(true);
+                        }} className="text-red-600">
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -232,6 +278,37 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Rename Dialog */}
+      <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename chat</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="Enter new chat name"
+              value={newChatName}
+              onChange={(e) => setNewChatName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleRename();
+                }
+              }}
+            />
+            
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowRenameDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleRename}>
+                Rename
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

@@ -32,7 +32,8 @@ import api from "@/lib/api";
   function DataCard({ 
     item, 
     onAction,
-    actions = []
+    actions = [],
+    navigationUrl
   }: { 
     item: Record<string, unknown>
     onAction?: (action: string, row: Record<string, unknown>) => void
@@ -41,6 +42,7 @@ import api from "@/lib/api";
       value: string
       variant?: "default" | "destructive"
     }>
+    navigationUrl?: string
   }) {
     const navigate = useNavigate();
 
@@ -59,8 +61,9 @@ import api from "@/lib/api";
         className="group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-border/50 hover:border-border h-full flex flex-col cursor-pointer"
         onClick={() => {
           const id = item.id || item._id;
-          if (id) {
-            navigate(`/employee/jobs/${id}`, { state: { job: item } });
+          if (id && navigationUrl) {
+            const url = navigationUrl.replace('{id}', String(id));
+            navigate(url);
           }
         }}
         tabIndex={0}
@@ -105,7 +108,7 @@ import api from "@/lib/api";
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3 flex-1">
+                <CardContent className="space-y-3 flex-1">
           {description && (
             <CardDescription className="line-clamp-3 text-sm">
               {description}
@@ -208,6 +211,11 @@ import api from "@/lib/api";
      * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
      */
     requestBody?: Record<string, unknown>;
+    /**
+     * Navigation URL template. Use {id} as placeholder for the item ID.
+     * Example: "/employee/jobs/{id}?mode=view"
+     */
+    navigationUrl?: string;
   }
 
   export function RecommendedJobsView({
@@ -222,29 +230,39 @@ import api from "@/lib/api";
     customActionElement,
     searchBarElement,
     filterTagsElement,
-    requestBody
+    requestBody,
+    navigationUrl
   }: GenericDataTableProps) {
     const [data, setData] = React.useState<Record<string, unknown>[]>([])
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<string | null>(null)
     const [currentPage, setCurrentPage] = React.useState(1)
     const [pageSize] = React.useState(12)
+    const [totalPages, setTotalPages] = React.useState(1)
+    const [totalResults, setTotalResults] = React.useState(0)
 
-    const fetchData = React.useCallback(async () => {
+    const fetchData = React.useCallback(async (page = 1, size = pageSize) => {
       try {
         setLoading(true)
         setError(null)
         let response;
         if (requestBody) {
-          response = await api.post(endpoint, requestBody as Record<string, unknown>);
+          response = await api.post(`${endpoint}?page=${page}&limit=${size}`, requestBody as Record<string, unknown>);
         } else {
-          response = await api.get(endpoint);
+          response = await api.get(`${endpoint}?page=${page}&limit=${size}`);
         }
         const responseData = response.data
 
         // Extract data using the provided key
         const extractedData = responseData[dataKey] || responseData
         setData(Array.isArray(extractedData) ? extractedData : [])
+        
+        // Set pagination info if available
+        if (responseData.pagination) {
+          setCurrentPage(responseData.pagination.currentPage)
+          setTotalPages(responseData.pagination.totalPages)
+          setTotalResults(responseData.pagination.totalResults)
+        }
       } catch (err) {
         console.error('Error fetching data:', err)
         setError('Failed to fetch data')
@@ -252,18 +270,18 @@ import api from "@/lib/api";
       } finally {
         setLoading(false)
       }
-    }, [endpoint, dataKey, requestBody])
+    }, [endpoint, dataKey, requestBody, pageSize])
 
     // Fetch data from endpoint
     React.useEffect(() => {
       fetchData()
     }, [fetchData])
 
-    // Calculate pagination
-    const totalPages = Math.ceil(data.length / pageSize)
-    const startIndex = (currentPage - 1) * pageSize
-    const endIndex = startIndex + pageSize
-    const currentData = data.slice(startIndex, endIndex)
+    // Handle page changes
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+      fetchData(page, pageSize);
+    };
 
     return (
       <div className="w-full flex-col justify-start gap-6">
@@ -278,7 +296,7 @@ import api from "@/lib/api";
             <Button
               variant="outline"
               size="sm"
-              onClick={fetchData}
+              onClick={() => fetchData(currentPage, pageSize)}
               title="Refresh"
               className="flex items-center gap-1"
             >
@@ -304,15 +322,16 @@ import api from "@/lib/api";
             <div className="flex items-center justify-center p-8 text-destructive">
               <span>{error}</span>
             </div>
-          ) : currentData.length > 0 ? (
+          ) : data.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {currentData.map((item, index) => (
+                {data.map((item, index) => (
                   <DataCard
                     key={String(item._id || item.id || index)}
                     item={item}
                     onAction={onRowAction}
                     actions={actions}
+                    navigationUrl={navigationUrl}
                   />
                 ))}
               </div>
@@ -320,13 +339,13 @@ import api from "@/lib/api";
               {totalPages > 1 && (
                 <div className="flex items-center justify-between mt-8">
                   <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(endIndex, data.length)} of {data.length} results
+                    Showing {data.length} of {totalResults} results
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(1)}
+                      onClick={() => handlePageChange(1)}
                       disabled={currentPage === 1}
                     >
                       <ChevronsLeft className="h-4 w-4" />
@@ -334,7 +353,7 @@ import api from "@/lib/api";
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(currentPage - 1)}
+                      onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                     >
                       <ChevronLeft className="h-4 w-4" />
@@ -347,7 +366,7 @@ import api from "@/lib/api";
                             key={page}
                             variant={currentPage === page ? "default" : "outline"}
                             size="sm"
-                            onClick={() => setCurrentPage(page)}
+                            onClick={() => handlePageChange(page)}
                             className="w-8 h-8 p-0"
                           >
                             {page}
@@ -358,7 +377,7 @@ import api from "@/lib/api";
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(currentPage + 1)}
+                      onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -366,7 +385,7 @@ import api from "@/lib/api";
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(totalPages)}
+                      onClick={() => handlePageChange(totalPages)}
                       disabled={currentPage === totalPages}
                     >
                       <ChevronsRight className="h-4 w-4" />
@@ -382,7 +401,7 @@ import api from "@/lib/api";
                 <h3 className="text-lg font-semibold mb-2">No results found</h3>
                 <p className="text-sm">Try adjusting your search criteria or refresh the page.</p>
               </div>
-              <Button onClick={fetchData} variant="outline">
+              <Button onClick={() => fetchData(currentPage, pageSize)} variant="outline">
                 <RefreshIcon className="h-4 w-4 mr-2" />
                 Refresh
               </Button>

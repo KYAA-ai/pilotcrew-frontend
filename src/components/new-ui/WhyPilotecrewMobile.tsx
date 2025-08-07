@@ -66,7 +66,6 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     if (!cardRefs.current[activeIdx] || !cardsContainerRef.current) return 0;
     
     const activeCard = cardRefs.current[activeIdx];
-    const container = cardsContainerRef.current;
     
     // Get the position of the active card relative to the container
     const cardTop = activeCard.offsetTop;

@@ -125,20 +125,28 @@ export default function JobFormPage() {
         "--header-height": "calc(var(--spacing) * 12)",
       } as React.CSSProperties}
     >
-      <EmployerSidebar variant="inset" />
+      <EmployerSidebar variant="sidebar" />
       <SidebarInset>
         <SiteHeader />
-        <div className="w-full px-8 min-h-screen flex flex-col">
-          {/* Top bar: Breadcrumbs left, buttons right */}
-          <div className="flex items-center justify-between mb-2 mt-4 gap-4">
+        <div className="w-full px-8 py-6 min-h-screen flex flex-col">
+          {/* Top bar: Back button left, breadcrumbs right */}
+          <div className="flex items-center justify-between mb-6 gap-4">
+            <Link 
+              to="/employer/jobs" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Jobs
+            </Link>
             <nav className="text-sm text-muted-foreground flex gap-2 items-center">
               <Link to="/employer/jobs" className="hover:underline">Jobs</Link>
               <span>/</span>
               <span className="text-foreground font-semibold">Post a Job</span>
             </nav>
-            {/* Removed Post Job button from top right */}
           </div>
-          <h1 className="text-2xl font-bold">Post a Job</h1>
+          <h1 className="text-3xl font-bold mb-8">Post a Job</h1>
           {jobCreated ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center max-w-md">
