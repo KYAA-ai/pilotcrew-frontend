@@ -34,7 +34,7 @@ interface EmployerProfile {
 const employerNavItems = [
   {
     title: "Posted Jobs",
-    url: "/employer/dashboard",
+    url: "/employer/jobs",
     icon: Briefcase,
   },
   // {

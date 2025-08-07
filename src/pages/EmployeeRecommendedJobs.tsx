@@ -402,6 +402,7 @@ export default function EmployeeRecommendedJobs() {
           customColumns={jobColumns}
           onRowAction={handleJobAction}
           requestBody={tableRequestBody}
+          navigationUrl="/employee/jobs/{id}?source=recommended"
           searchBarElement={
             <SearchBar
               onSubmit={handleSearchSubmit}
@@ -466,8 +467,7 @@ export default function EmployeeRecommendedJobs() {
           }}
           actions={[
             { label: "View", value: "view" },
-            { label: "Apply", value: "apply" },
-            { label: "Save", value: "save" }
+            { label: "Bookmark", value: "save" }
           ]}
         />
       </div>

@@ -16,6 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 import apiClient from "@/lib/api";
@@ -59,11 +62,18 @@ export function Chat({
   const [evaluationQuestions, setEvaluationQuestions] = useState<EvaluationQuestion[]>([]);
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const { register, handleSubmit: handleFormSubmit, formState: { errors } } = useForm<EvaluationForm>();
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [newChatName, setNewChatName] = useState("");
+  const { register, handleSubmit: handleFormSubmit, formState: { errors }, getValues, setValue } = useForm<EvaluationForm>();
 
-  const getChatHistoryByChatId = (chatId: string) => {
-    const res = apiClient.get(`/v1/employee/getChatHistoryByChatId/${chatId}`);
-    return res.then((response) => response.data);
+  const getChatHistoryByChatId = async (chatId: string) => {
+    try {
+      const res = apiClient.get(`/v1/employee/getChatHistoryByChatId/${chatId}`);
+      const response = await res;
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch chat history:", error);
+    }
   }
 
   useEffect(() => {
@@ -158,7 +168,6 @@ export function Chat({
               }
               break;
             }
-            // decode and accumulate
             accumulated += decoder.decode(value, { stream: true });
           }
         })();
@@ -196,9 +205,11 @@ export function Chat({
         answer: data[question.id as keyof EvaluationForm],
       };
     });
-    // Handle form submission here
     try {
-      const res = await apiClient.post(`/v1/employee/workflow/${jobId}/submitJobWorkflow`, { submission: submission });
+      const res = await apiClient.post(`/v1/employee/workflow/submitJobWorkflow`, { 
+        submission: submission,
+        jobId: jobId
+      });
       if (!res.status.toString().startsWith("2")) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
@@ -206,13 +217,69 @@ export function Chat({
     } catch (error) {
       console.error("Failed to submit job:", error);
     }
-    // Show success modal
+  };
+
+  const onSaveProgress = async (data: EvaluationForm) => {
+    const submission = evaluationQuestions
+      .map((question: EvaluationQuestion) => {
+        const answer = data[question.id as keyof EvaluationForm];
+        return {
+          questionId: question.id,
+          question: question.question,
+          answer: answer,
+        };
+      })
+      .filter((item: { answer: string }) => item.answer && item.answer.trim() !== '');
+
+    try {
+      const res = await apiClient.post(`/v1/employee/workflow/saveJobWorkflowProgress`, { 
+        submission: submission,
+        jobId: jobId
+      });
+      if (!res.status.toString().startsWith("2")) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      setIsSplitScreen(false);
+      toast.success("Progress saved successfully");
+    } catch (error) {
+      console.error("Failed to save progress:", error);
+      toast.error("Failed to save progress");
+    }
   };
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);
-    navigate("/employee/recommended-jobs");
+    navigate("/employee/completed-jobs");
   };
+
+  const handleRenameChat = async () => {
+    try {
+      // TODO: Implement rename API call
+      console.log("Renaming chat to:", newChatName);
+      setShowRenameDialog(false);
+      setNewChatName("");
+    } catch (error) {
+      console.error("Failed to rename chat:", error);
+    }
+  };
+
+  const loadSavedFormData = async () => {
+    try {
+      const response = await apiClient.get(`/v1/employee/workflow/${jobId}/getSavedFormData`);
+      if (response.data.hasSavedData && response.data.formData) {
+        // Populate form fields with saved data
+        Object.entries(response.data.formData).forEach(([questionId, answer]) => {
+          setValue(questionId as keyof EvaluationForm, answer as string);
+        });
+      }
+    } catch (error) {
+      // Only show error toast for actual errors, not for "no saved data"
+      console.error("Error loading saved form data:", error);
+      toast.error("Failed to load saved form data");
+    }
+  };
+
+
 
   return (
     <div className={`flex h-dvh bg-background transition-all duration-500 ease-in-out ${isSplitScreen ? 'flex-row' : 'flex-row justify-center pb-4 md:pb-8 relative'}`}>
@@ -309,8 +376,15 @@ export function Chat({
                 </div>
               ))}
 
-              {/* Submit Button */}
-              <div className="pt-6 flex justify-center">
+              <div className="pt-6 flex justify-center gap-4">
+                <Button
+                  type="button"
+                  onClick={() => onSaveProgress(getValues())}
+                  variant="outline"
+                  className="w-1/3 bg-gray-700 hover:bg-gray-600 text-white font-eudoxus-medium py-6 px-6 rounded-xl transition-colors text-base border-gray-600"
+                >
+                  Save Progress
+                </Button>
                 <Button
                   type="submit"
                   className="w-1/3 bg-primary hover:bg-primary/90 text-white font-eudoxus-medium py-6 px-6 rounded-xl transition-colors text-base"
@@ -326,9 +400,9 @@ export function Chat({
       {/* Navigation Buttons - Only show when not in split screen */}
       {!isSplitScreen && (
         <>
-          {/* Go back to jobs page button */}
+          {/* Go back button */}
           <Button
-            onClick={() => navigate("/employee/recommended-jobs")}
+            onClick={() => navigate(-2)}
             className="absolute bottom-8 left-6 bg-primary hover:bg-primary/90 text-primary-foreground"
             size="sm"
           >
@@ -337,7 +411,11 @@ export function Chat({
 
           {/* Submit a Response button */}
           <Button
-            onClick={() => setIsSplitScreen(true)}
+            onClick={async () => {
+              setIsSplitScreen(true);
+              // Load saved form data when opening the split screen
+              setTimeout(() => loadSavedFormData(), 100);
+            }}
             className="absolute bottom-8 right-6 bg-blue-400 hover:bg-blue-500 text-white"
             size="sm"
           >
@@ -366,8 +444,39 @@ export function Chat({
               onClick={handleCloseModal}
               className="w-full sm:w-auto px-8"
             >
-              Continue to Jobs
+              Continue to Completed Jobs
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Chat Dialog */}
+      <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename chat</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="Enter new chat name"
+              value={newChatName}
+              onChange={(e) => setNewChatName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleRenameChat();
+                }
+              }}
+            />
+            
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowRenameDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleRenameChat}>
+                Rename
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
