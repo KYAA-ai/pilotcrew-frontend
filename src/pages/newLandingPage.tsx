@@ -78,8 +78,8 @@ export default function NewLandingPage() {
             <source src={backdropVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          {/* Black blur border at the bottom of the video */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20"></div>
+          {/* Video border at the bottom of the video */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#040713]/90 via-[#040713]/50 to-transparent z-20"></div>
         </div>
 
         {/* Text Overlay */}

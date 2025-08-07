@@ -15,39 +15,22 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
   useEffect(() => {
     const onScroll = () => {
       if (!sectionRef.current) return;
-      
-      const sectionRect = sectionRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      
-      // Only process if section is in view
-      if (sectionRect.bottom < 0 || sectionRect.top > viewportHeight) return;
-      
       let found = 0;
-      let minDistance = Infinity;
-      
       for (let i = 0; i < cards.length; i++) {
         const card = cardRefs.current[i];
         if (card) {
           const rect = card.getBoundingClientRect();
-          const cardCenter = rect.top + rect.height / 2;
-          const viewportCenter = viewportHeight / 2;
-          const distance = Math.abs(cardCenter - viewportCenter);
-          
-          if (distance < minDistance) {
-            minDistance = distance;
+          if (rect.top + rect.height / 2 > 56) { // 56px for nav
             found = i;
+            break;
           }
         }
       }
-      
-      if (found !== activeIdx) {
-        setActiveIdx(found);
-      }
+      setActiveIdx(found);
     };
-    
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [cards.length, activeIdx]);
+  }, [cards.length]);
 
   // Update line height to match cards stack
   useEffect(() => {
@@ -61,20 +44,17 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     return () => window.removeEventListener("resize", updateLineHeight);
   }, [cards.length]);
 
-  // Compute butterfly top position: use actual card positions
+  // Compute butterfly top position: use card height and start of the line
   const getButterflyTop = () => {
-    if (!cardRefs.current[activeIdx] || !cardsContainerRef.current) return 0;
-    
-    const activeCard = cardRefs.current[activeIdx];
-    const container = cardsContainerRef.current;
-    
-    // Get the position of the active card relative to the container
-    const cardTop = activeCard.offsetTop;
-    const cardHeight = activeCard.offsetHeight;
-    const cardCenter = cardTop + cardHeight / 2;
-    
-    // Adjust for the butterfly's own height (80px = 40px offset)
-    return cardCenter - 40;
+    if (!cardRefs.current[0]) return 0;
+    const cardHeight = cardRefs.current[0].offsetHeight;
+    if (!cardHeight) return 0;
+    // The offset from the top of the line to the center of the first card
+    const start = cardHeight / 2;
+    // The offset between each card center
+    const step = cardHeight + 32; // 32px gap-8
+    // Subtract half the butterfly's height (h-20 = 80px, so 40px)
+    return start + step * activeIdx - 40;
   };
 
   return (
