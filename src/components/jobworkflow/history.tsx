@@ -167,11 +167,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                       jobId,
                       messages: []
                     });
-                    
-                    // Navigate to the new chat
                     navigate(`/employee/workflow?jobId=${jobId}&chatId=${newChatId}`);
-                    
-                    // Refresh the history
                     mutate();
                   })();
 
