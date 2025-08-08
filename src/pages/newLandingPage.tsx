@@ -49,7 +49,7 @@ export default function NewLandingPage() {
       />
 
              {/* Hero Section with Video Background and Text Overlay */}
-       <div className="relative w-full h-[90vh] flex items-center justify-center">
+       <div className="relative w-full h-[90vh] xl:h-screen flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}
