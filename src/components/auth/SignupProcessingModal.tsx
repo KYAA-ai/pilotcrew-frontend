@@ -17,14 +17,14 @@ interface SignupProcessingModalProps {
 }
 
 
-export function SignupProcessingModal({ 
-  isOpen, 
+export function SignupProcessingModal({
+  isOpen,
   stage,
   processing,
   categories,
   selectedCategories: initialSelectedCategories,
   onCategoriesConfirm,
-  onComplete, 
+  onComplete,
   onClose,
   hasError = false,
   errorMessage
@@ -65,11 +65,7 @@ export function SignupProcessingModal({
       <DialogContent className="max-w-xl p-0 overflow-hidden">
         <div className="relative">
           {/* Background gradient */}
-          <div className={`absolute inset-0 ${
-            hasError 
-              ? 'bg-gradient-to-br from-destructive/10 via-warning/10 to-yellow-50' 
-              : 'bg-gradient-to-br from-primary/5 via-secondary/5 to-muted'
-          }`} />
+          <div className={`absolute inset-0 ${hasError ? 'bg-muted' : 'bg-gradient-to-br from-primary/5 via-secondary/5 to-muted'}`} />
           {/* Content */}
           <div className="relative p-8">
             {/* Header */}
@@ -83,18 +79,18 @@ export function SignupProcessingModal({
             </div>
             {/* Error state */}
             {hasError && (
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 p-6">
                 <div className="mb-4">
-                  <AlertCircle className="w-16 h-16 text-destructive mx-auto" />
+                  <AlertCircle className="w-16 h-16 text-primary mx-auto" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                   Registration Failed
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   {errorMessage || 'An error occurred during registration. Please try again.'}
                 </p>
                 <div className="flex gap-3">
-                  <Button 
+                  <Button
                     onClick={onClose}
                     variant="outline"
                     className="flex-1"
@@ -169,7 +165,7 @@ export function SignupProcessingModal({
                     <p className="text-muted-foreground mb-6">
                       Your profile is ready. Welcome to Pilotcrew.ai!
                     </p>
-                    <Button 
+                    <Button
                       onClick={handleContinueClick}
                       disabled={processing || isSubmitting}
                       className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary"
@@ -193,11 +189,10 @@ export function SignupProcessingModal({
                 {[1, 2].map((step) => (
                   <div
                     key={step}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      step === stage 
-                        ? 'bg-primary animate-pulse' 
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${step === stage
+                        ? 'bg-primary animate-pulse'
                         : 'bg-muted'
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
