@@ -115,23 +115,9 @@ export default function NewLandingPage() {
         
         <div className="flex justify-center">
           <div className="relative w-full max-w-4xl overflow-visible">
-            {/* Light blue radial blur sphere behind the image */}
-            <div 
-              className="absolute rounded-lg"
-              style={{
-                background: 'radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 30%, rgba(59, 130, 246, 0.1) 60%, transparent 80%)',
-                filter: 'blur(60px)',
-                transform: 'translateY(20%) scale(2.5)',
-                zIndex: -1,
-                width: '300%',
-                height: '300%',
-                left: '-100%',
-                top: '-100%',
-                pointerEvents: 'none'
-              }}
-            ></div>
             
-            {/* Wrapper for video with perspective transform */}
+            
+                        {/* Wrapper for video with perspective transform */}
             <div 
               className="relative"
               style={{
@@ -139,22 +125,68 @@ export default function NewLandingPage() {
                 transformOrigin: 'center top'
               }}
             >
-              <video
-                src={screenPlaceholder}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto object-contain rounded-lg relative z-10"
-                draggable={false}
-              />
+              {/* Black border with blue radial blur at top of video */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1 border-b"
+                style={{
+                  background: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.2) 100%)',
+                  borderColor: '#000000',
+                  filter: 'blur(10px)',
+                  zIndex: 15
+                }}
+              ></div>
+              {/* Radial blur overlay that progresses downwards from top */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-5"
+                style={{
+                  background: 'radial-gradient(ellipse at center top, rgba(11, 79, 167, 0.8) 0%, rgba(11, 79, 167, 0.5) 30%, rgba(11, 79, 167, 0.3) 50%, rgba(11, 79, 167, 0.1) 80%, transparent 100%)',
+                  filter: 'blur(20px)',
+                  zIndex: 12
+                }}
+              ></div>
+               
+              <div className="rounded-3xl overflow-hidden">
+                <div className="relative">
+                  <video
+                    src={screenPlaceholder}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto object-contain relative z-10"
+                    style={{ 
+                      clipPath: 'inset(3px 0 0 0)'
+                    }}
+                    draggable={false}
+                  />
+                </div>
+              </div>
+              {/* Black border with blue radial blur at bottom of video */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-1 border-t"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.2) 100%)',
+                  borderColor: '#000000',
+                  filter: 'blur(10px)',
+                  zIndex: 15
+                }}
+              ></div>
+              {/* Radial blur overlay that progresses upwards */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-5"
+                style={{
+                  background: 'radial-gradient(ellipse at center bottom, rgba(11, 79, 167, 0.8) 0%, rgba(11, 79, 167, 0.5) 30%, rgba(11, 79, 167, 0.3) 50%, rgba(11, 79, 167, 0.1) 80%, transparent 100%)',
+                  filter: 'blur(20px)',
+                  zIndex: 12
+                }}
+              ></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Demo Text Section */}
-      <div className="w-full flex flex-col items-center mt-8 sm:mt-12 md:mt-16">
+      <div className="w-full flex flex-col items-center mt-28 sm:mt-36 md:mt-40">
         <h2 className="text-center font-eudoxus-bold text-2xl sm:text-3xl md:text-4xl text-white">
           Explore Agents within seconds using our Agentic Search!
         </h2>
