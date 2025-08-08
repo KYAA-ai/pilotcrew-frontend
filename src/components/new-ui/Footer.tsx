@@ -13,11 +13,11 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col gap-10 md:flex-row md:justify-between md:items-start md:gap-8">
         {/* Left: Logo + Newsletter */}
         <div className="flex-1 space-y-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <img
               src={butterfly}
               alt="Pilotcrew.ai Logo"
-              className="w-10 h-10"
+              className="w-14 h-14"
               style={{ filter: "drop-shadow(0 0 10px rgba(233,168,85,0.6))" }}
             />
             <span className="font-eudoxus-medium text-xl sm:text-2xl">Pilotcrew.ai</span>

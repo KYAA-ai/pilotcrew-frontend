@@ -141,7 +141,7 @@ export default function WhyPilotcrew({ cards }: { cards: Card[] }) {
         <motion.img
           src={butterfly}
           alt="Butterfly"
-          className="absolute top-1/2 w-16 h-16"
+          className="absolute top-1/2 w-20 h-20"
           animate={{ left: `${butterflyLeft}%` }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           style={{ x: "-50%", y: "-50%" }}
