@@ -49,7 +49,7 @@ export default function NewLandingPage() {
       />
 
              {/* Hero Section with Video Background and Text Overlay */}
-       <div className="relative w-full h-[80vh] flex items-center justify-center">
+       <div className="relative w-full h-[90vh] flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}
@@ -78,8 +78,7 @@ export default function NewLandingPage() {
             <source src={backdropVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          {/* Video border at the bottom of the video */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#040713]/90 via-[#040713]/50 to-transparent z-20"></div>
+
         </div>
 
         {/* Text Overlay */}
@@ -337,7 +336,10 @@ export default function NewLandingPage() {
             src={butterfly}
             alt="Butterfly"
             className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
-            style={{ filter: "drop-shadow(0 0 15px rgba(233,168,85,0.6))" }}
+            style={{ 
+              filter: "drop-shadow(0 0 15px rgba(233,168,85,0.6)) drop-shadow(0 4px 8px rgba(0,0,0,0.8))",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.8)"
+            }}
           />
         </div>
       </section>

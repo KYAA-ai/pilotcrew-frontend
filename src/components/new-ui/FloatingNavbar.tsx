@@ -50,7 +50,14 @@ export default function FloatingNavbar({
           }}
         >
           <div className="flex items-center gap-0.5 z-10">
-            <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
+            <div className="relative">
+              {/* Golden blur sphere behind logo */}
+              <div 
+                className="absolute top-1/2 left-1/2 w-6 h-6 rounded-full bg-[#e9a855] blur-md opacity-60 transform -translate-x-1/2 -translate-y-1/2"
+                style={{ zIndex: -1 }}
+              />
+              <img src={logo} alt="Logo" className="w-8 h-8 m-2 object-contain relative z-10" />
+            </div>
             <span className="font-eudoxus-medium text-white text-xl tracking-wide">
               Pilotcrew.ai
             </span>
@@ -83,7 +90,7 @@ export default function FloatingNavbar({
           className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between bg-[rgba(24,29,54,0.95)] backdrop-blur-md px-6 py-3 border-b border-b-[3px] border-b-[#59A2FF]/80 sm:border-b-[#005BCD]/80 shadow-[0_2px_20px_rgba(0,46,103,0.45)]"
         >
           <div className="flex items-center">
-            <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
+            <img src={logo} alt="Logo" className="w-18 h-18 object-contain" />
             <span className="font-eudoxus-medium text-white text-xl tracking-wide">
               Pilotcrew.ai
             </span>

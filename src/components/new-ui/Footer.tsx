@@ -17,7 +17,7 @@ export default function Footer() {
             <img
               src={butterfly}
               alt="Pilotcrew.ai Logo"
-              className="w-14 h-14"
+              className="w-10 h-10 mr-2"
               style={{ filter: "drop-shadow(0 0 10px rgba(233,168,85,0.6))" }}
             />
             <span className="font-eudoxus-medium text-xl sm:text-2xl">Pilotcrew.ai</span>
