@@ -14,7 +14,7 @@ export default function Header() {
         className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
         onClick={handleLogoClick}
       >
-        <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+        <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
         <span className="font-eudoxus-medium text-white text-xl tracking-wide">
           Pilotcrew.ai
         </span>

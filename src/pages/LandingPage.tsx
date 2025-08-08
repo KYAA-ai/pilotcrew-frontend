@@ -12,7 +12,7 @@ export default function LandingPage() {
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center text-center px-4">
         <div className="mb-3">
-          <img src={logo} alt="Pilotcrew.ai Logo" className="w-20 h-20 md:w-24 md:h-24 mx-auto" />
+          <img src={logo} alt="Pilotcrew.ai Logo" className="w-16 h-16 mb-4 md:w-18 md:h-18 mx-auto" />
         </div>
         <h1 className="text-4xl md:text-6xl font-eudoxus-bold mb-4">
           Your entire hiring journey.<br />
