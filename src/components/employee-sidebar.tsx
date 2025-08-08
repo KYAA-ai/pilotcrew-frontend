@@ -1,7 +1,7 @@
 import {
-  Search,
-  CirclePlusFilled,
-  Bookmark
+    Bookmark,
+    CirclePlusFilled,
+    Search
 } from "@/components/SimpleIcons"
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
@@ -109,7 +109,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
                 <Link to="/" className="flex items-center">
-                  <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                  <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
                   <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                     Pilotcrew.ai
                   </span>
@@ -151,7 +151,7 @@ export function EmployeeSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   className="data-[slot=sidebar-menu-button]:!p-1.5"
                 >
                   <Link to="/" className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                    <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
                     <span className="font-eudoxus-medium text-white text-lg tracking-wide">
                       Pilotcrew.ai
                     </span>
