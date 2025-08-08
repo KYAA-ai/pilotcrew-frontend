@@ -336,10 +336,6 @@ export default function NewLandingPage() {
             src={butterfly}
             alt="Butterfly"
             className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
-            style={{ 
-              filter: "drop-shadow(0 0 15px rgba(233,168,85,0.6)) drop-shadow(0 4px 8px rgba(0,0,0,0.8))",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.8)"
-            }}
           />
         </div>
       </section>
