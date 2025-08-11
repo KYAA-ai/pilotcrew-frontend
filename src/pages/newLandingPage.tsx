@@ -84,7 +84,7 @@ export default function NewLandingPage() {
         {/* Text Overlay */}
         <div className="relative z-10 flex flex-col items-center px-4 sm:px-6 md:px-8 text-center">
           <h1 className="font-eudoxus-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white leading-tight max-w-3xl sm:max-w-4xl md:max-w-5xl">
-            Validate Your AI with{" "}
+            Validate Your AI Agent with{" "}
             <span className="text-[#e9a855] font-eudoxus-extrabold">
               Real Human Expertise.
             </span>
