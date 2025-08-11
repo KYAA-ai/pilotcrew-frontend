@@ -21,13 +21,13 @@ export function useLogout() {
       clearProfile();
       toast.success('Logged out successfully');
       window.location.href = '/';
-      //navigate('/', { replace: true });
+      // navigate('/platform');
     } catch (error) {
       console.error('Logout error:', error);
       clearProfile();
       toast.error('Logout failed, but you have been signed out locally');
       window.location.href = '/';
-      //navigate('/', { replace: true });
+      // navigate('/platform');
     }
   };
 

@@ -457,7 +457,6 @@ export default function EmployeeRecommendedJobs() {
           }}
           actions={[
             { label: "View", value: "view" },
-            { label: "Bookmark", value: "save" }
           ]}
         />
       </div>

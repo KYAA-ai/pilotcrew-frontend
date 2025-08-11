@@ -45,21 +45,6 @@ const employeeSignupFields: FormFieldWithFiles[] = [
     },
   },
   {
-    name: "phone",
-    label: "Phone Number",
-    type: "text",
-    required: false,
-    placeholder: "Enter your phone number",
-    validation: {
-      required: false,
-      custom: (value) => {
-        if (!value.trim()) return null;
-        const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
-        return phoneRegex.test(value.replace(/[\s\-()]/g, '')) ? null : "Please enter a valid phone number";
-      },
-    },
-  },
-  {
     name: "resume",
     label: "Resume/CV",
     type: "file",
@@ -69,33 +54,6 @@ const employeeSignupFields: FormFieldWithFiles[] = [
       required: true,
       fileSize: 5, // 5MB max
       fileTypes: ['.pdf', '.doc', '.docx', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    },
-  },
-  {
-    name: "skills",
-    label: "Skills",
-    type: "textarea",
-    required: false,
-    placeholder: "Enter your skills (e.g., JavaScript, React, Node.js, Python...)",
-    validation: {
-      required: false,
-      minLength: 10,
-    },
-  },
-  {
-    name: "experience",
-    label: "Years of Experience",
-    type: "select",
-    required: false,
-    options: [
-      { value: "0-1", label: "0-1 years" },
-      { value: "1-3", label: "1-3 years" },
-      { value: "3-5", label: "3-5 years" },
-      { value: "5-10", label: "5-10 years" },
-      { value: "10+", label: "10+ years" },
-    ],
-    validation: {
-      required: false,
     },
   },
 ];
@@ -169,7 +127,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
       });
       setEmployeeId(response.data?.employee?.id);
       setCategories(response.data?.employee?.categories || []);
-      setSelectedCategories(response.data?.employee?.recommendedCategories || []);
+      setSelectedCategories([]);
       setProcessing(false);
     } catch (error) {
       let errorMessage = "Registration failed. Please try again.";
