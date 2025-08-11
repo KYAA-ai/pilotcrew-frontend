@@ -206,7 +206,7 @@ export function Chat({
       };
     });
     try {
-      const res = await apiClient.post(`/v1/employee/workflow/submitJobWorkflow`, { 
+      const res = await apiClient.post(`/v1/employee/workflow/submitJobWorkflow`, {
         submission: submission,
         jobId: jobId
       });
@@ -232,7 +232,7 @@ export function Chat({
       .filter((item: { answer: string }) => item.answer && item.answer.trim() !== '');
 
     try {
-      const res = await apiClient.post(`/v1/employee/workflow/saveJobWorkflowProgress`, { 
+      const res = await apiClient.post(`/v1/employee/workflow/saveJobWorkflowProgress`, {
         submission: submission,
         jobId: jobId
       });
@@ -347,7 +347,7 @@ export function Chat({
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
-          
+
           {/* Agentics Evaluation Form */}
           <div className="flex-1 overflow-y-auto p-12 mx-8 mt-4 mb-8">
             <form onSubmit={handleFormSubmit(onSubmitForm)} className="space-y-8 font-sans">
@@ -362,12 +362,12 @@ export function Chat({
                   <label className="block text-base font-eudoxus-medium text-white">
                     {index + 1}. {questionData.question}
                   </label>
-                                      <textarea
-                      {...register(questionData.id as keyof EvaluationForm, { required: "This field is required" })}
-                      className="w-full p-4 font-eudoxus-medium bg-gray-700 border border-gray-600 rounded-3xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      rows={3}
-                      placeholder={questionData.placeholder}
-                    />
+                  <textarea
+                    {...register(questionData.id as keyof EvaluationForm, { required: "This field is required" })}
+                    className="w-full p-4 font-eudoxus-medium bg-gray-700 border border-gray-600 rounded-3xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={3}
+                    placeholder={questionData.placeholder}
+                  />
                   {errors[questionData.id as keyof EvaluationForm] && (
                     <p className="text-red-400 text-sm">
                       {errors[questionData.id as keyof EvaluationForm]?.message}
@@ -380,8 +380,7 @@ export function Chat({
                 <Button
                   type="button"
                   onClick={() => onSaveProgress(getValues())}
-                  variant="outline"
-                  className="w-1/3 bg-gray-700 hover:bg-gray-600 text-white font-eudoxus-medium py-6 px-6 rounded-xl transition-colors text-base border-gray-600"
+                  className="w-1/3 bg-primary hover:bg-primary/90 text-white font-eudoxus-medium py-6 px-6 rounded-xl transition-colors text-base"
                 >
                   Save Progress
                 </Button>
@@ -396,7 +395,7 @@ export function Chat({
           </div>
         </div>
       </div>
-      
+
       {/* Navigation Buttons - Only show when not in split screen */}
       {!isSplitScreen && (
         <>
@@ -432,15 +431,15 @@ export function Chat({
               Evaluation submitted successfully!
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="flex flex-col items-center space-y-6 py-6">
             <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
                 Thank you for your feedback. Your evaluation has been recorded.
               </p>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={handleCloseModal}
               className="w-full sm:w-auto px-8"
             >
@@ -456,7 +455,7 @@ export function Chat({
           <DialogHeader>
             <DialogTitle>Rename chat</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <Input
               placeholder="Enter new chat name"
@@ -468,7 +467,7 @@ export function Chat({
                 }
               }}
             />
-            
+
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setShowRenameDialog(false)}>
                 Cancel
