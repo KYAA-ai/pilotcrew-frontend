@@ -52,7 +52,7 @@ const employeeSignupFields: FormFieldWithFiles[] = [
     accept: ".pdf,.doc,.docx",
     validation: {
       required: true,
-      fileSize: 5, // 5MB max
+      fileSize: 2, // 2MB max
       fileTypes: ['.pdf', '.doc', '.docx', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     },
   },
@@ -66,18 +66,26 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [processing, setProcessing] = useState(false);
+  const [currentRetry, setCurrentRetry] = useState(0);
+  const [maxRetries] = useState(20);
 
   const startPollingLlamaExtraction = (employeeId: string) => {
     let isActive = true;
     let retries = 0;
-    const maxRetries = 3;
+    const maxRetries = 10;
+    
+    // Reset retry counter when starting
+    setCurrentRetry(0);
+    
     const poll = async () => {
       try {
+        setCurrentRetry(retries);
         const response = await apiClient.put(`/v1/employee/llama-extraction-status`, { employeeId });
         const status = response.data.status;
         if (!isActive) return;
         if (status === "SUCCESS") {
           setProcessing(false);
+          setCurrentRetry(maxRetries); // Set to 100% completion
           console.log("Navigating to /employee/recommended-jobs after registration SUCCESS");
           onSuccess?.();
           toast.success("Registration successful!");
@@ -178,6 +186,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
     setCategories([]);
     setSelectedCategories([]);
     setProcessing(false);
+    setCurrentRetry(0);
   };
 
   const handleComplete = () => {
@@ -208,6 +217,8 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         onClose={handleModalClose}
         hasError={!!registrationError}
         errorMessage={registrationError}
+        currentRetry={currentRetry}
+        maxRetries={maxRetries}
       />
     </>
   );

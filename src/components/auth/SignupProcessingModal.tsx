@@ -14,6 +14,8 @@ interface SignupProcessingModalProps {
   onClose?: () => void;
   hasError?: boolean;
   errorMessage?: string | null;
+  currentRetry?: number;
+  maxRetries?: number;
 }
 
 
@@ -27,7 +29,9 @@ export function SignupProcessingModal({
   onComplete,
   onClose,
   hasError = false,
-  errorMessage
+  errorMessage,
+  currentRetry = 0,
+  maxRetries = 10
 }: SignupProcessingModalProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialSelectedCategories || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,24 +40,15 @@ export function SignupProcessingModal({
     setSelectedCategories(initialSelectedCategories || []);
   }, [initialSelectedCategories]);
 
-  // Progress bar animation for stage 2 only
+  // Progress bar based on retries for stage 2
   useEffect(() => {
     if (stage === 2 && processing) {
-      setProgressValue(0);
-      const startTime = Date.now();
-      const estimatedDuration = 30000; // 30 seconds estimated
-
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min((elapsed / estimatedDuration) * 100, 95);
-        setProgressValue(progress);
-      }, 500);
-
-      return () => clearInterval(interval);
+      const progress = Math.min((currentRetry / maxRetries) * 100, 95);
+      setProgressValue(progress);
     } else if (stage === 2 && !processing) {
       setProgressValue(100);
     }
-  }, [stage, processing]);
+  }, [stage, processing, currentRetry, maxRetries]);
 
   const handleCategoryToggle = (category: string) => {
     if (selectedCategories.includes(category)) {
@@ -187,7 +182,7 @@ export function SignupProcessingModal({
                     {/* Progress Bar */}
                     <div className="w-full max-w-md">
                       <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                        <span>Processing...</span>
+                        <span>Processing... (Attempt {currentRetry + 1}/{maxRetries})</span>
                         <span>{Math.min(Math.round(progressValue), 100)}%</span>
                       </div>
                       <div className="w-full bg-secondary rounded-full h-3">
