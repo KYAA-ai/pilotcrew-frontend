@@ -182,7 +182,7 @@ export function SignupProcessingModal({
                     {/* Progress Bar */}
                     <div className="w-full max-w-md">
                       <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                        <span>Processing... (Attempt {currentRetry + 1}/{maxRetries})</span>
+                        <span>Processing....</span>
                         <span>{Math.min(Math.round(progressValue), 100)}%</span>
                       </div>
                       <div className="w-full bg-secondary rounded-full h-3">

@@ -67,7 +67,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [processing, setProcessing] = useState(false);
   const [currentRetry, setCurrentRetry] = useState(0);
-  const [maxRetries] = useState(5);
+  const [maxRetries] = useState(10);
 
   const startPollingLlamaExtraction = (employeeId: string) => {
     let isActive = true;
