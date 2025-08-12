@@ -69,16 +69,25 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   const [currentRetry, setCurrentRetry] = useState(0);
   const [maxRetries] = useState(10);
 
+  const rollbackEmployee = async (employeeId: string, reason: string) => {
+    try {
+      await apiClient.delete('/v1/employee/rollback', { data: { employeeId } });
+      console.log(`Employee soft deleted due to: ${reason}`);
+    } catch (rollbackError) {
+      console.error("Failed to rollback employee:", rollbackError);
+    }
+  };
+
   const startPollingLlamaExtraction = (employeeId: string) => {
     let isActive = true;
     let retries = 0;
     
-    // Reset retry counter when starting
-    setCurrentRetry(0);
+    // Reset retry counter when starting and show immediate progress
+    setCurrentRetry(1);
+    setProcessing(true);
     
     const poll = async () => {
       try {
-        setCurrentRetry(retries);
         const response = await apiClient.put(`/v1/employee/llama-extraction-status`, { employeeId });
         const status = response.data.status;
         if (!isActive) return;
@@ -91,22 +100,27 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         } else if (status === "FAILED") {
           setProcessing(false);
           setRegistrationError("Resume analysis failed. Please try again later.");
+          await rollbackEmployee(employeeId, "Llama extraction failure");
         } else if (status === "PENDING") {
           setProcessing(true);
-          if (retries < maxRetries) {
+          if (retries < maxRetries - 1) { // -1 because we already made the first call
             retries++;
+            setCurrentRetry(retries + 1); // +1 because we're counting from 1
             setTimeout(poll, 10000);
           } else {
             setProcessing(false);
             setRegistrationError("Resume analysis is taking too long. Please try again later.");
+            await rollbackEmployee(employeeId, "Timeout");
           }
         } else {
           setProcessing(false);
           setRegistrationError("Unknown status from server.");
+          await rollbackEmployee(employeeId, "Unknown status");
         }
       } catch {
         setProcessing(false);
         setRegistrationError("Error checking resume analysis status. Please try again later.");
+        await rollbackEmployee(employeeId, "Server error");
       }
     };
     poll();
@@ -127,7 +141,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
           formDataToSend.append(key, value);
         }
       });
-      const response = await apiClient.post('/v2/employee/register', formDataToSend, {
+      const response = await apiClient.post('/v3/employee/register', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

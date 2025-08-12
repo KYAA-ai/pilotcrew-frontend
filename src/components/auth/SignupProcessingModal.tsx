@@ -40,7 +40,6 @@ export function SignupProcessingModal({
     setSelectedCategories(initialSelectedCategories || []);
   }, [initialSelectedCategories]);
 
-  // Progress bar based on retries for stage 2
   useEffect(() => {
     if (stage === 2 && processing) {
       const progress = Math.min((currentRetry / maxRetries) * 100, 95);
@@ -128,7 +127,6 @@ export function SignupProcessingModal({
                       Only 3 categories can be chosen to go ahead with account creation
                     </p>
 
-                    {/* Selection Counter */}
                     <div className="text-center mb-4">
                       <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
                         <span className="text-sm font-medium text-primary">
@@ -179,10 +177,9 @@ export function SignupProcessingModal({
                       This may take a few minutes.
                     </p>
 
-                    {/* Progress Bar */}
                     <div className="w-full max-w-md">
                       <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                        <span>Processing....</span>
+                        <span>Processing...</span>
                         <span>{Math.min(Math.round(progressValue), 100)}%</span>
                       </div>
                       <div className="w-full bg-secondary rounded-full h-3">
