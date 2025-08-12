@@ -4,6 +4,7 @@ import {
     UserCircle,
 } from "@/components/SimpleIcons"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 import {
     Avatar,
@@ -33,6 +34,7 @@ export function NavUser() {
   const { isMobile } = useSidebar()
   const { profile, userType } = useProfile()
   const { logout } = useLogout()
+  const navigate = useNavigate()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
   if (!profile) {
@@ -65,7 +67,11 @@ export function NavUser() {
   }
 
   const handleAccountClick = () => {
-    setIsProfileModalOpen(true);
+    if (userType === 'employee') {
+      navigate('/employee/profile');
+    } else {
+      setIsProfileModalOpen(true);
+    }
   };
 
   //REVISIT
@@ -126,7 +132,7 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={handleAccountClick}>
                   <UserCircle />
-                  Account
+                  Profile
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

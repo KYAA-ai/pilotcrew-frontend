@@ -23,9 +23,10 @@ interface EmployeeProfile {
 interface EmployeeLayoutProps {
   children: React.ReactNode;
   sidebarCollapsible?: 'offcanvas' | 'icon' | 'none';
+  variant?: 'inset' | 'floating' | 'sidebar';
 }
 
-export function EmployeeLayout({ children, sidebarCollapsible }: EmployeeLayoutProps) {
+export function EmployeeLayout({ children, sidebarCollapsible, variant }: EmployeeLayoutProps) {
   const { profile } = useProfile<EmployeeProfile>();
 
   if (!profile) {
@@ -49,7 +50,7 @@ export function EmployeeLayout({ children, sidebarCollapsible }: EmployeeLayoutP
         } as React.CSSProperties
       }
     >
-      <EmployeeSidebar collapsible={sidebarCollapsible} />
+      <EmployeeSidebar collapsible={sidebarCollapsible} variant={variant} />
       <SidebarInset>
         <EmployeeHeader />
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">

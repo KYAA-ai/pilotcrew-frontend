@@ -1,28 +1,32 @@
 import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import {
-    Award,
-    Briefcase,
-    Building,
-    Calendar,
-    FileText,
-    Globe,
-    GraduationCap,
-    Mail,
-    MapPin,
-    Phone,
-    User,
+  Award,
+  Briefcase,
+  Building,
+  Calendar,
+  FileText,
+  Globe,
+  GraduationCap,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+  ChevronLeft,
 } from "@/components/SimpleIcons";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useProfile } from "@/contexts/ProfileContext";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function EmployeeProfile() {
   const { profile } = useProfile();
+  const navigate = useNavigate();
   const [isEditing] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("resume");
@@ -118,9 +122,9 @@ export default function EmployeeProfile() {
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long'
     });
   };
 
@@ -137,7 +141,7 @@ export default function EmployeeProfile() {
 
   if (!profile) {
     return (
-      <EmployeeLayout>
+      <EmployeeLayout variant="inset">
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
@@ -149,14 +153,25 @@ export default function EmployeeProfile() {
   }
 
   return (
-    <EmployeeLayout>
+    <EmployeeLayout variant="inset">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-                            <h1 className="text-3xl font-bold">Expert Profile</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your professional information and preferences
-            </p>
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground w-fit"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <div className="pt-2">
+              <h1 className="text-3xl font-bold mr-4">Expert Profile</h1>
+              <p className="text-muted-foreground mt-1">
+                Manage your professional information and preferences
+              </p>
+            </div>
           </div>
           {/* {!isEditing ? (
             <Button
@@ -195,7 +210,7 @@ export default function EmployeeProfile() {
           {/* Resume Details Tab */}
           <TabsContent value="resume" className="space-y-6">
             {employeeProfile?.llamaResumeInfo ? (
-              <Card>
+              <Card className="bg-background/50 border-none">
                 <CardHeader>
                   <CardTitle className="text-xl">Resume Details</CardTitle>
                 </CardHeader>
@@ -214,7 +229,7 @@ export default function EmployeeProfile() {
                             <p className="text-sm">{employeeProfile.llamaResumeInfo.profile.name}</p>
                           </div>
                         )}
-                        
+
                         {employeeProfile.llamaResumeInfo.profile.email && (
                           <div className="space-y-1">
                             <Label className="flex items-center gap-2 text-sm font-medium 600">
@@ -260,7 +275,7 @@ export default function EmployeeProfile() {
                                 href={`https://${profile.url}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 underline text-sm"
+                                className="underline text-sm"
                               >
                                 {profile.network}
                               </a>
@@ -281,7 +296,7 @@ export default function EmployeeProfile() {
                             <h4 className="font-medium text-sm 700">{skillCategory.category}</h4>
                             <div className="flex flex-wrap gap-2">
                               {skillCategory.keywords?.map((skill, skillIndex) => (
-                                <Badge key={skillIndex} variant="outline" className="text-xs">
+                                <Badge key={skillIndex} variant="default" className="text-xs">
                                   {skill}
                                 </Badge>
                               ))}
@@ -333,7 +348,7 @@ export default function EmployeeProfile() {
                                 <h5 className="text-xs font-medium">Technologies:</h5>
                                 <div className="flex flex-wrap gap-1">
                                   {exp.technologies.map((tech, techIndex) => (
-                                    <Badge key={techIndex} variant="secondary" className="text-xs bg-blue-50 text-blue-700">
+                                    <Badge key={techIndex} variant="default" className="text-xs">
                                       {tech}
                                     </Badge>
                                   ))}
@@ -428,7 +443,7 @@ export default function EmployeeProfile() {
                       <div className="flex items-center gap-2">
                         <p className="text-sm">{employeeProfile?.email}</p>
                         {employeeProfile?.linkedinEmailVerified && (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                          <Badge variant="default" className="bg-green-100 text-green-800 text-xs">
                             LinkedIn Verified
                           </Badge>
                         )}
@@ -497,7 +512,7 @@ export default function EmployeeProfile() {
                         {employeeProfile?.skills ? (
                           <div className="flex flex-wrap gap-1">
                             {employeeProfile.skills.split(',').map((skill: string, index: number) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge key={index} variant="default" className="text-xs">
                                 {skill.trim()}
                               </Badge>
                             ))}
