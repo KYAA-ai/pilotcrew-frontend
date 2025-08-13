@@ -24,14 +24,14 @@ export default function LandingPage() {
         <div className="flex flex-col gap-4 md:flex-row md:gap-6 mb-8">
           <Button
             size="lg"
-            className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-800)] hover:shadow-md transition-all duration-200 text-base font-eudoxus-bold"
+            className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white-500 cursor-pointer transition-all duration-100 text-base font-eudoxus-bold"
             onClick={() => navigate("/auth/employee")}
           >
             I'm an Expert
           </Button>
           <Button
             size="lg"
-            className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-800)] hover:shadow-md transition-all duration-200 text-base font-eudoxus-bold"
+            className="w-60 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white-500 cursor-pointer transition-all duration-100 text-base font-eudoxus-bold"
             onClick={() => navigate("/auth/employer")}
           >
             I'm a Client
