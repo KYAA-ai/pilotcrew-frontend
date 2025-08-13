@@ -64,6 +64,8 @@ export function Chat({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [newChatName, setNewChatName] = useState("");
+  const [streamingContent, setStreamingContent] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
   const { register, handleSubmit: handleFormSubmit, formState: { errors }, getValues, setValue } = useForm<EvaluationForm>();
 
   const getChatHistoryByChatId = async (chatId: string) => {
@@ -163,6 +165,9 @@ export function Chat({
         const decoder = new TextDecoder();
         let accumulated = "";
 
+        setIsStreaming(true);
+        setStreamingContent("");
+
         (async () => {
           while (true) {
             const { value, done } = await reader.read();
@@ -170,9 +175,14 @@ export function Chat({
               if (accumulated.length > 0) {
                 append({ role: "assistant", content: accumulated });
               }
+              setIsStreaming(false);
+              setStreamingContent("");
               break;
             }
-            accumulated += decoder.decode(value, { stream: true });
+            
+            const chunk = decoder.decode(value, { stream: true });
+            accumulated += chunk;
+            setStreamingContent(accumulated);
           }
         })();
       }
@@ -304,7 +314,17 @@ export function Chat({
             />
           ))}
 
-          {status !== "ready" && (
+          {/* Show streaming content in real-time */}
+          {isStreaming && streamingContent && (
+            <PreviewMessage
+              key="streaming-message"
+              role="assistant"
+              content={streamingContent}
+              attachments={[]}
+            />
+          )}
+
+          {status !== "ready" && !isStreaming && (
             <div className="gap-4 px-4 w-full md:w-[750px] md:px-0 first-of-type:pt-20 flex flex-row">
               <div className="size-[24px] border rounded-sm p-1 flex flex-row items-center shrink-0 text-zinc-500">
                 <BotIcon />
