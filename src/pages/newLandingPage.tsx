@@ -49,7 +49,7 @@ export default function NewLandingPage() {
       />
 
              {/* Hero Section with Video Background and Text Overlay */}
-       <div className="relative w-full h-[90vh] xl:h-screen flex items-center justify-center">
+       <div className="relative w-full h-[67vh] xl:h-screen flex items-center justify-center">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {/* Fallback Image */}
@@ -97,9 +97,9 @@ export default function NewLandingPage() {
       </div>
 
       {/* Screen-1 Video Section */}
-      <div className="w-full max-w-6xl mx-auto mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-6xl mx-auto mt-8 sm:mt-12 md:mt-16 px-8">
         {/* Golden line above video */}
-        <div className="flex justify-center mb-8 sm:mb-12 w-full relative">
+        <div className="flex justify-center mb-4 sm:mb-12 w-full relative">
           <hr className="w-48 sm:w-64 md:w-80 lg:w-96 h-px bg-[#e9a855] border-0 rounded-full" />
           {/* Golden radial blur extending downward from top line */}
           <div 
@@ -185,13 +185,13 @@ export default function NewLandingPage() {
       </div>
 
       {/* Demo Text Section */}
-      <div className="w-full flex flex-col items-center mt-28 sm:mt-36 md:mt-40">
+      <div className="w-full flex flex-col items-center mt-12 sm:mt-36 md:mt-40">
         <h2 className="text-center font-eudoxus-bold text-2xl sm:text-3xl md:text-4xl text-white">
           Explore Agents within seconds using our Agentic Search!
         </h2>
         {/* Golden line under demo text */}
         <div className="flex justify-center mt-6 sm:mt-8 w-full">
-          <hr className="w-full max-w-4xl h-px bg-[#e9a855] border-0 rounded-full" />
+          <hr className="w-50 sm:w-full max-w-4xl h-px bg-[#e9a855] border-0 rounded-full" />
         </div>
       </div>
 

@@ -120,7 +120,7 @@ export function DomainsCarousel() {
         <CarouselContent className="-ml-2 sm:-ml-4">
           {DOMAINS.map((domain, idx) => (
             <CarouselItem key={idx} className="pl-2 sm:pl-4 md:pl-6 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <div className="h-[200px] sm:h-[240px] md:h-[260px] lg:h-[280px] w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px] mx-auto flex flex-col items-center justify-center border border-[#338AFF] rounded-xl p-3 sm:p-4 md:p-5 lg:p-6 bg-transparent shadow-lg transition-all duration-300 ease-in-out hover:bg-[#12162c]/50 mb-2">
+              <div className="h-[200px] sm:h-[240px] md:h-[260px] lg:h-[280px] w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px] mx-auto flex flex-col items-center justify-center border-l-2 sm:border-l border-t border-r border-b border-[#338AFF] rounded-xl p-3 sm:p-4 md:p-5 lg:p-6 bg-transparent shadow-lg transition-all duration-300 ease-in-out hover:bg-[#12162c]/50 mb-2">
                 <img
                   src={domain.icon}
                   alt={domain.name}
