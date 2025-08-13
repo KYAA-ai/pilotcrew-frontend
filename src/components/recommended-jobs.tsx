@@ -299,46 +299,53 @@ import api from "@/lib/api";
 
     return (
       <div className="w-full flex-col justify-start gap-6">
-        <div className="flex items-center justify-between px-8 lg:px-16">
-          {searchBarElement && (
-            <div className="flex-1 max-w-3/4 mr-4">
-              {searchBarElement}
+        <div className="flex flex-col gap-4 px-4 sm:px-8 lg:px-16">
+          {/* Mobile: Stack elements vertically */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {searchBarElement && (
+              <div className="flex-1 w-full sm:max-w-3/4 sm:mr-4 order-1 sm:order-1">
+                {searchBarElement}
+              </div>
+            )}
+            <h2 className="text-xl sm:text-2xl font-bold order-2 sm:order-2">{title}</h2>
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-2 order-3 sm:order-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fetchData(currentPage, currentPageSize)}
+                title="Refresh"
+                className="flex items-center gap-2 w-full sm:w-auto px-4 py-2"
+              >
+                <RefreshIcon className="size-4 animate-none" />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
+              {customActionElement && (
+                <div className="w-full sm:w-auto">
+                  {customActionElement(fetchData)}
+                </div>
+              )}
             </div>
-          )}
-          <h2 className="text-2xl font-bold">{title}</h2>
-          <div className="flex items-center gap-2 p-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => fetchData(currentPage, currentPageSize)}
-              title="Refresh"
-              className="flex items-center gap-1"
-            >
-              <RefreshIcon className="size-4 animate-none" />
-              <span className="hidden lg:inline">Refresh</span>
-            </Button>
-            {customActionElement && customActionElement(fetchData)}
           </div>
         </div>
         {filterTagsElement && (
-          <div className="px-8 lg:px-16">
+          <div className="px-4 sm:px-8 lg:px-16">
             {filterTagsElement}
           </div>
         )}
-        <div className="px-8 lg:px-16">
+        <div className="px-4 sm:px-8 lg:px-16">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <CardSkeleton key={i} />
               ))}
             </div>
           ) : error ? (
-            <div className="flex items-center justify-center p-8 text-destructive">
+            <div className="flex items-center justify-center p-8 text-destructive mt-6">
               <span>{error}</span>
             </div>
           ) : data.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-6">
                 {data.map((item, index) => (
                   <DataCard
                     key={String(item._id || item.id || index)}
@@ -368,11 +375,11 @@ import api from "@/lib/api";
               </div>
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-8">
-                  <div className="text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8">
+                  <div className="text-sm text-muted-foreground text-center sm:text-left">
                     Showing {data.length} of {totalResults} results
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -427,7 +434,7 @@ import api from "@/lib/api";
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-12">
-              <div className="text-muted-foreground mb-4">
+              <div className="text-muted-foreground mb-4 text-center">
                 <Building className="h-12 w-12 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No results found</h3>
                 <p className="text-sm">Try adjusting your search criteria or refresh the page.</p>

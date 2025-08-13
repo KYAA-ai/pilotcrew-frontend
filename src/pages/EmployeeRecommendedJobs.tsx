@@ -376,10 +376,10 @@ export default function EmployeeRecommendedJobs() {
     <EmployeeLayout>
       <div className="flex flex-col gap-6 pb-8">
         {/* Header Section */}
-        <div className="flex items-center justify-between px-8 lg:px-16">
-          <div>
-            <h1 className="text-3xl font-bold">Marketplace</h1>
-            <p className="text-muted-foreground">
+        <div className="flex flex-col gap-4 px-4 sm:px-8 lg:px-16">
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl font-bold">Marketplace</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Discover products and opportunities that match your skills and experience
             </p>
           </div>
@@ -413,9 +413,14 @@ export default function EmployeeRecommendedJobs() {
           customActionElement={() => {
             return (
               <>
-                <Button variant="outline" className="ml-2" onClick={() => setPersonalizeOpen(true)}>
-                  <Filter className="w-4 h-4 mr-2" />
-                  Personalize Job Search
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto px-4 py-2 flex items-center justify-center gap-2" 
+                  onClick={() => setPersonalizeOpen(true)}
+                >
+                  <Filter className="w-4 h-4" />
+                  <span className="hidden sm:inline">Personalize Job Search</span>
+                  <span className="sm:hidden">Personalize</span>
                 </Button>
                 <PersonalizeJobSearchDialog
                   open={personalizeOpen}

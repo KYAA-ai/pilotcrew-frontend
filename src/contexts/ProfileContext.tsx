@@ -47,20 +47,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    const savedUserType = localStorage.getItem('userType') as UserType;
-    
-    if (savedProfile) {
-      try {
-        const parsedProfile = JSON.parse(savedProfile);
-        setProfileState(parsedProfile);
-        setUserType(savedUserType);
-      } catch (error) {
-        console.error('Error parsing saved profile:', error);
-        localStorage.removeItem('userProfile');
-        localStorage.removeItem('userType');
-      }
-    }
+    // Don't automatically load from localStorage on mount
+    // Let auth guards handle profile validation and loading
     setIsLoading(false);
   }, []);
 

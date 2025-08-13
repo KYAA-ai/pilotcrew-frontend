@@ -130,25 +130,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2 w-full">
-      <div ref={searchBarRef} className="flex-1 max-w-1/2 flex items-center relative border rounded px-2 py-1 bg-background focus-within:ring-2 focus-within:ring-primary">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-2 w-full p-4 sm:p-0">
+      <div ref={searchBarRef} className="flex-1 w-full sm:max-w-1/2 flex items-center relative border rounded-lg px-3 py-2 sm:px-2 sm:py-1 bg-background focus-within:ring-2 focus-within:ring-primary">
         {/* Field dropdown */}
         <div className="relative">
           <button
             type="button"
-            className="flex items-center gap-1 px-2 py-1 bg-muted rounded-l border-r border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex items-center gap-1 px-2 py-1 sm:px-2 sm:py-1 bg-muted rounded-l border-r border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             onClick={handleDropdownToggle}
             disabled={disabled}
             tabIndex={0}
             aria-haspopup="listbox"
             aria-expanded={dropdownOpen}
           >
-            {selectedField.label}
+            <span className="hidden sm:inline">{selectedField.label}</span>
+            <span className="sm:hidden">{selectedField.label.length > 8 ? selectedField.label.substring(0, 8) + '...' : selectedField.label}</span>
             <ChevronDown className="h-3 w-3 ml-1" />
           </button>
           {dropdownOpen && (
             <div
-              className="absolute left-0 top-full mt-1 bg-popover border border-border rounded shadow-lg z-20"
+              className="absolute left-0 top-full mt-1 bg-popover border border-border rounded shadow-lg z-20 w-full sm:w-auto"
               role="listbox"
               tabIndex={-1}
               style={{ width: searchBarWidth || undefined }}
@@ -200,6 +201,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onClick={handleSubmit}
         disabled={disabled || !query.trim()}
         size="sm"
+        className="w-full sm:w-auto"
       >
         Search
       </Button>
