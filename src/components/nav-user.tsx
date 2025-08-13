@@ -1,29 +1,29 @@
 import {
-    DotsVertical,
-    Logout,
-    UserCircle,
+  DotsVertical,
+  Logout,
+  UserCircle,
 } from "@/components/SimpleIcons"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import {
-    Avatar,
-    AvatarFallback,
+  Avatar,
+  AvatarFallback,
 } from "@/components/ui/avatar"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { useProfile } from "@/contexts/ProfileContext"
 import { useLogout } from "@/hooks/useLogout"
@@ -42,11 +42,11 @@ export function NavUser() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" disabled>
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg">...</AvatarFallback>
-            </Avatar>
+                         <Avatar className="h-6 w-6 md:h-8 md:w-8 rounded-lg">
+               <AvatarFallback className="rounded-lg text-tiny md:text-sm">...</AvatarFallback>
+             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">Loading...</span>
+              <span className="truncate font-medium text-xs md:text-sm">Loading...</span>
               <span className="text-muted-foreground truncate text-xs">
                 Loading profile...
               </span>
@@ -93,14 +93,14 @@ export function NavUser() {
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <Avatar className="h-8 w-8 rounded-lg grayscale">
-                  <AvatarFallback className="rounded-lg">
+                <Avatar className="h-6 w-6 md:h-8 md:w-8 rounded-lg grayscale">
+                  <AvatarFallback className="rounded-lg text-tiny md:text-sm">
                     {getInitials(displayName)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{displayName}</span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="truncate font-medium text-xs md:text-sm">{displayName}</span>
+                  <span className="text-muted-foreground truncate text-xs md:text-xs">
                     {displaySubtitle}
                   </span>
                 </div>
@@ -115,14 +115,14 @@ export function NavUser() {
             >
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarFallback className="rounded-lg">
+                  <Avatar className="h-6 w-6 md:h-8 md:w-8 rounded-lg">
+                    <AvatarFallback className="rounded-lg text-xs md:text-sm">
                       {getInitials(displayName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{displayName}</span>
-                    <span className="text-muted-foreground truncate text-xs">
+                    <span className="truncate font-medium text-xs md:text-sm">{displayName}</span>
+                    <span className="text-muted-foreground truncate text-xs md:text-xs">
                       {displaySubtitle}
                     </span>
                   </div>

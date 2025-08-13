@@ -5,9 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function EmployeeAuth() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 md:p-4">
+      <Card className="w-full max-w-sm md:max-w-lg px-6 md:px-0">
+        <CardHeader className="pb-2 md:pb-6">
           <CardTitle className="text-center text-2xl font-bold">
             Expert Access
           </CardTitle>

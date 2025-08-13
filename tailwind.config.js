@@ -15,6 +15,9 @@ module.exports = {
           italiana: ['Italiana', 'serif'],
           inter: ['Inter', 'sans-serif'],
         },
+        fontSize: {
+          'tiny': '0.3rem',
+        },
       },
     },
   };

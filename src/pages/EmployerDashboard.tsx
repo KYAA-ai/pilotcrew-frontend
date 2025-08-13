@@ -1,15 +1,15 @@
+import { SiteHeader } from "@/components/employer-header";
+import { EmployerSidebar } from "@/components/employer-sidebar";
 import { JobCardView } from "@/components/JobCardView";
+import { Loader } from "@/components/SimpleIcons";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useProfile } from '@/contexts/ProfileContext';
 import api from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {  Loader } from "@/components/SimpleIcons";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { EmployerSidebar } from "@/components/employer-sidebar";
-import { SiteHeader } from "@/components/employer-header";
 
 function JobsContent() {
   const navigate = useNavigate();
@@ -86,73 +86,71 @@ function JobsContent() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          {/* Header with title and action buttons */}
-          <div 
-            className="flex items-center justify-between mx-auto"
-            style={{ 
-              minWidth: "70vw"
-            }}
-          >
-            <h1 className="text-2xl font-bold">Jobs</h1>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="flex items-center gap-2"
-              >
-                <Loader className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                {refreshing ? 'Refreshing...' : 'Refresh'}
-              </Button>
-              <Link to="/employer/jobs/new">
-                <Button variant="outline" size="sm">
-                  Post a Job
+          {/* Container with 75vw width on desktop */}
+          <div className="w-full md:w-[75vw] md:mx-auto">
+            {/* Header with title and action buttons */}
+            <div className="flex flex-col gap-4 px-4 md:px-0">
+              {/* Jobs Title - Centered on mobile */}
+              <div className="flex justify-center md:justify-start">
+                <h1 className="text-2xl font-bold text-center md:text-left">Jobs</h1>
+              </div>
+              
+              {/* Action buttons - Left and right on mobile, normal layout on desktop */}
+              <div className="flex items-center justify-between md:justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="flex items-center gap-2"
+                >
+                  <Loader className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  {refreshing ? 'Refreshing...' : 'Refresh'}
                 </Button>
-              </Link>
+                <Link to="/employer/jobs/new">
+                  <Button variant="outline" size="sm">
+                    Post a Job
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
 
-          {/* Job Cards View */}
-          <div 
-            className="mx-auto"
-            style={{ 
-              minWidth: "70vw"
-            }}
-          >
-            <JobCardView 
-              jobs={jobs} 
-              onJobAction={handleJobAction}
-              loading={loading}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalJobs={totalJobs}
-              onPageChange={handlePageChange}
-            />
-            {!loading && jobs.length === 0 && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
-              </div>
-            )}
-            
-            {/* Page Size Selector - Bottom */}
-            {!loading && jobs.length > 0 && (
-              <div className="flex items-center justify-center gap-2 mt-6">
-                <span className="text-sm text-muted-foreground">Show:</span>
-                <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
-                  <SelectTrigger className="w-20 h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-sm text-muted-foreground">per page</span>
-              </div>
-            )}
+            {/* Job Cards View */}
+            <div className="px-4 md:px-0 mt-4 md:mt-8">
+              <JobCardView 
+                jobs={jobs} 
+                onJobAction={handleJobAction}
+                loading={loading}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalJobs={totalJobs}
+                onPageChange={handlePageChange}
+              />
+              {!loading && jobs.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No jobs found. Create your first job posting!</p>
+                </div>
+              )}
+              
+              {/* Page Size Selector - Bottom */}
+              {!loading && jobs.length > 0 && (
+                <div className="flex items-center justify-center gap-2 mt-6">
+                  <span className="text-sm text-muted-foreground">Show:</span>
+                  <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
+                    <SelectTrigger className="w-20 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm text-muted-foreground">per page</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
