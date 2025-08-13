@@ -8,7 +8,7 @@ import apiClient from "@/lib/api";
 import type { Chat, User } from "../../lib/utils";
 
 import { PanelLeftIcon } from "lucide-react";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,7 +50,6 @@ import {
 } from "./icons";
 
 export const History = ({ user, jobId }: { user: User | undefined, jobId: string }) => {
-  const { id } = useParams();
   const pathname = useLocation();
 
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
@@ -157,7 +156,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
           <div className="flex flex-col h-full">
             {user && (
               <Button
-                className="font-normal text-sm flex flex-row justify-between text-white mb-4"
+                className="font-normal text-sm flex flex-row justify-between mb-4 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-all duration-200 cursor-pointer border border-zinc-200 dark:border-zinc-700"
                 asChild
                 onClick={async () => {
                   const createChatPromise = (async () => {
@@ -178,7 +177,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                   });
                 }}
               >
-                <span>
+                <span className="cursor-pointer">
                   <div>Start a new chat</div>
                   <PencilEditIcon size={14} />
                 </span>
@@ -210,8 +209,11 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                   <div
                     key={chat.id}
                     className={cx(
-                      "flex flex-row items-center gap-2 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-md p-1 mb-1",
-                      { "bg-zinc-200 dark:bg-zinc-700": chat.id === id },
+                      "flex flex-row items-center gap-2 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-md p-1 mb-1 transition-colors duration-200",
+                      { 
+                        "bg-primary text-white": chat.id === currentChatId,
+                        "hover:bg-primary/90": chat.id === currentChatId 
+                      },
                     )}
                   >
                     <Tooltip>
@@ -219,7 +221,10 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                         <Button
                           variant="ghost"
                           className={cx(
-                            "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 flex-1 transition-none text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate",
+                            "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-2 text-sm font-normal flex flex-row items-center gap-2 flex-1 transition-all duration-200 text-ellipsis overflow-hidden text-left rounded-lg outline-zinc-900 truncate cursor-pointer",
+                            {
+                              "text-white font-medium": chat.id === currentChatId
+                            }
                           )}
                           asChild
                           onClick={() => {
@@ -228,7 +233,7 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                             }
                           }}
                         >
-                          <div>
+                          <div className="cursor-pointer">
                             {getTitleFromChat(chat)}
                           </div>
                         </Button>
@@ -241,7 +246,13 @@ export const History = ({ user, jobId }: { user: User | undefined, jobId: string
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="p-2 h-fit font-normal text-zinc-500 transition-none hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                          className={cx(
+                            "p-2 h-fit font-normal transition-all duration-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 cursor-pointer",
+                            {
+                              "text-white hover:bg-primary/90": chat.id === currentChatId,
+                              "text-zinc-500": chat.id !== currentChatId
+                            }
+                          )}
                           variant="ghost"
                         >
                           <MoreHorizontalIcon size={14} />

@@ -119,24 +119,28 @@ export function Chat({
     input: RequestInfo | URL,
     init?: RequestInit
   ): Promise<Response> => {
-    const res = await fetch(input, init);
+    console.log("Input:", input);
+    let messagesToSend = [];
+
+    try {
+      const initBody = JSON.parse(init?.body as string);
+      messagesToSend = initBody.messages.slice(-10);
+    } catch (error) {
+      console.error("Failed to parse init body:", error);
+    }
+
+    const modifiedInit = {
+      ...init,
+      body: JSON.stringify({
+        id: id,
+        messages: messagesToSend
+      })
+    };
+    const res = await fetch(input, modifiedInit);
     if (!res.body) return res;
 
-    // tee the body so we can log *and* forward it
     const forwardStream = res.body;
-    // const reader = logStream.getReader();
-    // const decoder = new TextDecoder();
 
-    // // async‐log loop (no need to await this)
-    // (async () => {
-    //   while (true) {
-    //     const { value, done } = await reader.read();
-    //     if (done) break;
-    //     console.log("SSE chunk:", decoder.decode(value, { stream: true }));
-    //   }
-    // })();
-
-    // hand the second stream back to the SDK
     return new Response(forwardStream, {
       status: res.status,
       headers: res.headers,
@@ -150,7 +154,7 @@ export function Chat({
       fetch: fetchWithLogging,
       body: { id },
       initialMessages: initialMessages,
-      maxSteps: 10,
+      maxSteps: 1,
       onResponse: (res) => {
         const clone = res.clone();
         const reader = clone.body?.getReader();

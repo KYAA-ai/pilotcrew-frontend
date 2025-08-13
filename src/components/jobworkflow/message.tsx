@@ -35,7 +35,11 @@ export const Message = ({
 
       <div className="flex flex-col gap-2 w-full">
         {content && typeof content === "string" && (
-          <div className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
+          <div className={`flex flex-col gap-4 ${
+            role === "assistant" 
+              ? "bg-slate-800 dark:bg-slate-900 text-white rounded-2xl p-5 max-w-[85%] self-start shadow-lg border border-slate-700/50" 
+              : "bg-primary text-primary-foreground rounded-2xl p-5 max-w-[85%] self-end shadow-lg"
+          }`}>
             <Markdown>{content}</Markdown>
           </div>
         )}
