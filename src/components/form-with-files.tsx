@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 export interface FormFieldWithFiles {
   name: string;
@@ -221,19 +221,32 @@ export default function GenericFormWithFiles({
       case 'file':
         return (
           <div className="space-y-2">
-            <Input
-              type="file"
-              onChange={(e) => {
-                const file = e.target.files?.[0] || null;
-                handleInputChange(name, file);
-              }}
-              className={error ? "border-red-500" : ""}
-              accept={accept}
-              required={required}
-            />
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  const fileInput = document.createElement('input');
+                  fileInput.type = 'file';
+                  fileInput.accept = accept || '';
+                  fileInput.required = required || false;
+                  fileInput.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0] || null;
+                    handleInputChange(name, file);
+                  };
+                  fileInput.click();
+                }}
+                className={error ? "border-red-500" : ""}
+              >
+                Browse Files
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                {value instanceof File ? value.name : "No file selected"}
+              </span>
+            </div>
             {value instanceof File && (
               <p className="text-sm text-gray-600">
-                Selected: {value.name} ({(value.size / 1024 / 1024).toFixed(2)} MB)
+                File size: {(value.size / 1024 / 1024).toFixed(2)} MB
               </p>
             )}
           </div>
