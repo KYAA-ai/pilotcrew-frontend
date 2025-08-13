@@ -79,7 +79,7 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
   };
 
   const handleLinkedInLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/linkedin`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/auth/linkedin`;
   };
 
   return (

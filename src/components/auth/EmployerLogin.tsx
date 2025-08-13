@@ -84,7 +84,7 @@ export default function EmployerLogin({ onSuccess, onValidationError }: Employer
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/employer/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/employer/auth/google`;
   };
 
   return (

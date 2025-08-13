@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function EmployeeAuthCard() {
   const handleLinkedInLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/linkedin`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/auth/linkedin`;
   };
 
   return (

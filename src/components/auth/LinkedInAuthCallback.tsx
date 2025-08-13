@@ -9,7 +9,7 @@ export function LinkedInAuthCallback() {
     const handleCallback = async () => {
       try {
         toast.success('LinkedIn authentication successful!');
-        navigate('/employee/profile');
+        navigate('/employee/recommended-jobs');
       } catch (error) {
         console.error('LinkedIn auth callback error:', error);
         toast.error('Authentication failed. Please try again.');
