@@ -14,11 +14,11 @@ export default function LandingPage() {
         <div className="mb-3">
           <img src={logo} alt="Pilotcrew.ai Logo" className="w-12 h-12 mb-4 md:w-15 md:h-15 md:mb-6 mx-auto" />
         </div>
-        <h1 className="text-3xl md:text-6xl font-eudoxus-bold mb-4">
-          Your entire hiring journey.<br />
-          <span className="text-[var(--primary)]">Powered by one profile.</span>
+        <h1 className="text-3xl md:text-6xl font-eudoxus-bold mb-4 px-0">
+          Your entire hiring journey.<br className="block md:hidden" />
+          <span className="text-[var(--primary)] block mt-1 md:mt-0">Powered by one profile.</span>
         </h1>
-        <p className="text-base font-eudoxus-medium md:text-lg text-[var(--foreground)]/70 mb-8 max-w-xl">
+        <p className="text-xs px-5 font-eudoxus-medium md:text-lg text-[var(--foreground)]/70 mb-8 max-w-xl">
           Get personalized job recommendations, craft tailored resumes, autofill and track your job applications. Pilotcrew is here for every step of your career.
         </p>
         <div className="flex flex-col gap-4 md:flex-row md:gap-6 mb-8">
@@ -37,7 +37,7 @@ export default function LandingPage() {
             I'm a Client
           </Button>
         </div>
-        <div className="text-[var(--foreground)]/60 text-sm font-eudoxus-medium mb-8">
+        <div className="text-[var(--foreground)]/60 text-xs font-eudoxus-medium mb-8">
           <span className="text-yellow-500">★★★★★</span> Join 10,000+ professionals who use Pilotcrew
         </div>
         
