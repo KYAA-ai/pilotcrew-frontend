@@ -53,8 +53,8 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     const start = cardHeight / 2;
     // The offset between each card center
     const step = cardHeight + 32; // 32px gap-8
-    // Subtract half the butterfly's height (h-20 = 80px, so 40px)
-    return start + step * activeIdx - 40;
+    // Subtract half the butterfly's height (h-16 = 64px, so 32px) and add slight y displacement
+    return start + step * activeIdx - 32 + 4; // +8px for slight y displacement
   };
 
   return (
@@ -65,7 +65,9 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
     >
       {/* Heading above everything */}
       <div className="w-full">
-        <h2 className="font-eudoxus-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mt-12 mb-15 text-center w-full">Why Pilotcrew.ai?</h2>
+        <h2 className="font-eudoxus-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mt-12 mb-15 text-center w-full">
+          Why Pilotcrew.ai?
+        </h2>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', position: 'relative' }} className="justify-center w-full flex">
           {/* Vertical line at left, starts after heading */}
           <div style={{ width: 40, height: lineHeight, position: 'relative' }}>
@@ -74,8 +76,8 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
             <motion.img
               src={butterflyLogo}
               alt="Butterfly"
-              className="absolute left-1/2 -translate-x-1/2 w-20 h-20 object-contain"
-              style={{ minHeight: '3rem', minWidth: '3rem' }}
+              className="absolute left-1/2 -translate-x-1/2 w-16 h-16 object-contain"
+              style={{ minHeight: '2.5rem', minWidth: '2.5rem' }}
               animate={{ top: getButterflyTop() }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
@@ -86,7 +88,7 @@ export default function WhyPilotcrewMobile({ cards }: { cards: Card[] }) {
               <div
                 key={card.title}
                 ref={el => { cardRefs.current[i] = el; }}
-                className="border border-[#338AFF] rounded-xl p-6 flex flex-col min-h-[120px] items-start text-left justify-center bg-[#040713]"
+                className="border-l-2 border-t border-r border-b border-[#338AFF] rounded-xl p-6 flex flex-col min-h-[120px] items-start text-left justify-center bg-[#040713]"
                 style={{
                   boxShadow:
                     activeIdx === i
