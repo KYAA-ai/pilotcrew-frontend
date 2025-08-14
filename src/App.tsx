@@ -2,6 +2,7 @@ import { EmployeeAuthGuard } from '@/components/auth/employee-auth-guard'
 import { EmployerAuthGuard } from '@/components/auth/employer-auth-guard'
 import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
 import { GoogleEmployeeAuthCallback } from '@/components/auth/GoogleEmployeeAuthCallback'
+import { GoogleEmployeeLoginCallback } from '@/components/auth/GoogleEmployeeLoginCallback'
 import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -24,12 +25,6 @@ import JobFormPage from './pages/JobFormPage'
 import JobResponsesPage from './pages/JobResponsesPage'
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
-<<<<<<< Updated upstream
-import EmployeeInProgressJobs from './pages/EmployeeInProgressJobs'
-import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
-import { GoogleEmployeeLoginCallback } from './components/auth/GoogleEmployeeLoginCallback'
-=======
->>>>>>> Stashed changes
 
 function App() {
   return (

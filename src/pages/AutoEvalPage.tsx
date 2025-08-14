@@ -1,24 +1,56 @@
 
 import { SiteHeader } from "@/components/employer-header";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import React, { useState } from "react"; // Added missing import for React
 import { AutoEvalSidebar } from "./AutoEvalSidebar";
 
+// Import all step components
+import Step1UploadDataset from "./steps/Step1UploadDataset";
+import Step2TaskTypeSelection from "./steps/Step2TaskTypeSelection";
+import Step3ModelSelection from "./steps/Step3ModelSelection";
+import Step4ParameterConfiguration from "./steps/Step4ParameterConfiguration";
+import Step5MetricsSelection from "./steps/Step5MetricsSelection";
+import Step6ReviewLaunch from "./steps/Step6ReviewLaunch";
+
+// Step configuration
+const STEPS = [
+  { id: 1, name: "Upload dataset", component: Step1UploadDataset },
+  { id: 2, name: "Task Type Selection", component: Step2TaskTypeSelection },
+  { id: 3, name: "Model Selection", component: Step3ModelSelection },
+  { id: 4, name: "Parameter Configuration", component: Step4ParameterConfiguration },
+  { id: 5, name: "Metrics Selection", component: Step5MetricsSelection },
+  { id: 6, name: "Review & Launch", component: Step6ReviewLaunch },
+];
+
 export default function AutoEvalPage() {
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const handleNext = () => {
+    if (currentStep < STEPS.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const CurrentStepComponent = STEPS[currentStep - 1].component;
+  const isFirstStep = currentStep === 1;
+  const isLastStep = currentStep === STEPS.length;
+
   return (
     <SidebarProvider
       defaultOpen={false}
@@ -32,108 +64,127 @@ export default function AutoEvalPage() {
       <AutoEvalSidebar collapsible="offcanvas" />
       <SidebarInset>
         <SiteHeader />
-        <div className="min-h-screen bg-[var(--background)] flex flex-col">
-          {/* 5 parallel containers with equal width */}
-          <div className="flex w-full h-screen items-center">
-        {/* First container - Dataset Upload */}
-        <div className="w-1/5 h-full p-4 flex items-center">
-          <Card className="h-[30vh] w-full">
-            <CardHeader className="text-center">
-              <CardTitle>Dataset Upload</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <Button className="w-full">
-                Upload Dataset
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Second container - Model Selection */}
-        <div className="w-1/5 h-full p-4 flex items-center">
-          <Card className="h-[50vh] w-full">
-            <CardHeader className="text-center">
-              <CardTitle>Model Selection</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gpt-4">GPT-4</SelectItem>
-                  <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                  <SelectItem value="claude-3">Claude-3</SelectItem>
-                  <SelectItem value="llama-2">Llama-2</SelectItem>
-                  <SelectItem value="gemini">Gemini</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Third container - Pass@k metrics */}
-        <div className="w-1/5 h-full p-4 flex items-center">
-          <Card className="h-[50vh] w-full">
-            <CardHeader className="text-center">
-              <CardTitle>Pass@k metrics</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Pass@k value" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pass@1">Pass@1</SelectItem>
-                  <SelectItem value="pass@5">Pass@5</SelectItem>
-                  <SelectItem value="pass@10">Pass@10</SelectItem>
-                  <SelectItem value="pass@20">Pass@20</SelectItem>
-                  <SelectItem value="pass@50">Pass@50</SelectItem>
-                  <SelectItem value="pass@100">Pass@100</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Fourth container - Temperature */}
-        <div className="w-1/5 h-full p-4 flex items-center">
-          <Card className="h-[50vh] w-full">
-            <CardHeader className="text-center">
-              <CardTitle>Temperature</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <Input 
-                type="number" 
-                placeholder="Enter temperature value"
-                min="0"
-                max="2"
-                step="0.1"
-              />
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Fifth container - Text eval metrics */}
-        <div className="w-1/5 h-full p-4 flex items-center">
-          <Card className="h-[50vh] w-full">
-            <CardHeader className="text-center">
-              <CardTitle>Text eval metrics</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select metric" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bleu">BLEU</SelectItem>
-                  <SelectItem value="rouge">ROUGE</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+        <div className="h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
+          <div className="flex w-full h-full">
+            {/* Left Container - 2/3 width */}
+            <div className="w-2/3 h-full p-6 flex flex-col overflow-hidden relative">
+              {/* Breadcrumb */}
+              <Breadcrumb className="mb-4 flex-shrink-0">
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>AutoEval</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+              
+              {/* Main Heading */}
+              <h1 className="text-3xl font-bold mb-6 flex-shrink-0">Evaluation Setup Wizard</h1>
+              
+              {/* Content area for future components */}
+              <div className="flex-1 overflow-hidden">
+                <Card className="h-full">
+                  <CardHeader className="relative">
+                    {/* Breadcrumb at the top */}
+                    <Breadcrumb className="mb-4">
+                      <BreadcrumbList>
+                        {STEPS.slice(0, currentStep).map((step, index) => (
+                          <React.Fragment key={step.id}>
+                            <BreadcrumbItem>
+                              {index === currentStep - 1 ? (
+                                // Current step - not clickable
+                                <BreadcrumbPage className="text-sm text-muted-foreground">
+                                  {step.name}
+                                </BreadcrumbPage>
+                              ) : (
+                                // Previous steps - clickable
+                                <BreadcrumbLink 
+                                  href="#" 
+                                  className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentStep(step.id);
+                                  }}
+                                >
+                                  {step.name}
+                                </BreadcrumbLink>
+                              )}
+                            </BreadcrumbItem>
+                            {index < currentStep - 1 && <BreadcrumbSeparator />}
+                          </React.Fragment>
+                        ))}
+                      </BreadcrumbList>
+                    </Breadcrumb>
+                    
+                    {/* Step title and navigation buttons */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Step {currentStep} of 6</CardTitle>
+                        <h2 className="text-2xl font-semibold mt-2">{STEPS[currentStep - 1].name}</h2>
+                      </div>
+                      {!isLastStep && (
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handlePrevious}
+                            disabled={isFirstStep}
+                            className={`border border-primary text-primary hover:bg-primary/10 px-4 py-2 text-sm ${
+                              isFirstStep ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Previous
+                          </Button>
+
+                          <Button
+                            onClick={handleNext}
+                            disabled={isLastStep}
+                            className={`border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm ${
+                              isLastStep ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CurrentStepComponent />
+                </Card>
+              </div>
+            </div>
+            
+            {/* Right Container - 1/3 width */}
+            <div className="w-1/3 h-full p-6 flex flex-col gap-4 overflow-hidden">
+              {/* Top Container - Configuration Summary */}
+              <Card className="flex-1 overflow-hidden">
+                <CardHeader className="flex-shrink-0">
+                  <CardTitle>Configuration Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="overflow-hidden">
+                  {/* Configuration summary content will go here */}
+                  <p className="text-sm text-muted-foreground">
+                    Current Step: {STEPS[currentStep - 1].name}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              {/* Bottom Container - Estimated Cost */}
+              <Card className="flex-1 overflow-hidden">
+                <CardHeader className="flex-shrink-0">
+                  <CardTitle>Estimated Cost</CardTitle>
+                </CardHeader>
+                <CardContent className="overflow-hidden">
+                  {/* Estimated cost content will go here */}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
