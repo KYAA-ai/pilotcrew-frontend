@@ -1,6 +1,7 @@
 import { EmployeeAuthGuard } from '@/components/auth/employee-auth-guard'
 import { EmployerAuthGuard } from '@/components/auth/employer-auth-guard'
 import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
+import { GoogleEmployeeAuthCallback } from '@/components/auth/GoogleEmployeeAuthCallback'
 import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -22,6 +23,7 @@ import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
 import EmployeeInProgressJobs from './pages/EmployeeInProgressJobs'
 import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
+import { GoogleEmployeeLoginCallback } from './components/auth/GoogleEmployeeLoginCallback'
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
       <Routes>
         {/* Auth Callback */}
         <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
+        <Route path="/auth/google-employee/callback" element={<GoogleEmployeeAuthCallback />} />
+        <Route path="/auth/google-employee/login/callback" element={<GoogleEmployeeLoginCallback />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInAuthCallback />} />
         {/* Employer Flow */}
         <Route path="/auth/employer" element={<EmployerAuth />} />

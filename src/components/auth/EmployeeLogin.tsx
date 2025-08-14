@@ -78,8 +78,8 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
     onValidationError?.(errors);
   };
 
-  const handleLinkedInLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/v1/auth/linkedin`;
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/employee/auth/google/login`;
   };
 
   return (
@@ -96,13 +96,13 @@ export default function EmployeeLogin({ onSuccess, onValidationError }: Employee
 
       <button 
         className="w-full flex items-center justify-center gap-2 px-4 py-2 border rounded-md shadow-sm bg-foreground text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        onClick={handleLinkedInLogin}
+        onClick={handleGoogleLogin}
         type="button"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-5">
-          <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.26 2.3-2.6 4.73-2.6C21.4 7.6 24 10 24 15v9h-5v-8.1c0-1.9-.03-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V24h-5V8z" />
+          <path d="M21.35 11.1h-9.09v3.7h5.82c-.25 1.46-1.5 4.3-5.82 4.3-3.5 0-6.36-2.9-6.36-6.5s2.86-6.5 6.36-6.5c2 0 3.34.88 4.09 1.63l2.8-2.8C17.57 2.46 15.46 1.5 12.32 1.5 6.46 1.5 2 5.93 2 11.7s4.46 10.2 10.32 10.2c5.93 0 9.82-4.16 9.82-10.07 0-.84-.08-1.43-.18-2.73z"/>
         </svg>
-        Continue with LinkedIn
+        Continue with Google
       </button>
     </div>
   );
