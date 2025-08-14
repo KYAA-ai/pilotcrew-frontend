@@ -101,7 +101,7 @@ export function Chat({
           }
         })
         .catch(() => {
-          setEvaluationQuestions([]); // fallback to empty if API fails
+          setEvaluationQuestions([]);
         });
     }
   }, [jobId]);
@@ -179,7 +179,7 @@ export function Chat({
               setStreamingContent("");
               break;
             }
-            
+
             const chunk = decoder.decode(value, { stream: true });
             accumulated += chunk;
             setStreamingContent(accumulated);
@@ -201,11 +201,11 @@ export function Chat({
     setLastSavedMessageIdx(messages.length - 1);
     const chat: Chat = {
       id: id,
-      title: '', // Default placeholder. Not updated in backend
-      createdAt: new Date(), // Default placeholder. Not updated in backend
+      title: '',
+      createdAt: new Date(),
       updatedAt: new Date(),
       messages: [latestMessage],
-      userId: '', // Default placeholder. Not updated in backend
+      userId: '',
       jobId: jobId
     };
     updateChatHistoryWithLatestMessages(chat);
@@ -268,7 +268,6 @@ export function Chat({
 
   const handleRenameChat = async () => {
     try {
-      // TODO: Implement rename API call
       console.log("Renaming chat to:", newChatName);
       setShowRenameDialog(false);
       setNewChatName("");
@@ -281,13 +280,11 @@ export function Chat({
     try {
       const response = await apiClient.get(`/v1/employee/workflow/${jobId}/getSavedFormData`);
       if (response.data.hasSavedData && response.data.formData) {
-        // Populate form fields with saved data
         Object.entries(response.data.formData).forEach(([questionId, answer]) => {
           setValue(questionId as keyof EvaluationForm, answer as string);
         });
       }
     } catch (error) {
-      // Only show error toast for actual errors, not for "no saved data"
       console.error("Error loading saved form data:", error);
       toast.error("Failed to load saved form data");
     }
@@ -297,7 +294,6 @@ export function Chat({
 
   return (
     <div className={`flex h-dvh bg-background transition-all duration-500 ease-in-out ${isSplitScreen ? 'flex-row' : 'flex-row justify-center pb-4 md:pb-8 relative'}`}>
-      {/* Chat Section */}
       <div className={`flex flex-col justify-between items-center gap-4 transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-1/2' : 'w-full'}`}>
         <div
           ref={messagesContainerRef}
@@ -314,7 +310,6 @@ export function Chat({
             />
           ))}
 
-          {/* Show streaming content in real-time */}
           {isStreaming && streamingContent && (
             <PreviewMessage
               key="streaming-message"
@@ -356,10 +351,8 @@ export function Chat({
         </form>
       </div>
 
-      {/* Split Screen Right Panel */}
       <div className={`transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-1/2 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
         <div className="w-full h-full bg-[#040713] flex flex-col relative">
-          {/* Close Button - Part of submission area, attached to left edge */}
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
             <Button
               onClick={() => setIsSplitScreen(false)}
@@ -420,10 +413,8 @@ export function Chat({
         </div>
       </div>
 
-      {/* Navigation Buttons - Only show when not in split screen */}
       {!isSplitScreen && (
         <>
-          {/* Go back button */}
           <Button
             onClick={() => navigate(-2)}
             className="absolute bottom-8 left-6 bg-primary hover:bg-primary/90 text-primary-foreground"
@@ -432,11 +423,9 @@ export function Chat({
             Go back to Jobs
           </Button>
 
-          {/* Submit a Response button */}
           <Button
             onClick={async () => {
               setIsSplitScreen(true);
-              // Load saved form data when opening the split screen
               setTimeout(() => loadSavedFormData(), 100);
             }}
             className="absolute bottom-8 right-6 bg-blue-400 hover:bg-blue-500 text-white"
@@ -447,7 +436,6 @@ export function Chat({
         </>
       )}
 
-      {/* Success Modal */}
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="sm:max-w-md rounded-3xl">
           <DialogHeader className="text-center space-y-6 pt-6">
@@ -473,7 +461,6 @@ export function Chat({
         </DialogContent>
       </Dialog>
 
-      {/* Rename Chat Dialog */}
       <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

@@ -12,6 +12,7 @@ export interface FormFieldWithFiles {
   placeholder?: string;
   options?: { value: string; label: string }[]; // For select fields
   accept?: string; // For file fields
+  dragAndDrop?: boolean; // Enable drag and drop for file fields
   validation?: {
     required?: boolean;
     minLength?: number;
@@ -219,6 +220,93 @@ export default function GenericFormWithFiles({
         );
 
       case 'file':
+        if (field.dragAndDrop) {
+          return (
+            <div className="space-y-2">
+              <div
+                className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  error ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+                }`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const files = Array.from(e.dataTransfer.files);
+                  if (files.length > 0) {
+                    const file = files[0];
+                    // Validate file type
+                    if (accept && !accept.split(',').some(type => {
+                      if (type.startsWith('.')) {
+                        return file.name.toLowerCase().endsWith(type);
+                      }
+                      return file.type.startsWith(type.trim());
+                    })) {
+                      return; // Invalid file type
+                    }
+                    handleInputChange(name, file);
+                  }
+                }}
+              >
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <div className="text-sm">
+                    <span className="font-medium">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {accept ? `Accepted formats: ${accept}` : "All file types accepted"}
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  accept={accept}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    handleInputChange(name, file);
+                  }}
+                />
+              </div>
+              {value instanceof File && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">{value.name}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleInputChange(name, null)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        }
+        
         return (
           <div className="space-y-2">
             <div className="flex items-center gap-3">
