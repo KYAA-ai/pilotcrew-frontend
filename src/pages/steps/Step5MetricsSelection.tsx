@@ -99,8 +99,8 @@ export default function Step5MetricsSelection() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-6">
-        <p className="text-muted-foreground">Select the evaluation metrics you want to use for your analysis.</p>
+      <CardContent className="overflow-y-auto space-y-6 h-full">
+        <p className="text-muted-foreground">Select the metrics you want to use for evaluation. You can select multiple metrics from each category.</p>
         
         <TooltipProvider>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -39,7 +39,7 @@ export default function Step1UploadDataset() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-6">
+      <CardContent className="overflow-y-auto space-y-6 h-full">
         {/* Upload Status Message */}
         {uploadStatus !== 'idle' && (
           <div className={`flex items-center gap-2 p-3 rounded-md ${

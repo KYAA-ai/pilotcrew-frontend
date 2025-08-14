@@ -58,7 +58,7 @@ export default function Step3ModelSelection() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-6">
+      <CardContent className="overflow-y-auto space-y-6 h-full">
         <p className="text-muted-foreground">Drag models from the left to the right to select them for evaluation.</p>
         
         {/* Model Selection Area */}

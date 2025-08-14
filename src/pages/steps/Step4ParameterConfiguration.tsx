@@ -16,7 +16,7 @@ export default function Step4ParameterConfiguration() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-8">
+      <CardContent className="overflow-y-auto space-y-8 h-full">
         <p className="text-muted-foreground">Configure the parameters for your evaluation. These settings will be applied to all selected models.</p>
         
         {/* Temperature Slider */}

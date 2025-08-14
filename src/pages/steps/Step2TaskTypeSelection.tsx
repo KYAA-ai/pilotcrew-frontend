@@ -56,7 +56,7 @@ export default function Step2TaskTypeSelection() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-6">
+      <CardContent className="overflow-y-auto space-y-6 h-full">
         <p className="text-muted-foreground">Select the task types you want to evaluate. You can select multiple tasks.</p>
         
         {/* Task Type Grid */}

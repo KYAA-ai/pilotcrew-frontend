@@ -49,7 +49,7 @@ export default function Step6ReviewLaunch() {
 
   return (
     <>
-      <CardContent className="overflow-hidden space-y-6">
+      <CardContent className="overflow-y-auto space-y-6 h-full">
         <p className="text-muted-foreground">Review your configuration and launch the evaluation.</p>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
