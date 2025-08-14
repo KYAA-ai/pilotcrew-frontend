@@ -6,24 +6,30 @@ import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
+import AutoEvalPage from './pages/AutoEvalPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
+import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
 import EmployeeDashboardPage from './pages/EmployeeDashboard'
+import EmployeeInProgressJobs from './pages/EmployeeInProgressJobs'
 import EmployeeJobWorkflowChatScreen from './pages/EmployeeJobWorkflowChatScreen'
 import EmployeeProfile from './pages/EmployeeProfile'
 import EmployeeRecommendedJobs from './pages/EmployeeRecommendedJobs'
 import EmployerAuth from './pages/EmployerAuth'
 import EmployerDashboardPage from './pages/EmployerDashboard'
 import EmployerJobDetailsPage from './pages/EmployerJobDetailsPage'
-import JobResponsesPage from './pages/JobResponsesPage'
 import EmployerProfile from './pages/EmployerProfile'
 import JobDetailsPage from './pages/JobDetailsPage'
 import JobFormPage from './pages/JobFormPage'
+import JobResponsesPage from './pages/JobResponsesPage'
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/newLandingPage'
+<<<<<<< Updated upstream
 import EmployeeInProgressJobs from './pages/EmployeeInProgressJobs'
 import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
 import { GoogleEmployeeLoginCallback } from './components/auth/GoogleEmployeeLoginCallback'
+=======
+>>>>>>> Stashed changes
 
 function App() {
   return (
@@ -153,6 +159,8 @@ function App() {
             </EmployerAuthGuard>
           }
         />
+        {/* AutoEval Platform */}
+        <Route path="/autoeval" element={<AutoEvalPage />} />
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />
         <Route path="/" element={<NewLandingPage />} />
