@@ -64,6 +64,8 @@ export function Chat({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [newChatName, setNewChatName] = useState("");
+  const [streamingContent, setStreamingContent] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
   const { register, handleSubmit: handleFormSubmit, formState: { errors }, getValues, setValue } = useForm<EvaluationForm>();
 
   const getChatHistoryByChatId = async (chatId: string) => {
@@ -99,7 +101,7 @@ export function Chat({
           }
         })
         .catch(() => {
-          setEvaluationQuestions([]); // fallback to empty if API fails
+          setEvaluationQuestions([]);
         });
     }
   }, [jobId]);
@@ -119,24 +121,28 @@ export function Chat({
     input: RequestInfo | URL,
     init?: RequestInit
   ): Promise<Response> => {
-    const res = await fetch(input, init);
+    console.log("Input:", input);
+    let messagesToSend = [];
+
+    try {
+      const initBody = JSON.parse(init?.body as string);
+      messagesToSend = initBody.messages.slice(-10);
+    } catch (error) {
+      console.error("Failed to parse init body:", error);
+    }
+
+    const modifiedInit = {
+      ...init,
+      body: JSON.stringify({
+        id: id,
+        messages: messagesToSend
+      })
+    };
+    const res = await fetch(input, modifiedInit);
     if (!res.body) return res;
 
-    // tee the body so we can log *and* forward it
     const forwardStream = res.body;
-    // const reader = logStream.getReader();
-    // const decoder = new TextDecoder();
 
-    // // async‐log loop (no need to await this)
-    // (async () => {
-    //   while (true) {
-    //     const { value, done } = await reader.read();
-    //     if (done) break;
-    //     console.log("SSE chunk:", decoder.decode(value, { stream: true }));
-    //   }
-    // })();
-
-    // hand the second stream back to the SDK
     return new Response(forwardStream, {
       status: res.status,
       headers: res.headers,
@@ -150,7 +156,7 @@ export function Chat({
       fetch: fetchWithLogging,
       body: { id },
       initialMessages: initialMessages,
-      maxSteps: 10,
+      maxSteps: 1,
       onResponse: (res) => {
         const clone = res.clone();
         const reader = clone.body?.getReader();
@@ -159,6 +165,9 @@ export function Chat({
         const decoder = new TextDecoder();
         let accumulated = "";
 
+        setIsStreaming(true);
+        setStreamingContent("");
+
         (async () => {
           while (true) {
             const { value, done } = await reader.read();
@@ -166,9 +175,14 @@ export function Chat({
               if (accumulated.length > 0) {
                 append({ role: "assistant", content: accumulated });
               }
+              setIsStreaming(false);
+              setStreamingContent("");
               break;
             }
-            accumulated += decoder.decode(value, { stream: true });
+
+            const chunk = decoder.decode(value, { stream: true });
+            accumulated += chunk;
+            setStreamingContent(accumulated);
           }
         })();
       }
@@ -187,11 +201,11 @@ export function Chat({
     setLastSavedMessageIdx(messages.length - 1);
     const chat: Chat = {
       id: id,
-      title: '', // Default placeholder. Not updated in backend
-      createdAt: new Date(), // Default placeholder. Not updated in backend
+      title: '',
+      createdAt: new Date(),
       updatedAt: new Date(),
       messages: [latestMessage],
-      userId: '', // Default placeholder. Not updated in backend
+      userId: '',
       jobId: jobId
     };
     updateChatHistoryWithLatestMessages(chat);
@@ -254,7 +268,6 @@ export function Chat({
 
   const handleRenameChat = async () => {
     try {
-      // TODO: Implement rename API call
       console.log("Renaming chat to:", newChatName);
       setShowRenameDialog(false);
       setNewChatName("");
@@ -267,13 +280,11 @@ export function Chat({
     try {
       const response = await apiClient.get(`/v1/employee/workflow/${jobId}/getSavedFormData`);
       if (response.data.hasSavedData && response.data.formData) {
-        // Populate form fields with saved data
         Object.entries(response.data.formData).forEach(([questionId, answer]) => {
           setValue(questionId as keyof EvaluationForm, answer as string);
         });
       }
     } catch (error) {
-      // Only show error toast for actual errors, not for "no saved data"
       console.error("Error loading saved form data:", error);
       toast.error("Failed to load saved form data");
     }
@@ -283,7 +294,6 @@ export function Chat({
 
   return (
     <div className={`flex h-dvh bg-background transition-all duration-500 ease-in-out ${isSplitScreen ? 'flex-row' : 'flex-row justify-center pb-4 md:pb-8 relative'}`}>
-      {/* Chat Section */}
       <div className={`flex flex-col justify-between items-center gap-4 transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-1/2' : 'w-full'}`}>
         <div
           ref={messagesContainerRef}
@@ -300,7 +310,16 @@ export function Chat({
             />
           ))}
 
-          {status !== "ready" && (
+          {isStreaming && streamingContent && (
+            <PreviewMessage
+              key="streaming-message"
+              role="assistant"
+              content={streamingContent}
+              attachments={[]}
+            />
+          )}
+
+          {status !== "ready" && !isStreaming && (
             <div className="gap-4 px-4 w-full md:w-[750px] md:px-0 first-of-type:pt-20 flex flex-row">
               <div className="size-[24px] border rounded-sm p-1 flex flex-row items-center shrink-0 text-zinc-500">
                 <BotIcon />
@@ -332,10 +351,8 @@ export function Chat({
         </form>
       </div>
 
-      {/* Split Screen Right Panel */}
       <div className={`transition-all duration-500 ease-in-out ${isSplitScreen ? 'w-1/2 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
         <div className="w-full h-full bg-[#040713] flex flex-col relative">
-          {/* Close Button - Part of submission area, attached to left edge */}
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
             <Button
               onClick={() => setIsSplitScreen(false)}
@@ -396,10 +413,8 @@ export function Chat({
         </div>
       </div>
 
-      {/* Navigation Buttons - Only show when not in split screen */}
       {!isSplitScreen && (
         <>
-          {/* Go back button */}
           <Button
             onClick={() => navigate(-2)}
             className="absolute bottom-8 left-6 bg-primary hover:bg-primary/90 text-primary-foreground"
@@ -408,11 +423,9 @@ export function Chat({
             Go back to Jobs
           </Button>
 
-          {/* Submit a Response button */}
           <Button
             onClick={async () => {
               setIsSplitScreen(true);
-              // Load saved form data when opening the split screen
               setTimeout(() => loadSavedFormData(), 100);
             }}
             className="absolute bottom-8 right-6 bg-blue-400 hover:bg-blue-500 text-white"
@@ -423,7 +436,6 @@ export function Chat({
         </>
       )}
 
-      {/* Success Modal */}
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="sm:max-w-md rounded-3xl">
           <DialogHeader className="text-center space-y-6 pt-6">
@@ -449,7 +461,6 @@ export function Chat({
         </DialogContent>
       </Dialog>
 
-      {/* Rename Chat Dialog */}
       <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

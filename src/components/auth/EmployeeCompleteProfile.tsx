@@ -5,51 +5,19 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { SignupProcessingModal } from "./SignupProcessingModal";
 
-interface EmployeeSignupProps {
+interface EmployeeCompleteProfileProps {
   onSuccess?: () => void;
   onValidationError?: (errors: string[]) => void;
 }
 
-const employeeSignupFields: FormFieldWithFiles[] = [
-  {
-    name: "name",
-    label: "Full Name",
-    type: "text",
-    required: true,
-    placeholder: "Enter your full name",
-    validation: {
-      required: true,
-      minLength: 2,
-    },
-  },
-  {
-    name: "email",
-    label: "Email",
-    type: "email",
-    required: true,
-    placeholder: "Enter your email",
-    validation: {
-      required: true,
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    },
-  },
-  {
-    name: "password",
-    label: "Password",
-    type: "password",
-    required: true,
-    placeholder: "Enter your password",
-    validation: {
-      required: true,
-      minLength: 6,
-    },
-  },
+const employeeCompleteProfileFields: FormFieldWithFiles[] = [
   {
     name: "resume",
     label: "Resume/CV",
     type: "file",
     required: true,
     accept: ".pdf,.doc,.docx",
+    dragAndDrop: true, // Enable drag and drop for this field
     validation: {
       required: true,
       fileSize: 2, // 2MB max
@@ -58,7 +26,7 @@ const employeeSignupFields: FormFieldWithFiles[] = [
   },
 ];
 
-export default function EmployeeSignup({ onSuccess, onValidationError }: EmployeeSignupProps) {
+export default function EmployeeCompleteProfile({ onSuccess, onValidationError }: EmployeeCompleteProfileProps) {
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
   const [modalStage, setModalStage] = useState<1 | 2>(1);
@@ -68,10 +36,6 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   const [processing, setProcessing] = useState(false);
   const [currentRetry, setCurrentRetry] = useState(0);
   const [maxRetries] = useState(10);
-
-  const handleGoogleSignup = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/v1/employee/auth/google`;
-  };
 
   const rollbackEmployee = async (employeeId: string, reason: string) => {
     try {
@@ -86,7 +50,6 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
     let isActive = true;
     let retries = 0;
     
-    // Reset retry counter when starting and show immediate progress
     setCurrentRetry(1);
     setProcessing(true);
     
@@ -97,7 +60,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
         if (!isActive) return;
         if (status === "SUCCESS") {
           setProcessing(false);
-          setCurrentRetry(maxRetries); // Set to 100% completion
+          setCurrentRetry(maxRetries);
           console.log("Navigating to /employee/recommended-jobs after registration SUCCESS");
           onSuccess?.();
           toast.success("Registration successful!");
@@ -145,7 +108,7 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
           formDataToSend.append(key, value);
         }
       });
-      const response = await apiClient.post('/v3/employee/register', formDataToSend, {
+      const response = await apiClient.post('/v1/employee/google-register', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -207,7 +170,6 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
   };
 
   const handleComplete = () => {
-    // navigate('/employee/recommended-jobs');
     window.location.href = '/employee/recommended-jobs';
   };
 
@@ -215,25 +177,12 @@ export default function EmployeeSignup({ onSuccess, onValidationError }: Employe
     <>
       <div className="flex flex-col gap-4">
         <GenericFormWithFiles
-          fields={employeeSignupFields}
-          submitButtonText="Sign up"
+          fields={employeeCompleteProfileFields}
+          submitButtonText="Complete Profile"
           onSubmit={handleSubmit}
           onValidationError={handleValidationError}
           isLoading={false}
         />
-
-        <div className="text-center italic"> OR </div>
-
-        <button 
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 border rounded-md shadow-sm bg-foreground text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          onClick={handleGoogleSignup}
-          type="button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-5">
-            <path d="M21.35 11.1h-9.09v3.7h5.82c-.25 1.46-1.5 4.3-5.82 4.3-3.5 0-6.36-2.9-6.36-6.5s2.86-6.5 6.36-6.5c2 0 3.34.88 4.09 1.63l2.8-2.8C17.57 2.46 15.46 1.5 12.32 1.5 6.46 1.5 2 5.93 2 11.7s4.46 10.2 10.32 10.2c5.93 0 9.82-4.16 9.82-10.07 0-.84-.08-1.43-.18-2.73z"/>
-          </svg>
-          Sign up with Google
-        </button>
       </div>
 
       <SignupProcessingModal
