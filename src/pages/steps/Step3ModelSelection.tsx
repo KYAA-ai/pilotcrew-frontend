@@ -1,7 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Bot, DollarSign, Move } from "lucide-react";
 import { useState } from "react";
 
@@ -24,7 +22,6 @@ const availableModels: Model[] = [
 
 export default function Step3ModelSelection() {
   const [selectedModels, setSelectedModels] = useState<Model[]>([]);
-  const [useLocalEndpoints, setUseLocalEndpoints] = useState(false);
 
   const handleDragStart = (e: React.DragEvent, model: Model) => {
     e.dataTransfer.setData('application/json', JSON.stringify(model));
@@ -155,18 +152,6 @@ export default function Step3ModelSelection() {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Local Endpoints Toggle */}
-        <div className="flex items-center space-x-2 p-4 border rounded-lg">
-          <Switch
-            id="local-endpoints"
-            checked={useLocalEndpoints}
-            onCheckedChange={setUseLocalEndpoints}
-          />
-          <Label htmlFor="local-endpoints" className="text-sm font-medium">
-            Use local endpoints for model instances (Optional)
-          </Label>
         </div>
 
         {/* Selection Summary */}

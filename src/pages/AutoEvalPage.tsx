@@ -1,17 +1,18 @@
 
 import { SiteHeader } from "@/components/employer-header";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import React, { useState } from "react"; // Added missing import for React
+import { Play } from "lucide-react";
+import React, { useEffect, useState } from "react"; // Added useEffect import
 import { AutoEvalSidebar } from "./AutoEvalSidebar";
 
 // Import all step components
@@ -34,6 +35,21 @@ const STEPS = [
 
 export default function AutoEvalPage() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isStep6Transition, setIsStep6Transition] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(false);
+
+  // Trigger transition when entering Step 6
+  useEffect(() => {
+    if (currentStep === 6) {
+      // Small delay to ensure the step change is rendered first
+      const timer = setTimeout(() => {
+        setIsStep6Transition(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setIsStep6Transition(false);
+    }
+  }, [currentStep]);
 
   const handleNext = () => {
     if (currentStep < STEPS.length) {
@@ -45,6 +61,15 @@ export default function AutoEvalPage() {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleLaunch = () => {
+    setIsLaunching(true);
+    // Simulate launch process
+    setTimeout(() => {
+      setIsLaunching(false);
+      // Here you would typically navigate to results page or show success message
+    }, 2000);
   };
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
@@ -66,8 +91,12 @@ export default function AutoEvalPage() {
         <SiteHeader />
         <div className="h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
           <div className="flex w-full h-full">
-            {/* Left Container - 2/3 width */}
-            <div className="w-2/3 h-full p-6 flex flex-col overflow-hidden relative">
+            {/* Left Container - Wizard */}
+            <div 
+              className={`h-full p-6 flex flex-col overflow-hidden relative transition-all duration-700 ease-in-out ${
+                isStep6Transition ? 'w-full' : 'w-2/3'
+              }`}
+            >
               {/* Breadcrumb */}
               <Breadcrumb className="mb-4 flex-shrink-0">
                 <BreadcrumbList>
@@ -125,7 +154,28 @@ export default function AutoEvalPage() {
                         <CardTitle>Step {currentStep} of 6</CardTitle>
                         <h2 className="text-2xl font-semibold mt-2">{STEPS[currentStep - 1].name}</h2>
                       </div>
-                      {!isLastStep && (
+                      {currentStep === 6 ? (
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleLaunch}
+                            disabled={isLaunching}
+                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
+                            size="sm"
+                          >
+                            {isLaunching ? (
+                              <>
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                                Launching...
+                              </>
+                            ) : (
+                              <>
+                                <Play className="h-4 w-4 mr-2" />
+                                Launch Evaluation
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      ) : (
                         <div className="flex gap-2">
                           <Button
                             onClick={handlePrevious}
@@ -159,8 +209,14 @@ export default function AutoEvalPage() {
               </div>
             </div>
             
-            {/* Right Container - 1/3 width */}
-            <div className="w-1/3 h-full p-6 flex flex-col gap-4 overflow-hidden">
+            {/* Right Container - Configuration Summary and Estimated Cost */}
+            <div 
+              className={`h-full p-6 flex flex-col gap-4 overflow-hidden transition-all duration-700 ease-in-out ${
+                isStep6Transition 
+                  ? 'w-0 opacity-0 translate-x-full' 
+                  : 'w-1/3 opacity-100 translate-x-0'
+              }`}
+            >
               {/* Top Container - Configuration Summary */}
               <Card className="flex-1 overflow-hidden">
                 <CardHeader className="flex-shrink-0">

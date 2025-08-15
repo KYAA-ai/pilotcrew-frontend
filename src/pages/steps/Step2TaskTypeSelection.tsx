@@ -108,22 +108,6 @@ export default function Step2TaskTypeSelection() {
             })}
           </div>
 
-          {/* Selection Summary */}
-          {selectedTasks.length > 0 && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Selected Tasks:</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedTasks.map((taskId) => {
-                  const task = taskTypes.find(t => t.id === taskId);
-                  return (
-                    <Badge key={taskId} variant="outline" className="bg-white">
-                      {task?.name}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </CardContent>
       </>
     );

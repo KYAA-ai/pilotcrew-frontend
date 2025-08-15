@@ -39,10 +39,10 @@ export default function Step1UploadDataset() {
 
   return (
     <>
-      <CardContent className="overflow-y-auto space-y-6 h-full">
+      <CardContent className="overflow-y-auto space-y-4 h-full">
         {/* Upload Status Message */}
         {uploadStatus !== 'idle' && (
-          <div className={`flex items-center gap-2 p-3 rounded-md ${
+          <div className={`flex items-center gap-2 p-2 rounded-md ${
             uploadStatus === 'success' 
               ? 'bg-green-50 border border-green-200 text-green-800' 
               : 'bg-red-50 border border-red-200 text-red-800'
@@ -58,16 +58,17 @@ export default function Step1UploadDataset() {
 
         {/* Drag and Drop Upload Area */}
         <div
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
+          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Upload your dataset</h3>
-          <p className="text-gray-500 mb-4">Drag and drop your CSV, JSON, or Excel file here, or click to browse</p>
+          <Upload className="mx-auto h-8 w-8 text-gray-400 mb-3" />
+          <h3 className="text-base font-medium text-gray-900 mb-1">Upload your dataset</h3>
+          <p className="text-sm text-gray-500 mb-3">Drag and drop your CSV, JSON, or Excel file here, or click to browse</p>
           <Button 
             onClick={() => document.getElementById('file-upload')?.click()}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 text-sm"
+            size="sm"
           >
             Choose File
           </Button>
@@ -81,14 +82,14 @@ export default function Step1UploadDataset() {
         </div>
 
         {/* Dataset Preview Table */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Dataset Preview (df.head())</h3>
+        <div className="space-y-3">
+          <h3 className="text-base font-medium">Dataset Preview (df.head())</h3>
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
                   {columns.map((column) => (
-                    <TableHead key={column} className="font-medium">
+                    <TableHead key={column} className="font-medium text-xs">
                       {column}
                     </TableHead>
                   ))}
@@ -98,7 +99,7 @@ export default function Step1UploadDataset() {
                 {sampleData.map((row) => (
                   <TableRow key={row.id}>
                     {columns.map((column) => (
-                      <TableCell key={column} className="text-sm">
+                      <TableCell key={column} className="text-xs">
                         {row[column as keyof typeof row]}
                       </TableCell>
                     ))}
@@ -109,72 +110,24 @@ export default function Step1UploadDataset() {
           </div>
         </div>
 
-        {/* Column Mapping */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Map Dataset Columns</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Input Column</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select input column" />
-                </SelectTrigger>
-                <SelectContent>
-                  {columns.map((column) => (
-                    <SelectItem key={column} value={column}>
-                      {column}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Ground Truth Column</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select ground truth column" />
-                </SelectTrigger>
-                <SelectContent>
-                  {columns.map((column) => (
-                    <SelectItem key={column} value={column}>
-                      {column}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tags Column (Optional)</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select tags column" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {columns.map((column) => (
-                    <SelectItem key={column} value={column}>
-                      {column}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Output Column (Optional)</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select output column" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {columns.map((column) => (
-                    <SelectItem key={column} value={column}>
-                      {column}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Output Column Selection */}
+        <div className="space-y-3">
+          <h3 className="text-base font-medium">Output Column Selection</h3>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Output Column (Optional)</label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select output column" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {columns.map((column) => (
+                  <SelectItem key={column} value={column}>
+                    {column}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
