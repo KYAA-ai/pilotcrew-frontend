@@ -1,18 +1,40 @@
-import { Badge } from "@/components/ui/badge";
+import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, FileText } from "lucide-react";
+import { DollarSign } from "lucide-react";
 
-export default function Step6ReviewLaunch() {
-  // Sample configuration data
-  const config = {
+interface Step6ReviewLaunchProps {
+  configuration?: {
+    dataset?: {
+      name: string;
+      columns: string[];
+      outputColumn?: string;
+    };
+    tasks?: string[];
+    models?: Array<{
+      name: string;
+      provider: string;
+      pricing: string;
+    }>;
+    parameters?: Record<string, {
+      temperature: number;
+      topP: number;
+      topK: number;
+    }>;
+    metrics?: {
+      passAtK?: string;
+      textMetrics: string[];
+    };
+  };
+  currentStep?: number;
+}
+
+export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: Step6ReviewLaunchProps) {
+  // Sample configuration data (fallback if no configuration is passed)
+  const config = configuration || {
     dataset: {
       name: "qa_dataset.csv",
-      columns: {
-        input: "question",
-        ground_truth: "answer",
-        tags: "category",
-        output: "none"
-      }
+      columns: ["id", "question", "answer", "category", "difficulty"],
+      outputColumn: "none"
     },
     tasks: ["qa", "classification"],
     models: [
@@ -20,16 +42,12 @@ export default function Step6ReviewLaunch() {
       { name: "Claude-3", provider: "Anthropic", pricing: "$0.015/1K tokens" }
     ],
     parameters: {
-      temperature: 0.7,
-      max_tokens: 1000,
-      top_p: 0.9,
-      samples_per_prompt: 1,
-      pass_at_k: 1,
-      seed: "random"
+      "GPT-4": { temperature: 0, topP: 0, topK: 1 },
+      "Claude-3": { temperature: 0, topP: 0, topK: 1 }
     },
     metrics: {
-      pass_at_k: ["pass@1", "pass@5"],
-      text_metrics: ["bleu", "rouge", "exact_match"]
+      passAtK: "1",
+      textMetrics: ["bleu", "rouge", "exact_match"]
     }
   };
 
@@ -40,62 +58,11 @@ export default function Step6ReviewLaunch() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Configuration Summary Card */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" />
-              <h3 className="text-lg font-medium">Configuration Summary</h3>
-            </div>
-            <Card className="p-4">
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Dataset</h4>
-                  <p className="text-sm text-gray-600">{config.dataset.name}</p>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Input: {config.dataset.columns.input} | Ground Truth: {config.dataset.columns.ground_truth}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Tasks</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {config.tasks.map(task => (
-                      <Badge key={task} variant="outline" className="text-xs">
-                        {task}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Models</h4>
-                  <div className="space-y-1">
-                    {config.models.map(model => (
-                      <div key={model.name} className="text-sm text-gray-600">
-                        {model.name} ({model.provider})
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Parameters</h4>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <div>Temperature: {config.parameters.temperature}</div>
-                    <div>Top P: {config.parameters.top_p}</div>
-                    <div>Top K: 50</div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Metrics</h4>
-                  <div className="text-sm text-gray-600">
-                    <div>Pass@k: {config.metrics.pass_at_k.length} selected</div>
-                    <div>Text Metrics: {config.metrics.text_metrics.length} selected</div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
+          <ConfigurationSummary 
+            config={config}
+            currentStep={currentStep}
+            isCompact={false}
+          />
 
           {/* Estimated Cost Card */}
           <div className="space-y-4">
@@ -117,11 +84,11 @@ export default function Step6ReviewLaunch() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Models:</span>
-                    <span className="font-medium">{config.models.length} selected</span>
+                    <span className="font-medium">{config.models?.length || 0} selected</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tasks:</span>
-                    <span className="font-medium">{config.tasks.length} selected</span>
+                    <span className="font-medium">{config.tasks?.length || 0} selected</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Avg. Tokens per Response:</span>

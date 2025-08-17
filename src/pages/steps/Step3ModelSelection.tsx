@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bot, DollarSign, Move } from "lucide-react";
-import { useState } from "react";
+import { Bot, DollarSign, Move, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Model {
   id: string;
@@ -20,8 +21,20 @@ const availableModels: Model[] = [
   { id: "mistral", name: "Mistral", provider: "Mistral AI", pricing: "$0.0014/1K tokens", logo: "🤖" },
 ];
 
-export default function Step3ModelSelection() {
+interface Step3ModelSelectionProps {
+  onConfigurationUpdate?: (config: { models: Model[] }) => void;
+  initialConfig?: { models?: Model[] };
+}
+
+export default function Step3ModelSelection({ onConfigurationUpdate, initialConfig }: Step3ModelSelectionProps) {
   const [selectedModels, setSelectedModels] = useState<Model[]>([]);
+
+  // Initialize from initialConfig if provided
+  useEffect(() => {
+    if (initialConfig?.models) {
+      setSelectedModels(initialConfig.models);
+    }
+  }, [initialConfig]);
 
   const handleDragStart = (e: React.DragEvent, model: Model) => {
     e.dataTransfer.setData('application/json', JSON.stringify(model));
@@ -38,15 +51,34 @@ export default function Step3ModelSelection() {
 
     if (targetList === 'selected') {
       if (!selectedModels.find(m => m.id === model.id)) {
-        setSelectedModels(prev => [...prev, model]);
+        const newSelectedModels = [...selectedModels, model];
+        setSelectedModels(newSelectedModels);
+        if (onConfigurationUpdate) {
+          onConfigurationUpdate({ models: newSelectedModels });
+        }
       }
     } else {
-      setSelectedModels(prev => prev.filter(m => m.id !== model.id));
+      const newSelectedModels = selectedModels.filter(m => m.id !== model.id);
+      setSelectedModels(newSelectedModels);
+      if (onConfigurationUpdate) {
+        onConfigurationUpdate({ models: newSelectedModels });
+      }
     }
   };
 
   const removeModel = (modelId: string) => {
-    setSelectedModels(prev => prev.filter(m => m.id !== modelId));
+    const newSelectedModels = selectedModels.filter(m => m.id !== modelId);
+    setSelectedModels(newSelectedModels);
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ models: newSelectedModels });
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedModels([]);
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ models: [] });
+    }
   };
 
   const availableModelsList = availableModels.filter(
@@ -56,7 +88,18 @@ export default function Step3ModelSelection() {
   return (
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
-        <p className="text-muted-foreground">Drag models from the left to the right to select them for evaluation.</p>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground">Drag models between sections to select or deselect them for evaluation.</p>
+          <Button
+            onClick={handleClearSelection}
+            variant="outline"
+            size="sm"
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <RotateCcw className="h-4 w-4 mr-1" />
+            Clear Selection
+          </Button>
+        </div>
         
         {/* Model Selection Area */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -116,6 +159,9 @@ export default function Step3ModelSelection() {
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, 'selected')}
             >
+              <div className="text-xs text-blue-600 mb-2 text-center">
+                💡 Drag models back to Available to deselect
+              </div>
               {selectedModels.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   <p>Drag models here to select</p>
@@ -125,7 +171,9 @@ export default function Step3ModelSelection() {
                   {selectedModels.map((model) => (
                     <Card
                       key={model.id}
-                      className="p-4 bg-white border-blue-200"
+                      className="p-4 bg-white border-blue-200 cursor-move hover:shadow-md transition-shadow"
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, model)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -138,12 +186,7 @@ export default function Step3ModelSelection() {
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4 text-gray-400" />
                           <span className="text-sm text-gray-600">{model.pricing}</span>
-                          <button
-                            onClick={() => removeModel(model.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            ×
-                          </button>
+                          <Move className="h-4 w-4 text-gray-400" />
                         </div>
                       </div>
                     </Card>

@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Code, FileText, MessageSquare, Tags, Zap } from "lucide-react";
-import { useState } from "react";
+import { Code, FileText, MessageSquare, RotateCcw, Tags, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface TaskType {
   id: string;
@@ -43,21 +44,56 @@ const taskTypes: TaskType[] = [
   },
 ];
 
-export default function Step2TaskTypeSelection() {
+interface Step2TaskTypeSelectionProps {
+  onConfigurationUpdate?: (config: { tasks: string[] }) => void;
+  initialConfig?: { tasks?: string[] };
+}
+
+export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialConfig }: Step2TaskTypeSelectionProps) {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
+  // Initialize from initialConfig if provided
+  useEffect(() => {
+    if (initialConfig?.tasks) {
+      setSelectedTasks(initialConfig.tasks);
+    }
+  }, [initialConfig]);
+
   const toggleTask = (taskId: string) => {
-    setSelectedTasks(prev => 
-      prev.includes(taskId) 
-        ? prev.filter(id => id !== taskId)
-        : [...prev, taskId]
-    );
+    const newSelectedTasks = selectedTasks.includes(taskId) 
+      ? selectedTasks.filter(id => id !== taskId)
+      : [...selectedTasks, taskId];
+    
+    setSelectedTasks(newSelectedTasks);
+    
+    // Update configuration
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ tasks: newSelectedTasks });
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedTasks([]);
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ tasks: [] });
+    }
   };
 
   return (
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
-        <p className="text-muted-foreground">Select the task types you want to evaluate. You can select multiple tasks.</p>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground">Select the task types you want to evaluate. You can select multiple tasks.</p>
+          <Button
+            onClick={handleClearSelection}
+            variant="outline"
+            size="sm"
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <RotateCcw className="h-4 w-4 mr-1" />
+            Clear Selection
+          </Button>
+        </div>
         
         {/* Task Type Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

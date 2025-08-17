@@ -1,12 +1,13 @@
 
+import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { SiteHeader } from "@/components/employer-header";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +38,21 @@ export default function AutoEvalPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isStep6Transition, setIsStep6Transition] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  
+  // Configuration state to track user selections
+  const [configuration, setConfiguration] = useState<{
+    dataset?: { name: string; columns: string[]; outputColumn?: string };
+    tasks: string[];
+    models: Array<{ name: string; provider: string; pricing: string }>;
+    parameters?: Record<string, { temperature: number; topP: number; topK: number }>;
+    metrics?: { passAtK?: string; textMetrics: string[] };
+  }>({
+    dataset: undefined,
+    tasks: [],
+    models: [],
+    parameters: undefined,
+    metrics: undefined,
+  });
 
   // Trigger transition when entering Step 6
   useEffect(() => {
@@ -70,6 +86,13 @@ export default function AutoEvalPage() {
       setIsLaunching(false);
       // Here you would typically navigate to results page or show success message
     }, 2000);
+  };
+
+  const handleConfigurationUpdate = (stepConfig: Partial<typeof configuration>) => {
+    setConfiguration(prev => ({
+      ...prev,
+      ...stepConfig
+    }));
   };
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
@@ -180,7 +203,7 @@ export default function AutoEvalPage() {
                           <Button
                             onClick={handlePrevious}
                             disabled={isFirstStep}
-                            className={`border border-primary text-primary hover:bg-primary/10 px-4 py-2 text-sm ${
+                            className={`border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm ${
                               isFirstStep ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                             size="sm"
@@ -204,7 +227,14 @@ export default function AutoEvalPage() {
                       )}
                     </div>
                   </CardHeader>
-                  <CurrentStepComponent />
+                  {currentStep === 6 ? (
+                    <CurrentStepComponent configuration={configuration} currentStep={currentStep} />
+                  ) : (
+                    <CurrentStepComponent 
+                      onConfigurationUpdate={handleConfigurationUpdate}
+                      initialConfig={configuration}
+                    />
+                  )}
                 </Card>
               </div>
             </div>
@@ -218,17 +248,11 @@ export default function AutoEvalPage() {
               }`}
             >
               {/* Top Container - Configuration Summary */}
-              <Card className="flex-1 overflow-hidden">
-                <CardHeader className="flex-shrink-0">
-                  <CardTitle>Configuration Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="overflow-hidden">
-                  {/* Configuration summary content will go here */}
-                  <p className="text-sm text-muted-foreground">
-                    Current Step: {STEPS[currentStep - 1].name}
-                  </p>
-                </CardContent>
-              </Card>
+              <ConfigurationSummary 
+                config={configuration}
+                currentStep={currentStep}
+                isCompact={true}
+              />
               
               {/* Bottom Container - Estimated Cost */}
               <Card className="flex-1 overflow-hidden">

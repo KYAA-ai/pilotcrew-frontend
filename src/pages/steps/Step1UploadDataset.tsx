@@ -2,12 +2,19 @@ import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertCircle, CheckCircle, Upload } from "lucide-react";
-import { useState } from "react";
+import { AlertCircle, CheckCircle, RotateCcw, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function Step1UploadDataset() {
+interface Step1UploadDatasetProps {
+  onConfigurationUpdate?: (config: { dataset?: { name: string; columns: string[]; outputColumn?: string } }) => void;
+  initialConfig?: { dataset?: { name: string; columns: string[]; outputColumn?: string } };
+}
+
+export default function Step1UploadDataset({ onConfigurationUpdate, initialConfig }: Step1UploadDatasetProps) {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [uploadMessage, setUploadMessage] = useState('');
+  const [selectedOutputColumn, setSelectedOutputColumn] = useState<string>('');
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
   // Placeholder data for df.head()
   const sampleData = [
@@ -20,11 +27,56 @@ export default function Step1UploadDataset() {
 
   const columns = ["id", "question", "answer", "category", "difficulty"];
 
-  const handleFileUpload = (files: FileList | null) => {
+  // Initialize from initialConfig if provided
+  useEffect(() => {
+    if (initialConfig?.dataset) {
+      setUploadedFileName(initialConfig.dataset.name);
+      setSelectedOutputColumn(initialConfig.dataset.outputColumn || '');
+      setUploadStatus('success');
+      setUploadMessage('Dataset loaded from previous selection');
+    }
+  }, [initialConfig]);
+
+  const handleFileUpload = (files: FileList | null) => { 
     if (files && files.length > 0) {
-      // Simulate upload success
+      const file = files[0];
+      setUploadedFileName(file.name);
       setUploadStatus('success');
       setUploadMessage('Dataset uploaded successfully!');
+      
+      // Update configuration
+      if (onConfigurationUpdate) {
+        onConfigurationUpdate({
+          dataset: {
+            name: file.name,
+            columns: columns,
+            outputColumn: selectedOutputColumn || 'none'
+          }
+        });
+      }
+    }
+  };
+
+  const handleOutputColumnChange = (value: string) => {
+    setSelectedOutputColumn(value);
+    if (uploadedFileName && onConfigurationUpdate) {
+      onConfigurationUpdate({
+        dataset: {
+          name: uploadedFileName,
+          columns: columns,
+          outputColumn: value
+        }
+      });
+    }
+  };
+
+  const handleClearSelection = () => {
+    setUploadStatus('idle');
+    setUploadMessage('');
+    setSelectedOutputColumn('');
+    setUploadedFileName('');
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ dataset: undefined });
     }
   };
 
@@ -112,10 +164,21 @@ export default function Step1UploadDataset() {
 
         {/* Output Column Selection */}
         <div className="space-y-3">
-          <h3 className="text-base font-medium">Output Column Selection</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-medium">Output Column Selection</h3>
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Output Column (Optional)</label>
-            <Select>
+            <Select value={selectedOutputColumn} onValueChange={handleOutputColumnChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select output column" />
               </SelectTrigger>
