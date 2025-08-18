@@ -2,12 +2,12 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { SiteHeader } from "@/components/employer-header";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,7 +43,7 @@ export default function AutoEvalPage() {
   const [configuration, setConfiguration] = useState<{
     dataset?: { name: string; columns: string[]; outputColumn?: string };
     tasks: string[];
-    models: Array<{ name: string; provider: string; pricing: string }>;
+    models: Array<{ id: string; name: string; provider: string; pricing: string; logo: string }>;
     parameters?: Record<string, { temperature: number; topP: number; topK: number }>;
     metrics?: { passAtK?: string; textMetrics: string[] };
   }>({
@@ -93,6 +93,24 @@ export default function AutoEvalPage() {
       ...prev,
       ...stepConfig
     }));
+  };
+
+  // Helper function to get the appropriate initial config for each step
+  const getInitialConfigForStep = (step: number) => {
+    switch (step) {
+      case 1:
+        return { dataset: configuration.dataset };
+      case 2:
+        return { tasks: configuration.tasks };
+      case 3:
+        return { models: configuration.models };
+      case 4:
+        return { parameters: configuration.parameters, models: configuration.models };
+      case 5:
+        return { metrics: configuration.metrics };
+      default:
+        return configuration;
+    }
   };
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
@@ -232,7 +250,7 @@ export default function AutoEvalPage() {
                   ) : (
                     <CurrentStepComponent 
                       onConfigurationUpdate={handleConfigurationUpdate}
-                      initialConfig={configuration}
+                      initialConfig={getInitialConfigForStep(currentStep)}
                     />
                   )}
                 </Card>

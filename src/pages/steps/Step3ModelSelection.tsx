@@ -66,13 +66,7 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
     }
   };
 
-  const removeModel = (modelId: string) => {
-    const newSelectedModels = selectedModels.filter(m => m.id !== modelId);
-    setSelectedModels(newSelectedModels);
-    if (onConfigurationUpdate) {
-      onConfigurationUpdate({ models: newSelectedModels });
-    }
-  };
+
 
   const handleClearSelection = () => {
     setSelectedModels([]);
