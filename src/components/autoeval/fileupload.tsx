@@ -161,7 +161,6 @@ export class UploadService {
     
     try {
       // Initialize upload
-      const fileType = file.type;
       // start timer
       console.time('Upload Time');
       const initData = await this.initializeUpload(file.name, file.type, file.size);
