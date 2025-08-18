@@ -58,7 +58,6 @@ export class UploadService {
     presignedUrl: string,
     chunk: Blob,
     partNumber: number,
-    fileType: string,
     onProgress?: (progress: { loaded: number; total: number }) => void,
     cancelToken?: CancelTokenSource
   ): Promise<string> {
@@ -198,7 +197,6 @@ export class UploadService {
             presignedUrls[currentPartIndex],
             chunk,
             partNumber,
-            fileType,
             (pp) => {
               if (!onProgress) return;
 
