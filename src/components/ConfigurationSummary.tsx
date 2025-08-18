@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Bot, Database, Settings } from "lucide-react";
+import { Bot, Database, FileText, Settings, Target } from "lucide-react";
 
 interface ConfigurationSummaryProps {
   config: {
@@ -32,174 +32,128 @@ interface ConfigurationSummaryProps {
 }
 
 export default function ConfigurationSummary({ 
-  config, 
-  currentStep = 6, 
-  isCompact = false 
+  config
 }: ConfigurationSummaryProps) {
   return (
-    <div className={`space-y-4 ${isCompact ? 'text-sm' : ''}`}>
-      <div className="flex items-center gap-2">
-        <Settings className="h-5 w-5" />
-        <h3 className={`font-medium ${isCompact ? 'text-base' : 'text-lg'}`}>
-          Configuration Summary {currentStep < 6 ? `(Step ${currentStep}/6)` : ''}
-        </h3>
-      </div>
-      
-      <div className="space-y-4">
-        {/* Dataset Section */}
-        {config.dataset && currentStep >= 1 && (
-          <Card className={isCompact ? 'p-2' : ''}>
-            <CardHeader className={isCompact ? 'pb-2' : 'pb-3'}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                <Database className={isCompact ? 'h-3 w-3' : 'h-4 w-4'} />
-                Dataset
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
+    <Card className="h-full flex flex-col">
+      <CardHeader className="flex-shrink-0">
+        <CardTitle className="flex items-center gap-2">
+          <Settings className="h-5 w-5" />
+          Configuration Summary
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-y-auto space-y-4">
+        {/* Current Configuration Details */}
+        {(config.dataset || config.tasks?.length || config.models?.length || config.parameters || config.metrics) ? (
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-gray-700">Current Configuration</h4>
+            
+            {/* Dataset */}
+            {config.dataset && (
               <div className="space-y-2">
-                <div>
-                  <span className="text-sm font-medium">Name:</span>
-                  <span className="text-sm ml-2">{config.dataset.name}</span>
+                <div className="flex items-center gap-2">
+                  <Database className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-medium text-sm">Dataset</h4>
                 </div>
-                <div>
-                  <span className="text-sm font-medium">Columns:</span>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {config.dataset.columns.map((column, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {column}
-                      </Badge>
-                    ))}
+                <div className="text-sm text-gray-600 space-y-1">
+                  <div className="font-medium">{config.dataset.name}</div>
+                  <div className="text-xs text-gray-500">
+                    Columns: {config.dataset.columns.join(", ")}
                   </div>
+                  {config.dataset.outputColumn && (
+                    <div className="text-xs text-gray-500">
+                      Output: {config.dataset.outputColumn}
+                    </div>
+                  )}
                 </div>
-                {config.dataset.outputColumn && (
-                  <div>
-                    <span className="text-sm font-medium">Output Column:</span>
-                    <span className="text-sm ml-2">{config.dataset.outputColumn}</span>
-                  </div>
-                )}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
 
-        {/* Tasks Section */}
-        {config.tasks && config.tasks.length > 0 && currentStep >= 2 && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-wrap gap-1">
-                {config.tasks.map((task, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {task}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Models Section */}
-        {config.models && config.models.length > 0 && currentStep >= 3 && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Bot className="h-4 w-4" />
-                Models ({config.models.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
+            {/* Tasks */}
+            {config.tasks && config.tasks.length > 0 && (
               <div className="space-y-2">
-                {config.models.map((model, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{model.logo || "🤖"}</span>
-                      <div>
-                        <div className="text-sm font-medium">{model.name}</div>
-                        <div className="text-xs text-gray-600">{model.provider}</div>
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-green-600" />
+                  <h4 className="font-medium text-sm">Tasks</h4>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {config.tasks.map((task, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {task}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Models */}
+            {config.models && config.models.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-purple-600" />
+                  <h4 className="font-medium text-sm">Models</h4>
+                </div>
+                <div className="space-y-1">
+                  {config.models.map((model, index) => (
+                    <div key={index} className="text-sm text-gray-600">
+                      {model.name} ({model.provider})
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Parameters */}
+            {config.parameters && Object.keys(config.parameters).length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Settings className="h-4 w-4 text-orange-600" />
+                  <h4 className="font-medium text-sm">Parameters</h4>
+                </div>
+                <div className="text-sm text-gray-600 space-y-2">
+                  {Object.entries(config.parameters).map(([modelName, params]) => (
+                    <div key={modelName} className="border-l-2 border-orange-200 pl-2">
+                      <div className="font-medium text-xs text-gray-700">{modelName}</div>
+                      <div className="text-xs text-gray-500">
+                        Temp: {params.temperature} | Top P: {params.topP} | Top K: {params.topK}
                       </div>
                     </div>
-                    <div className="text-xs text-gray-600">{model.pricing}</div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
 
-        {/* Parameters Section */}
-        {config.parameters && Object.keys(config.parameters).length > 0 && currentStep >= 4 && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Parameters
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
+            {/* Metrics */}
+            {config.metrics && (
               <div className="space-y-2">
-                {Object.entries(config.parameters).map(([modelName, params]) => (
-                  <div key={modelName} className="p-2 bg-gray-50 rounded">
-                    <div className="text-sm font-medium mb-1">{modelName}</div>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div>
-                        <span className="text-gray-600">Temp:</span>
-                        <span className="ml-1">{params.temperature}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Top-P:</span>
-                        <span className="ml-1">{params.topP}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Top-K:</span>
-                        <span className="ml-1">{params.topK}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Metrics Section */}
-        {config.metrics && currentStep >= 5 && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Metrics
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {config.metrics.passAtK && (
-                  <div>
-                    <span className="text-sm font-medium">Pass@K:</span>
-                    <span className="text-sm ml-2">{config.metrics.passAtK}</span>
-                  </div>
-                )}
-                {config.metrics.textMetrics && config.metrics.textMetrics.length > 0 && (
-                  <div>
-                    <span className="text-sm font-medium">Text Metrics:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-red-600" />
+                  <h4 className="font-medium text-sm">Metrics</h4>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  {config.metrics.passAtK && (
+                    <div>Pass@{config.metrics.passAtK}</div>
+                  )}
+                  {config.metrics.textMetrics && config.metrics.textMetrics.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
                       {config.metrics.textMetrics.map((metric, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge key={index} variant="outline" className="text-xs">
                           {metric}
                         </Badge>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            <p className="text-sm">No configuration set yet</p>
+            <p className="text-xs mt-1">Complete the steps to see your configuration</p>
+          </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

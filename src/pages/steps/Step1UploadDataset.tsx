@@ -4,7 +4,7 @@ import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertCircle, CheckCircle, RotateCcw, Upload } from "lucide-react";
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Step1UploadDatasetProps {
   onConfigurationUpdate?: (config: { dataset?: { name: string; columns: string[]; outputColumn?: string } }) => void;
@@ -188,7 +188,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
           onDrop={handleDrop}
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-3" />
-          <h3 className="text-base font-medium text-gray-900 mb-1">Upload your dataset</h3>
+          <h3 className="text-base font-medium text-gray-500 mb-1">Upload your dataset</h3>
           <p className="text-sm text-gray-500 mb-3">Drag and drop your CSV, JSON, or Excel file here, or click to browse</p>
           <Button 
             onClick={() => document.getElementById('file-upload')?.click()}
@@ -249,10 +249,10 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
               Clear Selection
             </Button>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Output Column (Optional)</label>
+          <div className="space-y-3">
+            <label className="text-sm font-medium">Output Column</label>
             <Select value={selectedOutputColumn} onValueChange={handleOutputColumnChange}>
-              <SelectTrigger>
+              <SelectTrigger className="mt-3">
                 <SelectValue placeholder="Select output column" />
               </SelectTrigger>
               <SelectContent>

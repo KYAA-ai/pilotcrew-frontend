@@ -122,7 +122,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
                       </div>
                       <div>
                         <h3 className={`font-semibold ${
-                          isSelected ? 'text-blue-900' : 'text-gray-900'
+                          isSelected ? 'text-gray-700' : 'text-gray-500'
                         }`}>
                           {task.name}
                         </h3>

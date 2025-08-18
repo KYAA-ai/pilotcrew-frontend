@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bot, DollarSign, Move, RotateCcw } from "lucide-react";
@@ -149,13 +148,10 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
               Selected Models
             </h3>
             <div
-              className="border-2 border-dashed border-blue-300 rounded-lg p-4 min-h-[400px] bg-blue-50"
+              className="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[400px]"
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, 'selected')}
             >
-              <div className="text-xs text-blue-600 mb-2 text-center">
-                💡 Drag models back to Available to deselect
-              </div>
               {selectedModels.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   <p>Drag models here to select</p>
@@ -165,7 +161,7 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
                   {selectedModels.map((model) => (
                     <Card
                       key={model.id}
-                      className="p-4 bg-white border-blue-200 cursor-move hover:shadow-md transition-shadow"
+                      className="p-4 cursor-move hover:shadow-md transition-shadow"
                       draggable
                       onDragStart={(e) => handleDragStart(e, model)}
                     >
@@ -190,20 +186,6 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
             </div>
           </div>
         </div>
-
-        {/* Selection Summary */}
-        {selectedModels.length > 0 && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Selected Models ({selectedModels.length}):</h4>
-            <div className="flex flex-wrap gap-2">
-              {selectedModels.map((model) => (
-                <Badge key={model.id} variant="outline" className="bg-white">
-                  {model.name}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
       </CardContent>
     </>
   );

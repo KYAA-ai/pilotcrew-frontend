@@ -95,24 +95,6 @@ export default function AutoEvalPage() {
     }));
   };
 
-  // Helper function to get the appropriate initial config for each step
-  const getInitialConfigForStep = (step: number) => {
-    switch (step) {
-      case 1:
-        return { dataset: configuration.dataset };
-      case 2:
-        return { tasks: configuration.tasks };
-      case 3:
-        return { models: configuration.models };
-      case 4:
-        return { parameters: configuration.parameters, models: configuration.models };
-      case 5:
-        return { metrics: configuration.metrics };
-      default:
-        return configuration;
-    }
-  };
-
   const CurrentStepComponent = STEPS[currentStep - 1].component;
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === STEPS.length;
@@ -130,7 +112,7 @@ export default function AutoEvalPage() {
       <AutoEvalSidebar collapsible="offcanvas" />
       <SidebarInset>
         <SiteHeader />
-        <div className="h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
+        <div className="autoeval-page h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
           <div className="flex w-full h-full">
             {/* Left Container - Wizard */}
             <div 
@@ -250,7 +232,7 @@ export default function AutoEvalPage() {
                   ) : (
                     <CurrentStepComponent 
                       onConfigurationUpdate={handleConfigurationUpdate}
-                      initialConfig={getInitialConfigForStep(currentStep)}
+                      initialConfig={configuration}
                     />
                   )}
                 </Card>
@@ -265,22 +247,26 @@ export default function AutoEvalPage() {
                   : 'w-1/3 opacity-100 translate-x-0'
               }`}
             >
-              {/* Top Container - Configuration Summary */}
-              <ConfigurationSummary 
-                config={configuration}
-                currentStep={currentStep}
-                isCompact={true}
-              />
+              {/* Top Container - Configuration Summary (2/3 height) */}
+              <div className="h-2/3 overflow-hidden">
+                <ConfigurationSummary 
+                  config={configuration}
+                  currentStep={currentStep}
+                  isCompact={true}
+                />
+              </div>
               
-              {/* Bottom Container - Estimated Cost */}
-              <Card className="flex-1 overflow-hidden">
-                <CardHeader className="flex-shrink-0">
-                  <CardTitle>Estimated Cost</CardTitle>
-                </CardHeader>
-                <CardContent className="overflow-hidden">
-                  {/* Estimated cost content will go here */}
-                </CardContent>
-              </Card>
+              {/* Bottom Container - Estimated Cost (1/3 height) */}
+              <div className="h-1/3 overflow-hidden">
+                <Card className="h-full">
+                  <CardHeader className="flex-shrink-0">
+                    <CardTitle>Estimated Cost</CardTitle>
+                  </CardHeader>
+                  <CardContent className="overflow-hidden">
+                    {/* Estimated cost content will go here */}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>

@@ -219,6 +219,40 @@
     font-weight: 500;
   }
   
+  /* AutoEval Page specific font enforcement */
+  .autoeval-page * {
+    font-family: 'Eudoxus', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+  
+  .autoeval-page h1, 
+  .autoeval-page h2, 
+  .autoeval-page h3, 
+  .autoeval-page h4, 
+  .autoeval-page h5, 
+  .autoeval-page h6,
+  .autoeval-page .font-bold,
+  .autoeval-page .font-semibold {
+    font-family: 'Eudoxus', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 700 !important; /* Eudoxus Bold */
+  }
+  
+  .autoeval-page p,
+  .autoeval-page span,
+  .autoeval-page div,
+  .autoeval-page a,
+  .autoeval-page button,
+  .autoeval-page input,
+  .autoeval-page textarea,
+  .autoeval-page select,
+  .autoeval-page label,
+  .autoeval-page li,
+  .autoeval-page td,
+  .autoeval-page th,
+  .autoeval-page .font-medium {
+    font-family: 'Eudoxus', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 500 !important; /* Eudoxus Medium */
+  }
+  
   /* Form card styling */
   .form-card {
     @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl p-6 shadow-xl max-w-4xl mx-auto;
