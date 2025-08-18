@@ -1,9 +1,10 @@
+import { UploadService, type UploadProgress } from "@/components/autoeval/fileupload";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertCircle, CheckCircle, RotateCcw, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 
 interface Step1UploadDatasetProps {
   onConfigurationUpdate?: (config: { dataset?: { name: string; columns: string[]; outputColumn?: string } }) => void;
@@ -15,6 +16,77 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   const [uploadMessage, setUploadMessage] = useState('');
   const [selectedOutputColumn, setSelectedOutputColumn] = useState<string>('');
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
+   const [, setUploads] = useState<Array<{
+    id: string;
+    fileName: string;
+    status: 'completed' | 'error';
+    result?: { location: string; key: string };
+    error?: string;
+  }>>([]);
+
+  const [uploading, setUploading] = useState(false);
+  const [, setProgress] = useState<UploadProgress | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cancelRef = useRef<boolean>(false);
+
+  const handleUploadComplete = (result: { location: string; key: string }) => {
+    const id = Date.now().toString();
+    setUploads(prev => [...prev, {
+      id,
+      fileName: result.key.split('/').pop() || 'Unknown',
+      status: 'completed',
+      result,
+    }]);
+  };
+
+  const handleUploadError = (error: Error) => {
+    const id = Date.now().toString();
+    setUploads(prev => [...prev, {
+      id,
+      fileName: 'Upload failed',
+      status: 'error',
+      error: error.message,
+    }]);
+  };
+
+  const handleUpload = useCallback(
+    async (file?: File) => {
+      const fileToUpload = file || selectedFile;
+      if (!fileToUpload || uploading) return;
+
+      setUploading(true);
+      setProgress(null);
+      setError(null);
+      cancelRef.current = false;
+
+      try {
+        const result = await UploadService.uploadFile(
+          fileToUpload,
+          (progressData) => {
+            setProgress(progressData);
+          },
+          () => cancelRef.current
+        );
+
+        handleUploadComplete(result);
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+        setError(errorMessage);
+        handleUploadError(error instanceof Error ? error : new Error(errorMessage));
+      } finally {
+        setUploading(false);
+        setProgress(null);
+      }
+    },
+    [selectedFile, uploading]
+  );
 
   // Placeholder data for df.head()
   const sampleData = [
@@ -41,6 +113,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
     if (files && files.length > 0) {
       const file = files[0];
       setUploadedFileName(file.name);
+      handleUpload(files[0]);
       setUploadStatus('success');
       setUploadMessage('Dataset uploaded successfully!');
       
