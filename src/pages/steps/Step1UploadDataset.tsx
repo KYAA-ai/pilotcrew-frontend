@@ -112,6 +112,17 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   const handleFileUpload = (files: FileList | null) => { 
     if (files && files.length > 0) {
       const file = files[0];
+      
+      // Validate file type
+      const allowedExtensions = ['.csv', '.json', '.xlsx', '.xls', '.parquet'];
+      const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+      
+      if (!allowedExtensions.includes(fileExtension)) {
+        setUploadStatus('error');
+        setUploadMessage('Invalid file type. Please upload a CSV, JSON, Excel, or Parquet file.');
+        return;
+      }
+      
       setUploadedFileName(file.name);
       handleUpload(files[0]);
       setUploadStatus('success');
@@ -189,7 +200,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-3" />
           <h3 className="text-base font-medium text-gray-500 mb-1">Upload your dataset</h3>
-          <p className="text-sm text-gray-500 mb-3">Drag and drop your CSV, JSON, or Excel file here, or click to browse</p>
+          <p className="text-sm text-gray-500 mb-3">Drag and drop your CSV, JSON, Excel, or Parquet file here, or click to browse</p>
           <Button 
             onClick={() => document.getElementById('file-upload')?.click()}
             className="bg-blue-600 hover:bg-blue-700 text-sm"
@@ -200,7 +211,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
           <input
             id="file-upload"
             type="file"
-            accept=".csv,.json,.xlsx,.xls"
+            accept=".csv,.json,.xlsx,.xls,.parquet"
             className="hidden"
             onChange={(e) => handleFileUpload(e.target.files)}
           />

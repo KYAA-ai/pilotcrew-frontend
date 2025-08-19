@@ -58,6 +58,7 @@ export class UploadService {
     presignedUrl: string,
     chunk: Blob,
     partNumber: number,
+    fileType: string,
     onProgress?: (progress: { loaded: number; total: number }) => void,
     cancelToken?: CancelTokenSource
   ): Promise<string> {
@@ -161,6 +162,7 @@ export class UploadService {
     
     try {
       // Initialize upload
+      const fileType = file.type;
       // start timer
       console.time('Upload Time');
       const initData = await this.initializeUpload(file.name, file.type, file.size);
@@ -196,6 +198,7 @@ export class UploadService {
             presignedUrls[currentPartIndex],
             chunk,
             partNumber,
+            fileType,
             (pp) => {
               if (!onProgress) return;
 
