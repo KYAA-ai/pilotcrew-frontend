@@ -2,12 +2,12 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { SiteHeader } from "@/components/employer-header";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +44,7 @@ export default function AutoEvalPage() {
     dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string };
     tasks: string[];
     models: Array<{ id: string; name: string; provider: string; pricing: string; costPerMillionInputTokens: string; costPerMillionOutputTokens: string; logo: string }>;
-    parameters?: Record<string, { temperature: number; topP: number; topK: number }>;
+    parameters?: Record<string, { temperature: number; topP: number; maxTokens: number }>;
     metrics?: { passAtK?: string; textMetrics: string[] };
   }>({
     dataset: undefined,

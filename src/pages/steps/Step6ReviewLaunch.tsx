@@ -18,7 +18,7 @@ interface Step6ReviewLaunchProps {
     parameters?: Record<string, {
       temperature: number;
       topP: number;
-      topK: number;
+      maxTokens: number;
     }>;
     metrics?: {
       passAtK?: string;
@@ -42,8 +42,8 @@ export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: St
       { name: "Claude-3", provider: "Anthropic", pricing: "$0.015/1K tokens" }
     ],
     parameters: {
-      "GPT-4": { temperature: 0, topP: 0, topK: 1 },
-      "Claude-3": { temperature: 0, topP: 0, topK: 1 }
+      "GPT-4": { temperature: 0, topP: 0, maxTokens: 500 },
+      "Claude-3": { temperature: 0, topP: 0, maxTokens: 500 }
     },
     metrics: {
       passAtK: "1",

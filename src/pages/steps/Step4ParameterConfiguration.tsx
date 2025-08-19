@@ -129,7 +129,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {selectedModels.map((model) => {
-            const params = modelParameters[model.name] || { temperature: 0, topP: 0, topK: 1 };
+            const params = modelParameters[model.name] || { temperature: 0, topP: 0, maxTokens: 500 };
             
             return (
               <Card key={model.name} className="p-6">
