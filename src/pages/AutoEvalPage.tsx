@@ -41,9 +41,9 @@ export default function AutoEvalPage() {
   
   // Configuration state to track user selections
   const [configuration, setConfiguration] = useState<{
-    dataset?: { name: string; columns: string[]; outputColumn?: string };
+    dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string };
     tasks: string[];
-    models: Array<{ id: string; name: string; provider: string; pricing: string; logo: string }>;
+    models: Array<{ id: string; name: string; provider: string; pricing: string; costPerMillionInputTokens: string; costPerMillionOutputTokens: string; logo: string }>;
     parameters?: Record<string, { temperature: number; topP: number; topK: number }>;
     metrics?: { passAtK?: string; textMetrics: string[] };
   }>({
