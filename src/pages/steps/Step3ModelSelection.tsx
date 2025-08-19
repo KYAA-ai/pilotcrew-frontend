@@ -8,16 +8,66 @@ interface Model {
   name: string;
   provider: string;
   pricing: string;
+  costPerMillionInputTokens: string;
+  costPerMillionOutputTokens: string;
   logo: string;
 }
 
 const availableModels: Model[] = [
-  { id: "gpt-4", name: "GPT-4", provider: "OpenAI", pricing: "$0.03/1K tokens", logo: "🤖" },
-  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", provider: "OpenAI", pricing: "$0.002/1K tokens", logo: "🤖" },
-  { id: "claude-3", name: "Claude-3", provider: "Anthropic", pricing: "$0.015/1K tokens", logo: "🤖" },
-  { id: "gemini-pro", name: "Gemini Pro", provider: "Google", pricing: "$0.001/1K tokens", logo: "🤖" },
-  { id: "llama-2", name: "Llama-2", provider: "Meta", pricing: "$0.0006/1K tokens", logo: "🤖" },
-  { id: "mistral", name: "Mistral", provider: "Mistral AI", pricing: "$0.0014/1K tokens", logo: "🤖" },
+  { 
+    id: "gpt-4", 
+    name: "GPT-4", 
+    provider: "OpenAI", 
+    pricing: "$0.03/1K tokens", 
+    costPerMillionInputTokens: "$30.00",
+    costPerMillionOutputTokens: "$60.00",
+    logo: "🤖" 
+  },
+  { 
+    id: "gpt-3.5-turbo", 
+    name: "GPT-3.5 Turbo", 
+    provider: "OpenAI", 
+    pricing: "$0.002/1K tokens", 
+    costPerMillionInputTokens: "$2.00",
+    costPerMillionOutputTokens: "$2.00",
+    logo: "🤖" 
+  },
+  { 
+    id: "claude-3", 
+    name: "Claude-3", 
+    provider: "Anthropic", 
+    pricing: "$0.015/1K tokens", 
+    costPerMillionInputTokens: "$15.00",
+    costPerMillionOutputTokens: "$75.00",
+    logo: "🤖" 
+  },
+  { 
+    id: "gemini-pro", 
+    name: "Gemini Pro", 
+    provider: "Google", 
+    pricing: "$0.001/1K tokens", 
+    costPerMillionInputTokens: "$1.00",
+    costPerMillionOutputTokens: "$2.00",
+    logo: "🤖" 
+  },
+  { 
+    id: "llama-2", 
+    name: "Llama-2", 
+    provider: "Meta", 
+    pricing: "$0.0006/1K tokens", 
+    costPerMillionInputTokens: "$0.60",
+    costPerMillionOutputTokens: "$0.60",
+    logo: "🤖" 
+  },
+  { 
+    id: "mistral", 
+    name: "Mistral", 
+    provider: "Mistral AI", 
+    pricing: "$0.0014/1K tokens", 
+    costPerMillionInputTokens: "$1.40",
+    costPerMillionOutputTokens: "$4.20",
+    logo: "🤖" 
+  },
 ];
 
 interface Step3ModelSelectionProps {
@@ -94,6 +144,13 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
           </Button>
         </div>
         
+        {/* Cost Footnote */}
+        <div className="mb-3">
+          <p className="text-xs text-gray-500 text-left">
+            * All costs are measured per 1 million tokens
+          </p>
+        </div>
+        
         {/* Model Selection Area */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Available Models */}
@@ -112,26 +169,32 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
                   <p>All models selected</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {availableModelsList.map((model) => (
                     <Card
                       key={model.id}
-                      className="p-4 cursor-move hover:shadow-md transition-shadow"
+                      className="p-3 cursor-move hover:shadow-md transition-shadow"
                       draggable
                       onDragStart={(e) => handleDragStart(e, model)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{model.logo}</span>
+                          <span className="text-xl">{model.logo}</span>
                           <div>
-                            <h4 className="font-medium">{model.name}</h4>
-                            <p className="text-sm text-gray-600">{model.provider}</p>
+                            <h4 className="font-medium text-sm">{model.name}</h4>
+                            <p className="text-xs text-gray-600">{model.provider}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">{model.pricing}</span>
-                          <Move className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center gap-4 text-xs">
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3 text-gray-400" />
+                            <span className="text-gray-600">Input: {model.costPerMillionInputTokens}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3 text-gray-400" />
+                            <span className="text-gray-600">Output: {model.costPerMillionOutputTokens}</span>
+                          </div>
+                          <Move className="h-3 w-3 text-gray-400" />
                         </div>
                       </div>
                     </Card>
@@ -157,26 +220,32 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
                   <p>Drag models here to select</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {selectedModels.map((model) => (
                     <Card
                       key={model.id}
-                      className="p-4 cursor-move hover:shadow-md transition-shadow"
+                      className="p-3 cursor-move hover:shadow-md transition-shadow"
                       draggable
                       onDragStart={(e) => handleDragStart(e, model)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{model.logo}</span>
+                          <span className="text-xl">{model.logo}</span>
                           <div>
-                            <h4 className="font-medium">{model.name}</h4>
-                            <p className="text-sm text-gray-600">{model.provider}</p>
+                            <h4 className="font-medium text-sm">{model.name}</h4>
+                            <p className="text-xs text-gray-600">{model.provider}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">{model.pricing}</span>
-                          <Move className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center gap-4 text-xs">
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3 text-gray-400" />
+                            <span className="text-gray-600">Input: {model.costPerMillionInputTokens}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3 text-gray-400" />
+                            <span className="text-gray-600">Output: {model.costPerMillionOutputTokens}</span>
+                          </div>
+                          <Move className="h-3 w-3 text-gray-400" />
                         </div>
                       </div>
                     </Card>
@@ -190,3 +259,5 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
     </>
   );
 }
+
+
