@@ -15,7 +15,7 @@ interface Model {
 interface ModelParameters {
   temperature: number;
   topP: number;
-  topK: number;
+  maxTokens: number;
 }
 
 interface Step4ParameterConfigurationProps {
@@ -41,7 +41,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
         if (initialConfig.parameters?.[model.name]) {
           initialParams[model.name] = initialConfig.parameters[model.name];
         } else {
-          initialParams[model.name] = { temperature: 0, topP: 0, topK: 1 };
+          initialParams[model.name] = { temperature: 0, topP: 0, maxTokens: 500 };
         }
       });
       setModelParameters(initialParams);
@@ -66,12 +66,32 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
   const handleClearSelection = () => {
     const defaultParams: Record<string, ModelParameters> = {};
     selectedModels.forEach(model => {
-      defaultParams[model.name] = { temperature: 0, topP: 0, topK: 1 };
+      defaultParams[model.name] = { temperature: 0, topP: 0, maxTokens: 500 };
     });
     setModelParameters(defaultParams);
     
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ parameters: defaultParams });
+    }
+  };
+
+  const applyToAllModels = (sourceModelName: string) => {
+    const sourceParams = modelParameters[sourceModelName];
+    if (!sourceParams) return;
+
+    const updatedParams: Record<string, ModelParameters> = {};
+    selectedModels.forEach(model => {
+      updatedParams[model.name] = {
+        temperature: sourceParams.temperature,
+        topP: sourceParams.topP,
+        maxTokens: sourceParams.maxTokens
+      };
+    });
+    
+    setModelParameters(updatedParams);
+    
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ parameters: updatedParams });
     }
   };
 
@@ -176,30 +196,44 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
 
                   <Separator />
 
-                  {/* Top K Slider */}
+                  {/* Max Tokens Slider */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-green-600" />
-                      <Label className="text-sm font-medium">Top K</Label>
+                      <Label className="text-sm font-medium">Max Tokens</Label>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-gray-600">
-                        <span>1</span>
+                        <span>100</span>
                         <span>1000</span>
                       </div>
                       <Slider
-                        value={[params.topK]}
-                        onValueChange={(value) => updateModelParameter(model.name, 'topK', value[0])}
+                        value={[params.maxTokens]}
+                        onValueChange={(value) => updateModelParameter(model.name, 'maxTokens', value[0])}
                         max={1000}
-                        min={1}
+                        min={100}
                         step={1}
                         className="w-full"
                       />
                       <div className="text-center">
-                        <span className="text-sm font-semibold text-green-600">{params.topK}</span>
+                        <span className="text-sm font-semibold text-green-600">{params.maxTokens}</span>
                       </div>
                     </div>
                   </div>
+
+                  {/* Apply to All Button */}
+                  {selectedModels.length > 1 && (
+                    <div className="pt-2">
+                      <Button
+                        onClick={() => applyToAllModels(model.name)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs"
+                      >
+                        Apply to All Models
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </Card>
             );
@@ -209,3 +243,5 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
     </>
   );
 }
+
+

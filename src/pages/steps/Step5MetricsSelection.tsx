@@ -15,8 +15,9 @@ interface Metric {
 
 const passAtKOptions = [
   { value: "1", label: "Pass@1" },
-  { value: "5", label: "Pass@5" },
-  { value: "10", label: "Pass@10" }
+  { value: "4", label: "Pass@4" },
+  { value: "16", label: "Pass@16" },
+  { value: "64", label: "Pass@64" }
 ];
 
 const textMetrics: Metric[] = [

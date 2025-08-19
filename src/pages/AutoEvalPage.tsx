@@ -180,6 +180,14 @@ export default function AutoEvalPage() {
                       {currentStep === 6 ? (
                         <div className="flex gap-2">
                           <Button
+                            onClick={handlePrevious}
+                            className="border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm"
+                            size="sm"
+                            variant="outline"
+                          >
+                            Previous
+                          </Button>
+                          <Button
                             onClick={handleLaunch}
                             disabled={isLaunching}
                             className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"

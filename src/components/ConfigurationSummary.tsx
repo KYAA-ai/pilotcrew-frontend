@@ -20,7 +20,7 @@ interface ConfigurationSummaryProps {
     parameters?: Record<string, {
       temperature: number;
       topP: number;
-      topK: number;
+      maxTokens: number;
     }>;
     metrics?: {
       passAtK?: string;
@@ -115,7 +115,7 @@ export default function ConfigurationSummary({
                     <div key={modelName} className="border-l-2 border-orange-200 pl-2">
                       <div className="font-medium text-xs text-gray-700">{modelName}</div>
                       <div className="text-xs text-gray-500">
-                        Temp: {params.temperature} | Top P: {params.topP} | Top K: {params.topK}
+                        Temp: {params.temperature} | Top P: {params.topP} | Max Tokens: {params.maxTokens}
                       </div>
                     </div>
                   ))}
