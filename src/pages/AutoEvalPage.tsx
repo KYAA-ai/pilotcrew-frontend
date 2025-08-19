@@ -10,7 +10,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Play } from "lucide-react";
 import React, { useEffect, useState } from "react"; // Added useEffect import
@@ -239,34 +239,19 @@ export default function AutoEvalPage() {
               </div>
             </div>
             
-            {/* Right Container - Configuration Summary and Estimated Cost */}
+            {/* Right Container - Configuration Summary */}
             <div 
-              className={`h-full p-6 flex flex-col gap-4 overflow-hidden transition-all duration-700 ease-in-out ${
+              className={`h-full p-6 overflow-hidden transition-all duration-700 ease-in-out ${
                 isStep6Transition 
                   ? 'w-0 opacity-0 translate-x-full' 
                   : 'w-1/3 opacity-100 translate-x-0'
               }`}
             >
-              {/* Top Container - Configuration Summary (2/3 height) */}
-              <div className="h-2/3 overflow-hidden">
-                <ConfigurationSummary 
-                  config={configuration}
-                  currentStep={currentStep}
-                  isCompact={true}
-                />
-              </div>
-              
-              {/* Bottom Container - Estimated Cost (1/3 height) */}
-              <div className="h-1/3 overflow-hidden">
-                <Card className="h-full">
-                  <CardHeader className="flex-shrink-0">
-                    <CardTitle>Estimated Cost</CardTitle>
-                  </CardHeader>
-                  <CardContent className="overflow-hidden">
-                    {/* Estimated cost content will go here */}
-                  </CardContent>
-                </Card>
-              </div>
+              <ConfigurationSummary 
+                config={configuration}
+                currentStep={currentStep}
+                isCompact={true}
+              />
             </div>
           </div>
         </div>

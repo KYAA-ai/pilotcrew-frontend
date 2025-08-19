@@ -7,13 +7,14 @@ import { AlertCircle, CheckCircle, RotateCcw, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Step1UploadDatasetProps {
-  onConfigurationUpdate?: (config: { dataset?: { name: string; columns: string[]; outputColumn?: string } }) => void;
-  initialConfig?: { dataset?: { name: string; columns: string[]; outputColumn?: string } };
+  onConfigurationUpdate?: (config: { dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string } }) => void;
+  initialConfig?: { dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string } };
 }
 
 export default function Step1UploadDataset({ onConfigurationUpdate, initialConfig }: Step1UploadDatasetProps) {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [uploadMessage, setUploadMessage] = useState('');
+  const [selectedInputColumn, setSelectedInputColumn] = useState<string>('');
   const [selectedOutputColumn, setSelectedOutputColumn] = useState<string>('');
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
@@ -103,6 +104,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   useEffect(() => {
     if (initialConfig?.dataset) {
       setUploadedFileName(initialConfig.dataset.name);
+      setSelectedInputColumn(initialConfig.dataset.inputColumn || '');
       setSelectedOutputColumn(initialConfig.dataset.outputColumn || '');
       setUploadStatus('success');
       setUploadMessage('Dataset loaded from previous selection');
@@ -134,10 +136,25 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
           dataset: {
             name: file.name,
             columns: columns,
+            inputColumn: selectedInputColumn || 'none',
             outputColumn: selectedOutputColumn || 'none'
           }
         });
       }
+    }
+  };
+
+  const handleInputColumnChange = (value: string) => {
+    setSelectedInputColumn(value);
+    if (uploadedFileName && onConfigurationUpdate) {
+      onConfigurationUpdate({
+        dataset: {
+          name: uploadedFileName,
+          columns: columns,
+          inputColumn: value,
+          outputColumn: selectedOutputColumn
+        }
+      });
     }
   };
 
@@ -148,6 +165,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
         dataset: {
           name: uploadedFileName,
           columns: columns,
+          inputColumn: selectedInputColumn,
           outputColumn: value
         }
       });
@@ -157,6 +175,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   const handleClearSelection = () => {
     setUploadStatus('idle');
     setUploadMessage('');
+    setSelectedInputColumn('');
     setSelectedOutputColumn('');
     setUploadedFileName('');
     if (onConfigurationUpdate) {
@@ -246,10 +265,10 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
           </div>
         </div>
 
-        {/* Output Column Selection */}
+        {/* Column Selection */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-medium">Output Column Selection</h3>
+            <h3 className="text-base font-medium">Column Selection</h3>
             <Button
               onClick={handleClearSelection}
               variant="outline"
@@ -260,21 +279,39 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
               Clear Selection
             </Button>
           </div>
-          <div className="space-y-3">
-            <label className="text-sm font-medium">Output Column</label>
-            <Select value={selectedOutputColumn} onValueChange={handleOutputColumnChange}>
-              <SelectTrigger className="mt-3">
-                <SelectValue placeholder="Select output column" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                {columns.map((column) => (
-                  <SelectItem key={column} value={column}>
-                    {column}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Input Column</label>
+              <Select value={selectedInputColumn} onValueChange={handleInputColumnChange}>
+                <SelectTrigger className="mt-3">
+                  <SelectValue placeholder="Select input column" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {columns.map((column) => (
+                    <SelectItem key={column} value={column}>
+                      {column}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Output Column</label>
+              <Select value={selectedOutputColumn} onValueChange={handleOutputColumnChange}>
+                <SelectTrigger className="mt-3">
+                  <SelectValue placeholder="Select output column" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {columns.map((column) => (
+                    <SelectItem key={column} value={column}>
+                      {column}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       </CardContent>
