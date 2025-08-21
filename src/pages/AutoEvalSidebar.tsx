@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
+import { ClipboardList, Activity, Trophy } from "lucide-react"
 
 import logo from '@/assets/logo.png'
 import {
@@ -14,12 +15,27 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-// Empty navigation items for AutoEval sidebar
 const autoEvalNavItems: Array<{
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
-}> = []
+}> = [
+  {
+    title: "Create Evaluation",
+    url: "/autoeval/dashboard",
+    icon: ClipboardList,
+  },
+  {
+    title: "Run and Monitor Evaluations",
+    url: "",
+    icon: Activity,
+  },
+  {
+    title: "Evaluation Leaderboard",
+    url: "",
+    icon: Trophy,
+  },
+]
 
 const autoEvalSecondaryItems: Array<{
   title: string;
@@ -28,6 +44,7 @@ const autoEvalSecondaryItems: Array<{
 }> = []
 
 export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation()
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="pt-6">
@@ -57,6 +74,10 @@ export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
+                    isActive={
+                      location.pathname === item.url ||
+                      (item.title === 'Create Evaluation' && location.pathname.startsWith('/autoeval/dashboard'))
+                    }
                     tooltip={item.title}
                   >
                     <Link to={item.url}>

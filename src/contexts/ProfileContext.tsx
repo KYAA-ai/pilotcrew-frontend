@@ -23,8 +23,14 @@ interface EmployeeProfile {
   isEmailVerified?: boolean;
 }
 
-type Profile = EmployerProfile | EmployeeProfile;
-type UserType = 'employer' | 'employee' | null;
+interface AutoEvalProfile {
+  id: string;
+  name: string;
+  email: string;
+}
+
+type Profile = EmployerProfile | EmployeeProfile | AutoEvalProfile;
+type UserType = 'employer' | 'employee' | 'autoeval' | null;
 
 interface ProfileContextType {
   profile: Profile | null;
@@ -35,6 +41,7 @@ interface ProfileContextType {
   clearProfile: () => void;
   isEmployer: () => boolean;
   isEmployee: () => boolean;
+  isAutoEval: () => boolean;
   isLoggingOut: boolean;
 }
 
@@ -56,7 +63,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const setProfile = (newProfile: Profile | null) => {
     setProfileState(newProfile);
     if (newProfile) {
-      const type: UserType = 'companyName' in newProfile ? 'employer' : 'employee';
+      // Check if it's an autoeval user by looking for autoeval-specific properties
+      const type: UserType = 'companyName' in newProfile ? 'employer' : 
+                            'linkedinId' in newProfile ? 'employee' : 'autoeval';
       setUserType(type);
       localStorage.setItem('userProfile', JSON.stringify(newProfile));
       localStorage.setItem('userType', type);
@@ -84,6 +93,10 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     return userType === 'employee';
   };
 
+  const isAutoEval = (): boolean => {
+    return userType === 'autoeval';
+  };
+
   const value = {
     profile,
     userType,
@@ -93,6 +106,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     clearProfile,
     isEmployer,
     isEmployee,
+    isAutoEval,
     isLoggingOut,
   };
 

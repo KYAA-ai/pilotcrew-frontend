@@ -9,9 +9,10 @@ export function useLogout() {
 
   const logout = async () => {
     try {
-      const logoutEndpoints = {
+      const logoutEndpoints: Record<'employer' | 'employee' | 'autoeval', string> = {
         employer: '/v1/employer/logout',
-        employee: '/v1/employee/logout'
+        employee: '/v1/employee/logout',
+        autoeval: '/v1/autoeval/logout',
       };
 
       if (userType && logoutEndpoints[userType]) {
