@@ -41,6 +41,10 @@ export default function AutoEvalLogin({ onSuccess, onValidationError }: AutoEval
   const [isLoading, setIsLoading] = useState(false);
   const { setProfile } = useProfile();
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/autoeval/auth/google/login`;
+  };
+
   const handleSubmit = async (data: Record<string, string | string[]>) => {
     setIsLoading(true);
     try {
@@ -88,6 +92,19 @@ export default function AutoEvalLogin({ onSuccess, onValidationError }: AutoEval
         onValidationError={handleValidationError}
         isLoading={isLoading}
       />
+
+      <div className="text-center italic"> OR </div>
+
+      <button 
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 border rounded-md shadow-sm bg-foreground text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        onClick={handleGoogleLogin}
+        type="button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-5">
+          <path d="M21.35 11.1h-9.09v3.7h5.82c-.25 1.46-1.5 4.3-5.82 4.3-3.5 0-6.36-2.9-6.36-6.5s2.86-6.5 6.36-6.5c2 0 3.34.88 4.09 1.63l2.8-2.8C17.57 2.46 15.46 1.5 12.32 1.5 6.46 1.5 2 5.93 2 11.7s4.46 10.2 10.32 10.2c5.93 0 9.82-4.16 9.82-10.07 0-.84-.08-1.43-.18-2.73z"/>
+        </svg>
+        Continue with Google
+      </button>
     </div>
   );
 }
