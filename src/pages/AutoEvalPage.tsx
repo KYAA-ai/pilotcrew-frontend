@@ -1,18 +1,18 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
+import type { StepConfig, StepProgress } from "@/components/MultiStepForm";
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
+    BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Play, Wand2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Play } from "lucide-react";
+import React, { useCallback, useState } from "react"; // Added useEffect import
 
-// Import all step components
+
 import Step1UploadDataset from "./steps/Step1UploadDataset";
 import Step2TaskTypeSelection from "./steps/Step2TaskTypeSelection";
 import Step3ModelSelection from "./steps/Step3ModelSelection";
@@ -21,7 +21,7 @@ import Step5MetricsSelection from "./steps/Step5MetricsSelection";
 import Step6ReviewLaunch from "./steps/Step6ReviewLaunch";
 
 // Step configuration
-const STEPS = [
+const STEPS: StepConfig[] = [
   { id: 1, name: "Upload dataset", component: Step1UploadDataset },
   { id: 2, name: "Task Type Selection", component: Step2TaskTypeSelection },
   { id: 3, name: "Model Selection", component: Step3ModelSelection },
@@ -31,11 +31,6 @@ const STEPS = [
 ];
 
 export default function AutoEvalPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isStep6Transition, setIsStep6Transition] = useState(false);
-  const [isLaunching, setIsLaunching] = useState(false);
-  
-  // Configuration state to track user selections
   const [configuration, setConfiguration] = useState<{
     dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string };
     tasks: string[];
@@ -50,39 +45,80 @@ export default function AutoEvalPage() {
     metrics: undefined,
   });
 
-  // Trigger transition when entering Step 6
-  useEffect(() => {
-    if (currentStep === 6) {
-      // Small delay to ensure the step change is rendered first
-      const timer = setTimeout(() => {
-        setIsStep6Transition(true);
-      }, 100);
-      return () => clearTimeout(timer);
-    } else {
-      setIsStep6Transition(false);
-    }
-  }, [currentStep]);
+  const submitProgressToAPI = useCallback(async (progress: StepProgress[]) => {
+    try {
+      const response = await fetch('/api/autoeval/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          progress,
+          configuration,
+          timestamp: new Date().toISOString(),
+        }),
+      });
 
-  const handleNext = () => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const result = await response.json();
+      console.log('Progress submitted successfully:', result);
+      return result;
+    } catch (error) {
+      console.error('Error submitting progress:', error);
+      throw error;
     }
-  };
+  }, [configuration]);
 
-  const handleLaunch = () => {
-    setIsLaunching(true);
-    // Simulate launch process
-    setTimeout(() => {
-      setIsLaunching(false);
-      // Here you would typically navigate to results page or show success message
-    }, 2000);
-  };
+  const handleStepComplete = useCallback(async (stepId: number, stepData?: Record<string, unknown>) => {
+    console.log(`AutoEval Step ${stepId} completed with data:`, stepData);
+    switch (stepId) {
+      case 1:
+        console.log('Dataset upload completed');
+        break;
+      case 2:
+        console.log('Task selection completed');
+        break;
+      case 3:
+        console.log('Model selection completed');
+        break;
+      case 4:
+        console.log('Parameter configuration completed');
+        break;
+      case 5:
+        console.log('Metrics selection completed');
+        break;
+      case 6:
+        console.log('Final review completed');
+        break;
+    }
+  }, []);
+
+  const handleLaunch = useCallback(async () => {
+    console.log('Launching AutoEval evaluation with configuration:', configuration);
+    try {
+      const response = await fetch('/api/autoeval/launch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(configuration),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Launch failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Evaluation launched successfully:', result);
+
+    } catch (error) {
+      console.error('Failed to launch evaluation:', error);
+      throw error;
+    }
+  }, [configuration]);
 
   const handleConfigurationUpdate = (stepConfig: Partial<typeof configuration>) => {
     setConfiguration(prev => ({
@@ -91,9 +127,13 @@ export default function AutoEvalPage() {
     }));
   };
 
-  const CurrentStepComponent = STEPS[currentStep - 1].component;
-  const isFirstStep = currentStep === 1;
-  const isLastStep = currentStep === STEPS.length;
+  const renderRightPanel = ({ configuration, currentStep }: { configuration: Record<string, unknown>; currentStep: number }) => (
+    <ConfigurationSummary
+      config={configuration}
+      currentStep={currentStep}
+      isCompact={true}
+    />
+  );
 
   return (
     <div className="flex w-full h-full">

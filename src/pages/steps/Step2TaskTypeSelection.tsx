@@ -68,8 +68,8 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
 
   // Initialize from initialConfig if provided
   useEffect(() => {
-    if (initialConfig?.tasks) {
-      setSelectedTasks(initialConfig.tasks);
+    if (initialConfig?.tasks && initialConfig.tasks.length > 0) {
+      setSelectedTask(initialConfig.tasks[0]); // Take the first task if multiple were previously selected
     }
   }, [initialConfig]);
 
@@ -91,12 +91,12 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
     
     // Update configuration
     if (onConfigurationUpdate) {
-      onConfigurationUpdate({ tasks: newSelectedTasks });
+      onConfigurationUpdate({ tasks: [taskId] });
     }
   };
 
   const handleClearSelection = () => {
-    setSelectedTasks([]);
+    setSelectedTask('');
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ tasks: [] });
     }
@@ -106,12 +106,12 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Select the task types you want to evaluate. You can select multiple tasks.</p>
+          <p className="text-slate-300">Select the task type you want to evaluate.</p>
           <Button
             onClick={handleClearSelection}
             variant="outline"
             size="sm"
-            className="text-gray-500 hover:text-gray-700"
+            className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
           >
             <RotateCcw className="h-4 w-4 mr-1" />
             Clear Selection
@@ -122,7 +122,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {taskTypes.map((task) => {
               const Icon = task.icon;
-              const isSelected = selectedTasks.includes(task.id);
+              const isSelected = selectedTask === task.id;
               
               return (
                 <Card
@@ -132,6 +132,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
                       ? 'bg-[#04071307] border-l-[#FFD886] border-[#FFD886] shadow-lg' 
                       : 'bg-gradient-to-br from-[rgb(5,15,34)] to-[rgb(11,51,87)] hover:border-l-slate-300 hover:shadow-lg'
                   }`}
+                  onClick={() => selectTask(task.id)}
                   onClick={() => selectTask(task.id)}
                 >
                   <div className="flex items-start justify-between mb-4">

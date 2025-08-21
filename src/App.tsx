@@ -1,12 +1,15 @@
 import { EmployeeAuthGuard } from '@/components/auth/employee-auth-guard'
 import { EmployerAuthGuard } from '@/components/auth/employer-auth-guard'
+import { AutoEvalAuthGuard } from '@/components/auth/autoeval-auth-guard'
 import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
+import { GoogleAutoEvalAuthCallback, GoogleAutoEvalLoginCallback } from '@/components/auth/GoogleAutoEvalAuthCallback'
 import { GoogleEmployeeAuthCallback } from '@/components/auth/GoogleEmployeeAuthCallback'
 import { GoogleEmployeeLoginCallback } from '@/components/auth/GoogleEmployeeLoginCallback'
 import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
+import AutoEvalAuth from './components/auth/AutoEvalAuth'
 import AutoEvalLayout from './pages/AutoEvalLayout'
 import AutoEvalPage from './pages/AutoEvalPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
@@ -38,10 +41,15 @@ function App() {
         <Route path="/auth/google-employee/callback" element={<GoogleEmployeeAuthCallback />} />
         <Route path="/auth/google-employee/login/callback" element={<GoogleEmployeeLoginCallback />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInAuthCallback />} />
+        {/* AutoEval Google Callbacks */}
+        <Route path="/auth/google-autoeval/callback" element={<GoogleAutoEvalAuthCallback />} />
+        <Route path="/auth/google-autoeval/login/callback" element={<GoogleAutoEvalLoginCallback />} />
         {/* Employer Flow */}
         <Route path="/auth/employer" element={<EmployerAuth />} />
         {/* Employee Flow */}
         <Route path="/auth/employee" element={<EmployeeAuth />} />
+        {/* AutoEval Flow */}
+        <Route path="/auth/autoeval" element={<AutoEvalAuth />} />
         {/* Protected routes */}
         <Route
           path="/employee/profile"
@@ -158,12 +166,31 @@ function App() {
           }
         />
         {/* AutoEval Platform */}
-        <Route path="/autoeval" element={<AutoEvalLayout />}>
-          <Route index element={<AutoEvalPage />} />
-          <Route path="wizard" element={<AutoEvalPage />} />
-          <Route path="monitors" element={<RunningMonitorsPage />} />
-          <Route path="leaderboard" element={<LeaderboardPage />} />
-        </Route>
+        <Route path="/autoeval" element={<AutoEvalAuth />} />
+        <Route
+          path="/autoeval/dashboard"
+          element={
+            <AutoEvalAuthGuard>
+              <AutoEvalPage />
+            </AutoEvalAuthGuard>
+          }
+        />
+        <Route
+          path="/autoeval/monitors"
+          element={
+            <AutoEvalAuthGuard>
+              <RunningMonitorsPage />
+            </AutoEvalAuthGuard>
+          }
+        />
+        <Route
+          path="/autoeval/leaderboard"
+          element={
+            <AutoEvalAuthGuard>
+          <LeaderboardPage />
+            </AutoEvalAuthGuard>
+          }
+        />
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />
         <Route path="/" element={<NewLandingPage />} />

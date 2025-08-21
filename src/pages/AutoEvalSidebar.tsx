@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
+import { ClipboardList, Activity, Trophy } from "lucide-react"
 
 import logo from '@/assets/logo.png'
 import {
@@ -15,25 +16,43 @@ import {
 } from "@/components/ui/sidebar"
 import { Monitor, Trophy, Wand2 } from "lucide-react"
 
+<<<<<<< HEAD
 // Navigation items for AutoEval sidebar
+=======
+>>>>>>> f607e1d2beb90d464f80f27452c4272e115f4738
 const autoEvalNavItems: Array<{
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
 }> = [
   {
-    title: "Wizard",
-    url: "/autoeval/wizard",
+<<<<<<< HEAD
+    title: "Create Evaluation",
+    url: "/autoeval/dashboard",
     icon: Wand2,
   },
   {
-    title: "Running Monitors",
+    title: "Run and Monitor Evaluations",
     url: "/autoeval/monitors",
     icon: Monitor,
   },
   {
     title: "Leaderboard",
     url: "/autoeval/leaderboard",
+=======
+    title: "Create Evaluation",
+    url: "/autoeval/dashboard",
+    icon: ClipboardList,
+  },
+  {
+    title: "Run and Monitor Evaluations",
+    url: "",
+    icon: Activity,
+  },
+  {
+    title: "Evaluation Leaderboard",
+    url: "",
+>>>>>>> f607e1d2beb90d464f80f27452c4272e115f4738
     icon: Trophy,
   },
 ]
@@ -47,6 +66,7 @@ const autoEvalSecondaryItems: Array<{
 
 
 export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation()
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="pt-6">
@@ -76,6 +96,10 @@ export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
+                    isActive={
+                      location.pathname === item.url ||
+                      (item.title === 'Create Evaluation' && location.pathname.startsWith('/autoeval/dashboard'))
+                    }
                     tooltip={item.title}
                   >
                     <Link to={item.url}>
