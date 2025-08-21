@@ -50,30 +50,26 @@ interface Step2TaskTypeSelectionProps {
 }
 
 export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialConfig }: Step2TaskTypeSelectionProps) {
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  const [selectedTask, setSelectedTask] = useState<string>('');
 
   // Initialize from initialConfig if provided
   useEffect(() => {
-    if (initialConfig?.tasks) {
-      setSelectedTasks(initialConfig.tasks);
+    if (initialConfig?.tasks && initialConfig.tasks.length > 0) {
+      setSelectedTask(initialConfig.tasks[0]); // Take the first task if multiple were previously selected
     }
   }, [initialConfig]);
 
-  const toggleTask = (taskId: string) => {
-    const newSelectedTasks = selectedTasks.includes(taskId) 
-      ? selectedTasks.filter(id => id !== taskId)
-      : [...selectedTasks, taskId];
-    
-    setSelectedTasks(newSelectedTasks);
+  const selectTask = (taskId: string) => {
+    setSelectedTask(taskId);
     
     // Update configuration
     if (onConfigurationUpdate) {
-      onConfigurationUpdate({ tasks: newSelectedTasks });
+      onConfigurationUpdate({ tasks: [taskId] });
     }
   };
 
   const handleClearSelection = () => {
-    setSelectedTasks([]);
+    setSelectedTask('');
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ tasks: [] });
     }
@@ -83,12 +79,12 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Select the task types you want to evaluate. You can select multiple tasks.</p>
+          <p className="text-slate-300">Select the task type you want to evaluate.</p>
           <Button
             onClick={handleClearSelection}
             variant="outline"
             size="sm"
-            className="text-gray-500 hover:text-gray-700"
+            className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
           >
             <RotateCcw className="h-4 w-4 mr-1" />
             Clear Selection
@@ -99,42 +95,42 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {taskTypes.map((task) => {
               const Icon = task.icon;
-              const isSelected = selectedTasks.includes(task.id);
+              const isSelected = selectedTask === task.id;
               
               return (
                 <Card
                   key={task.id}
-                  className={`p-6 cursor-pointer transition-all duration-200 hover:shadow-md ${
+                  className={`p-6 cursor-pointer transition-all duration-200 hover:shadow-lg border ${
                     isSelected 
-                      ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-200' 
-                      : 'hover:border-gray-300'
+                      ? 'ring-2 ring-emerald-500 bg-gradient-to-br from-slate-800 to-slate-900 border-emerald-500/30 shadow-lg' 
+                      : 'bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600 hover:border-slate-500 hover:shadow-md'
                   }`}
-                  onClick={() => toggleTask(task.id)}
+                  onClick={() => selectTask(task.id)}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        isSelected ? 'bg-blue-100' : 'bg-gray-100'
+                      <div className={`p-2 rounded-lg transition-colors duration-200 ${
+                        isSelected ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-slate-600/50 border border-slate-500/30'
                       }`}>
-                        <Icon className={`h-6 w-6 ${
-                          isSelected ? 'text-blue-600' : 'text-gray-600'
+                        <Icon className={`h-6 w-6 transition-colors duration-200 ${
+                          isSelected ? 'text-emerald-300' : 'text-slate-300'
                         }`} />
                       </div>
                       <div>
-                        <h3 className={`font-semibold ${
-                          isSelected ? 'text-gray-700' : 'text-gray-500'
+                        <h3 className={`font-semibold transition-colors duration-200 ${
+                          isSelected ? 'text-slate-100' : 'text-slate-200'
                         }`}>
                           {task.name}
                         </h3>
-                        <p className={`text-sm ${
-                          isSelected ? 'text-blue-700' : 'text-gray-600'
+                        <p className={`text-sm transition-colors duration-200 ${
+                          isSelected ? 'text-emerald-300' : 'text-slate-400'
                         }`}>
                           {task.description}
                         </p>
                       </div>
                     </div>
                     {isSelected && (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">
                         Selected
                       </Badge>
                     )}
