@@ -1,5 +1,5 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
-import type { StepConfig, StepProgress } from "@/components/MultiStepForm";
+import type { StepConfig } from "@/components/MultiStepForm";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Play } from "lucide-react";
-import React, { useCallback, useState } from "react"; // Added useEffect import
+import { Play, Wand2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 
 import Step1UploadDataset from "./steps/Step1UploadDataset";
@@ -31,6 +32,11 @@ const STEPS: StepConfig[] = [
 ];
 
 export default function AutoEvalPage() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isStep6Transition, setIsStep6Transition] = useState(false);
+  
+  console.log('AutoEvalPage rendered, currentStep:', currentStep);
+  
   const [configuration, setConfiguration] = useState<{
     dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string };
     tasks: string[];
@@ -45,56 +51,34 @@ export default function AutoEvalPage() {
     metrics: undefined,
   });
 
-  const submitProgressToAPI = useCallback(async (progress: StepProgress[]) => {
-    try {
-      const response = await fetch('/api/autoeval/progress', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          progress,
-          configuration,
-          timestamp: new Date().toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Progress submitted successfully:', result);
-      return result;
-    } catch (error) {
-      console.error('Error submitting progress:', error);
-      throw error;
+  // Trigger transition when entering Step 6
+  useEffect(() => {
+    if (currentStep === 6) {
+      const timer = setTimeout(() => {
+        setIsStep6Transition(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setIsStep6Transition(false);
     }
-  }, [configuration]);
+  }, [currentStep]);
 
-  const handleStepComplete = useCallback(async (stepId: number, stepData?: Record<string, unknown>) => {
-    console.log(`AutoEval Step ${stepId} completed with data:`, stepData);
-    switch (stepId) {
-      case 1:
-        console.log('Dataset upload completed');
-        break;
-      case 2:
-        console.log('Task selection completed');
-        break;
-      case 3:
-        console.log('Model selection completed');
-        break;
-      case 4:
-        console.log('Parameter configuration completed');
-        break;
-      case 5:
-        console.log('Metrics selection completed');
-        break;
-      case 6:
-        console.log('Final review completed');
-        break;
+  const handleNext = () => {
+    console.log('handleNext called, currentStep:', currentStep, 'STEPS.length:', STEPS.length);
+    if (currentStep < STEPS.length) {
+      const nextStep = currentStep + 1;
+      console.log('Moving to step:', nextStep);
+      setCurrentStep(nextStep);
     }
-  }, []);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+
 
   const handleLaunch = useCallback(async () => {
     console.log('Launching AutoEval evaluation with configuration:', configuration);
@@ -127,13 +111,9 @@ export default function AutoEvalPage() {
     }));
   };
 
-  const renderRightPanel = ({ configuration, currentStep }: { configuration: Record<string, unknown>; currentStep: number }) => (
-    <ConfigurationSummary
-      config={configuration}
-      currentStep={currentStep}
-      isCompact={true}
-    />
-  );
+  const CurrentStepComponent = STEPS[currentStep - 1].component;
+  const isFirstStep = currentStep === 1;
+  const isLastStep = currentStep === STEPS.length;
 
   return (
     <div className="flex w-full h-full">
@@ -153,7 +133,7 @@ export default function AutoEvalPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Wizard</BreadcrumbPage>
+              <BreadcrumbPage>Dashboard</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -163,7 +143,7 @@ export default function AutoEvalPage() {
           <div className="p-2 bg-purple-900/20 rounded-lg">
             <Wand2 className="h-6 w-6 text-purple-400" />
           </div>
-          <h1 className="text-3xl font-bold">Evaluation Setup Wizard</h1>
+          <h1 className="text-3xl font-bold">Evaluation Dashboard</h1>
         </div>
         
         {/* Content area for future components */}
@@ -218,21 +198,11 @@ export default function AutoEvalPage() {
                     </Button>
                     <Button
                       onClick={handleLaunch}
-                      disabled={isLaunching}
                       className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
                       size="sm"
                     >
-                      {isLaunching ? (
-                        <>
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
-                          Launching...
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Launch Evaluation
-                        </>
-                      )}
+                      <Play className="h-4 w-4 mr-2" />
+                      Launch Evaluation
                     </Button>
                   </div>
                 ) : (
@@ -264,14 +234,28 @@ export default function AutoEvalPage() {
                 )}
               </div>
             </CardHeader>
-            {currentStep === 6 ? (
-              <CurrentStepComponent configuration={configuration} currentStep={currentStep} />
-            ) : (
-              <CurrentStepComponent 
-                onConfigurationUpdate={handleConfigurationUpdate}
-                initialConfig={configuration}
-              />
-            )}
+            {(() => {
+              try {
+                console.log('Rendering step component:', currentStep, 'Component:', CurrentStepComponent.name);
+                if (currentStep === 6) {
+                  return <CurrentStepComponent configuration={configuration} currentStep={currentStep} />;
+                } else {
+                  return (
+                    <CurrentStepComponent 
+                      onConfigurationUpdate={handleConfigurationUpdate}
+                      initialConfig={configuration}
+                    />
+                  );
+                }
+              } catch (error) {
+                console.error('Error rendering step component:', error);
+                return (
+                  <div className="p-6">
+                    <p className="text-red-500">Error loading step {currentStep}. Please try refreshing the page.</p>
+                  </div>
+                );
+              }
+            })()}
           </Card>
         </div>
       </div>

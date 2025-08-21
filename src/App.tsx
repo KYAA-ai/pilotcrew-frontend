@@ -1,6 +1,6 @@
+import { AutoEvalAuthGuard } from '@/components/auth/autoeval-auth-guard'
 import { EmployeeAuthGuard } from '@/components/auth/employee-auth-guard'
 import { EmployerAuthGuard } from '@/components/auth/employer-auth-guard'
-import { AutoEvalAuthGuard } from '@/components/auth/autoeval-auth-guard'
 import { GoogleAuthCallback } from '@/components/auth/GoogleAuthCallback'
 import { GoogleAutoEvalAuthCallback, GoogleAutoEvalLoginCallback } from '@/components/auth/GoogleAutoEvalAuthCallback'
 import { GoogleEmployeeAuthCallback } from '@/components/auth/GoogleEmployeeAuthCallback'
@@ -8,8 +8,8 @@ import { GoogleEmployeeLoginCallback } from '@/components/auth/GoogleEmployeeLog
 import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import AutoEvalAuth from './components/auth/AutoEvalAuth'
+import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
 import AutoEvalLayout from './pages/AutoEvalLayout'
 import AutoEvalPage from './pages/AutoEvalPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
@@ -168,29 +168,18 @@ function App() {
         {/* AutoEval Platform */}
         <Route path="/autoeval" element={<AutoEvalAuth />} />
         <Route
-          path="/autoeval/dashboard"
+          path="/autoeval"
           element={
             <AutoEvalAuthGuard>
-              <AutoEvalPage />
+              <AutoEvalLayout />
             </AutoEvalAuthGuard>
           }
-        />
-        <Route
-          path="/autoeval/monitors"
-          element={
-            <AutoEvalAuthGuard>
-              <RunningMonitorsPage />
-            </AutoEvalAuthGuard>
-          }
-        />
-        <Route
-          path="/autoeval/leaderboard"
-          element={
-            <AutoEvalAuthGuard>
-          <LeaderboardPage />
-            </AutoEvalAuthGuard>
-          }
-        />
+        >
+          <Route index element={<AutoEvalPage />} />
+          <Route path="dashboard" element={<AutoEvalPage />} />
+          <Route path="monitors" element={<RunningMonitorsPage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
+        </Route>
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />
         <Route path="/" element={<NewLandingPage />} />

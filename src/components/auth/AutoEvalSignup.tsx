@@ -1,10 +1,10 @@
+import type { FormField } from "@/components/form";
+import GenericForm from "@/components/form";
+import { useProfile } from "@/contexts/ProfileContext";
+import apiClient from "@/lib/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import GenericForm from "@/components/form";
-import type { FormField } from "@/components/form";
-import apiClient from "@/lib/api";
-import { useProfile } from "@/contexts/ProfileContext";
 
 interface AutoEvalSignupProps {
   onSuccess?: () => void;
@@ -72,7 +72,7 @@ export default function AutoEvalSignup({ onSuccess, onValidationError }: AutoEva
       onSuccess?.();
       
       setTimeout(() => {
-        navigate('/autoeval/dashboard');
+        navigate('/autoeval');
       }, 1500);
       
     } catch (error) {

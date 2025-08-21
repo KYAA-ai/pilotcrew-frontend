@@ -69,7 +69,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
   // Initialize from initialConfig if provided
   useEffect(() => {
     if (initialConfig?.tasks && initialConfig.tasks.length > 0) {
-      setSelectedTask(initialConfig.tasks[0]); // Take the first task if multiple were previously selected
+      setSelectedTasks([initialConfig.tasks[0]]); // Take the first task if multiple were previously selected
     }
   }, [initialConfig]);
 
@@ -91,12 +91,12 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
     
     // Update configuration
     if (onConfigurationUpdate) {
-      onConfigurationUpdate({ tasks: [taskId] });
+      onConfigurationUpdate({ tasks: newSelectedTasks });
     }
   };
 
   const handleClearSelection = () => {
-    setSelectedTask('');
+    setSelectedTasks([]);
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ tasks: [] });
     }
@@ -122,7 +122,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {taskTypes.map((task) => {
               const Icon = task.icon;
-              const isSelected = selectedTask === task.id;
+              const isSelected = selectedTasks.includes(task.id);
               
               return (
                 <Card
@@ -132,7 +132,6 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
                       ? 'bg-[#04071307] border-l-[#FFD886] border-[#FFD886] shadow-lg' 
                       : 'bg-gradient-to-br from-[rgb(5,15,34)] to-[rgb(11,51,87)] hover:border-l-slate-300 hover:shadow-lg'
                   }`}
-                  onClick={() => selectTask(task.id)}
                   onClick={() => selectTask(task.id)}
                 >
                   <div className="flex items-start justify-between mb-4">

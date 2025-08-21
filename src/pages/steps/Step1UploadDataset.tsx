@@ -1,4 +1,4 @@
-import { UploadService, type UploadProgress } from "@/components/autoeval/fileupload";
+import { UploadService } from "@/components/autoeval/fileupload";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,49 +18,12 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   const [selectedOutputColumn, setSelectedOutputColumn] = useState<string>('');
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [backendResponseReceived, setBackendResponseReceived] = useState<boolean>(false);
-  const [datasetPreview, setDatasetPreview] = useState<Record<string, string | number>[]>([]);
   const [datasetColumns, setDatasetColumns] = useState<string[]>([]);
 
-   const [, setUploads] = useState<Array<{
-    id: string;
-    fileName: string;
-    status: 'completed' | 'error';
-    result?: { location: string; key: string };
-    error?: string;
-  }>>([]);
-
   const [uploading, setUploading] = useState(false);
-  const [, setProgress] = useState<UploadProgress | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cancelRef = useRef<boolean>(false);
-
-  const handleUploadComplete = (result: { location: string; key: string }) => {
-    const id = Date.now().toString();
-    setUploads(prev => [...prev, {
-      id,
-      fileName: result.key.split('/').pop() || 'Unknown',
-      status: 'completed',
-      result,
-    }]);
-    
-    // TODO: Here you would make an API call to get the dataset preview from backend
-    // For now, we'll simulate the backend response
-    // setBackendResponseReceived(true);
-    // setDatasetPreview(actualDataFromBackend);
-    // setDatasetColumns(actualColumnsFromBackend);
-  };
-
-  const handleUploadError = (error: Error) => {
-    const id = Date.now().toString();
-    setUploads(prev => [...prev, {
-      id,
-      fileName: 'Upload failed',
-      status: 'error',
-      error: error.message,
-    }]);
-  };
 
   const handleUpload = useCallback(
     async (file?: File) => {
@@ -68,32 +31,31 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       if (!fileToUpload || uploading) return;
 
       setUploading(true);
-      setProgress(null);
-      setError(null);
       cancelRef.current = false;
       setBackendResponseReceived(false); // Reset backend response state
 
       try {
-        const result = await UploadService.uploadFile(
+        await UploadService.uploadFile(
           fileToUpload,
-          (progressData) => {
-            setProgress(progressData);
-          },
+          () => {}, // Progress callback - not used
           () => cancelRef.current
         );
 
-        handleUploadComplete(result);
+        // Simulate successful upload
+        setUploadStatus('success');
+        setUploadMessage('Dataset uploaded successfully!');
+        setBackendResponseReceived(true);
+        
         setSelectedFile(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Upload failed';
-        setError(errorMessage);
-        handleUploadError(error instanceof Error ? error : new Error(errorMessage));
+        setUploadStatus('error');
+        setUploadMessage(errorMessage);
       } finally {
         setUploading(false);
-        setProgress(null);
       }
     },
     [selectedFile, uploading]
@@ -133,7 +95,6 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       
       // Reset backend response state
       setBackendResponseReceived(false);
-      setDatasetPreview([]);
       setDatasetColumns([]);
       
       // Update configuration
@@ -185,7 +146,6 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
     setSelectedOutputColumn('');
     setUploadedFileName('');
     setBackendResponseReceived(false);
-    setDatasetPreview([]);
     setDatasetColumns([]);
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ dataset: undefined });
@@ -254,7 +214,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
                 <p className="text-sm">Upload a dataset to see the preview</p>
                 {/* <p className="text-xs mt-1">Processing will begin after upload...</p> */}
               </div>
-            ) : datasetPreview.length > 0 ? (
+            ) : datasetColumns.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -266,15 +226,11 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {datasetPreview.map((row, index) => (
-                    <TableRow key={index}>
-                      {datasetColumns.map((column) => (
-                        <TableCell key={column} className="text-xs">
-                          {row[column]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                  <TableRow>
+                    <TableCell colSpan={datasetColumns.length} className="text-xs text-center">
+                      Dataset uploaded successfully
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             ) : (
