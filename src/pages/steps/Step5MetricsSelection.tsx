@@ -50,6 +50,11 @@ const textMetrics: Metric[] = [
     id: "f1_score",
     name: "F1 Score",
     description: "Harmonic mean of precision and recall for text matching"
+  },
+  {
+    id: "perplexity",
+    name: "Perplexity",
+    description: "Measures how well a language model predicts a sample of text, lower values indicate better performance"
   }
 ];
 
@@ -131,34 +136,6 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
         
         <TooltipProvider>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Pass@k Metrics */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-medium">Pass@k Metrics</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Select Pass@k Value</Label>
-                  <Select value={selectedPassAtK} onValueChange={handlePassAtKChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Pass@k value" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {passAtKOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-gray-600">
-                    Measures if at least one correct answer is generated in the first k attempts
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Text Metrics */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -188,6 +165,34 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Pass@k Metrics */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-medium">Pass@k Metrics</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Select Pass@k Value</Label>
+                  <Select value={selectedPassAtK} onValueChange={handlePassAtKChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Pass@k value" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {passAtKOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-gray-600">
+                    Measures if at least one correct answer is generated in the first k attempts
+                  </p>
+                </div>
               </div>
             </div>
           </div>

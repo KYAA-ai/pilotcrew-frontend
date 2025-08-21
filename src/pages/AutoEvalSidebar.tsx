@@ -13,19 +13,38 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Monitor, Trophy, Wand2 } from "lucide-react"
 
-// Empty navigation items for AutoEval sidebar
+// Navigation items for AutoEval sidebar
 const autoEvalNavItems: Array<{
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
-}> = []
+}> = [
+  {
+    title: "Wizard",
+    url: "/autoeval/wizard",
+    icon: Wand2,
+  },
+  {
+    title: "Running Monitors",
+    url: "/autoeval/monitors",
+    icon: Monitor,
+  },
+  {
+    title: "Leaderboard",
+    url: "/autoeval/leaderboard",
+    icon: Trophy,
+  },
+]
 
 const autoEvalSecondaryItems: Array<{
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
 }> = []
+
+
 
 export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

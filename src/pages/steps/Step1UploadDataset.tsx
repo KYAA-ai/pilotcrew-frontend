@@ -17,6 +17,9 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
   const [selectedInputColumn, setSelectedInputColumn] = useState<string>('');
   const [selectedOutputColumn, setSelectedOutputColumn] = useState<string>('');
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [backendResponseReceived, setBackendResponseReceived] = useState<boolean>(false);
+  const [datasetPreview, setDatasetPreview] = useState<Record<string, string | number>[]>([]);
+  const [datasetColumns, setDatasetColumns] = useState<string[]>([]);
 
    const [, setUploads] = useState<Array<{
     id: string;
@@ -41,6 +44,12 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       status: 'completed',
       result,
     }]);
+    
+    // TODO: Here you would make an API call to get the dataset preview from backend
+    // For now, we'll simulate the backend response
+    // setBackendResponseReceived(true);
+    // setDatasetPreview(actualDataFromBackend);
+    // setDatasetColumns(actualColumnsFromBackend);
   };
 
   const handleUploadError = (error: Error) => {
@@ -62,6 +71,7 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       setProgress(null);
       setError(null);
       cancelRef.current = false;
+      setBackendResponseReceived(false); // Reset backend response state
 
       try {
         const result = await UploadService.uploadFile(
@@ -89,17 +99,6 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
     [selectedFile, uploading]
   );
 
-  // Placeholder data for df.head()
-  const sampleData = [
-    { id: 1, question: "What is the capital of France?", answer: "Paris", category: "Geography", difficulty: "Easy" },
-    { id: 2, question: "How many planets are in our solar system?", answer: "8", category: "Science", difficulty: "Medium" },
-    { id: 3, question: "Who wrote Romeo and Juliet?", answer: "William Shakespeare", category: "Literature", difficulty: "Easy" },
-    { id: 4, question: "What is the chemical symbol for gold?", answer: "Au", category: "Chemistry", difficulty: "Medium" },
-    { id: 5, question: "In which year did World War II end?", answer: "1945", category: "History", difficulty: "Hard" },
-  ];
-
-  const columns = ["id", "question", "answer", "category", "difficulty"];
-
   // Initialize from initialConfig if provided
   useEffect(() => {
     if (initialConfig?.dataset) {
@@ -108,6 +107,8 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       setSelectedOutputColumn(initialConfig.dataset.outputColumn || '');
       setUploadStatus('success');
       setUploadMessage('Dataset loaded from previous selection');
+      setBackendResponseReceived(true); // Assume backend response was received for initial config
+      setDatasetColumns(initialConfig.dataset.columns);
     }
   }, [initialConfig]);
 
@@ -128,16 +129,21 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
       setUploadedFileName(file.name);
       handleUpload(files[0]);
       setUploadStatus('success');
-      setUploadMessage('Dataset uploaded successfully!');
+      setUploadMessage('Dataset uploaded successfully! Processing...');
+      
+      // Reset backend response state
+      setBackendResponseReceived(false);
+      setDatasetPreview([]);
+      setDatasetColumns([]);
       
       // Update configuration
       if (onConfigurationUpdate) {
         onConfigurationUpdate({
           dataset: {
             name: file.name,
-            columns: columns,
-            inputColumn: selectedInputColumn || 'none',
-            outputColumn: selectedOutputColumn || 'none'
+            columns: [],
+            inputColumn: '',
+            outputColumn: ''
           }
         });
       }
@@ -146,11 +152,11 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
 
   const handleInputColumnChange = (value: string) => {
     setSelectedInputColumn(value);
-    if (uploadedFileName && onConfigurationUpdate) {
+    if (uploadedFileName && onConfigurationUpdate && backendResponseReceived) {
       onConfigurationUpdate({
         dataset: {
           name: uploadedFileName,
-          columns: columns,
+          columns: datasetColumns,
           inputColumn: value,
           outputColumn: selectedOutputColumn
         }
@@ -160,11 +166,11 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
 
   const handleOutputColumnChange = (value: string) => {
     setSelectedOutputColumn(value);
-    if (uploadedFileName && onConfigurationUpdate) {
+    if (uploadedFileName && onConfigurationUpdate && backendResponseReceived) {
       onConfigurationUpdate({
         dataset: {
           name: uploadedFileName,
-          columns: columns,
+          columns: datasetColumns,
           inputColumn: selectedInputColumn,
           outputColumn: value
         }
@@ -178,6 +184,9 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
     setSelectedInputColumn('');
     setSelectedOutputColumn('');
     setUploadedFileName('');
+    setBackendResponseReceived(false);
+    setDatasetPreview([]);
+    setDatasetColumns([]);
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ dataset: undefined });
     }
@@ -240,28 +249,39 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
         <div className="space-y-3">
           <h3 className="text-base font-medium">Dataset Preview (df.head())</h3>
           <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHead key={column} className="font-medium text-xs">
-                      {column}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sampleData.map((row) => (
-                  <TableRow key={row.id}>
-                    {columns.map((column) => (
-                      <TableCell key={column} className="text-xs">
-                        {row[column as keyof typeof row]}
-                      </TableCell>
+            {!backendResponseReceived ? (
+              <div className="p-8 text-center text-gray-500">
+                <p className="text-sm">Upload a dataset to see the preview</p>
+                {/* <p className="text-xs mt-1">Processing will begin after upload...</p> */}
+              </div>
+            ) : datasetPreview.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {datasetColumns.map((column) => (
+                      <TableHead key={column} className="font-medium text-xs">
+                        {column}
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {datasetPreview.map((row, index) => (
+                    <TableRow key={index}>
+                      {datasetColumns.map((column) => (
+                        <TableCell key={column} className="text-xs">
+                          {row[column]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="p-8 text-center text-gray-500">
+                <p className="text-sm">No data available</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -282,13 +302,17 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <label className="text-sm font-medium">Input Column</label>
-              <Select value={selectedInputColumn} onValueChange={handleInputColumnChange}>
+              <Select 
+                value={selectedInputColumn} 
+                onValueChange={handleInputColumnChange}
+                disabled={!backendResponseReceived}
+              >
                 <SelectTrigger className="mt-3">
-                  <SelectValue placeholder="Select input column" />
+                  <SelectValue placeholder={backendResponseReceived ? "Select input column" : "Upload dataset first"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
-                  {columns.map((column) => (
+                  {datasetColumns.map((column) => (
                     <SelectItem key={column} value={column}>
                       {column}
                     </SelectItem>
@@ -298,13 +322,17 @@ export default function Step1UploadDataset({ onConfigurationUpdate, initialConfi
             </div>
             <div className="space-y-3">
               <label className="text-sm font-medium">Output Column</label>
-              <Select value={selectedOutputColumn} onValueChange={handleOutputColumnChange}>
+              <Select 
+                value={selectedOutputColumn} 
+                onValueChange={handleOutputColumnChange}
+                disabled={!backendResponseReceived}
+              >
                 <SelectTrigger className="mt-3">
-                  <SelectValue placeholder="Select output column" />
+                  <SelectValue placeholder={backendResponseReceived ? "Select output column" : "Upload dataset first"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
-                  {columns.map((column) => (
+                  {datasetColumns.map((column) => (
                     <SelectItem key={column} value={column}>
                       {column}
                     </SelectItem>

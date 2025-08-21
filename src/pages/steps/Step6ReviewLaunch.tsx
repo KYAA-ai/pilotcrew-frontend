@@ -74,30 +74,30 @@ export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: St
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">$15-25</div>
-                  <p className="text-sm text-gray-600">Estimated cost for this evaluation</p>
+                  <p className="text-sm text-light-gray-600">Estimated cost for this evaluation</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Dataset Size:</span>
-                    <span className="font-medium">1,000 samples</span>
+                    <span className="text-light-gray-600">Dataset Size:</span>
+                    <span className="font-medium">50 MB</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Models:</span>
+                    <span className="text-light-gray-600">Models:</span>
                     <span className="font-medium">{config.models?.length || 0} selected</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tasks:</span>
+                    <span className="text-light-gray-600">Tasks:</span>
                     <span className="font-medium">{config.tasks?.length || 0} selected</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Avg. Tokens per Response:</span>
-                    <span className="font-medium">~150 tokens</span>
+                    <span className="text-light-gray-600">Max Token Limit:</span>
+                    <span className="font-medium">500 tokens</span>
                   </div>
                 </div>
                 
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-xs text-blue-700">
+                <div className="border border-[#1942abc0] p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">
                     <strong>Note:</strong> This is an estimate based on your configuration. Actual costs may vary depending on model usage and response lengths.
                   </p>
                 </div>

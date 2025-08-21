@@ -1,6 +1,46 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Smooth page transitions */
+.autoeval-page {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.autoeval-page.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.autoeval-page.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth sidebar transitions */
+[data-slot="sidebar-container"] {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+[data-slot="sidebar-container"].sidebar-closing {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Smooth navigation link transitions */
+[data-slot="sidebar-menu-button"] {
+  transition: all 0.2s ease-in-out;
+}
+
+[data-slot="sidebar-menu-button"]:hover {
+  transform: translateX(4px);
+}
+
+/* Loading state for navigation */
+.navigation-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 /* Eudoxus Font Family */
 @font-face {
   font-family: 'Eudoxus';

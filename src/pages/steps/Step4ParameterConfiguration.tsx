@@ -132,18 +132,32 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
             const params = modelParameters[model.name] || { temperature: 0, topP: 0, maxTokens: 500 };
             
             return (
-              <Card key={model.name} className="p-6">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Target className="h-5 w-5 text-blue-600" />
-                    {model.name}
-                  </CardTitle>
-                  <p className="text-sm text-gray-600">{model.provider}</p>
+              <Card key={model.name} className="p-4">
+                <CardHeader className="pb-3 -ml-2">
+                  <div className="flex items-center justify-between">
+                    <div className="-ml-2">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <Target className="h-4 w-4 text-blue-600" />
+                        {model.name}
+                      </CardTitle>
+                      <p className="text-xs text-gray-600 mt-1">{model.provider}</p>
+                    </div>
+                    {selectedModels.length > 1 && (
+                      <Button
+                        onClick={() => applyToAllModels(model.name)}
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-3 text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 active:scale-95"
+                      >
+                        Apply to All
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Temperature Slider */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Thermometer className="h-4 w-4 text-blue-600" />
                       <Label className="text-sm font-medium">Temperature</Label>
@@ -170,7 +184,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                   <Separator />
 
                   {/* Top P Slider */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-purple-600" />
                       <Label className="text-sm font-medium">Top P</Label>
@@ -197,7 +211,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                   <Separator />
 
                   {/* Max Tokens Slider */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-green-600" />
                       <Label className="text-sm font-medium">Max Tokens</Label>
@@ -221,19 +235,6 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                     </div>
                   </div>
 
-                  {/* Apply to All Button */}
-                  {selectedModels.length > 1 && (
-                    <div className="pt-2">
-                      <Button
-                        onClick={() => applyToAllModels(model.name)}
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-xs"
-                      >
-                        Apply to All Models
-                      </Button>
-                    </div>
-                  )}
                 </div>
               </Card>
             );

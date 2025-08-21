@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
+import AutoEvalLayout from './pages/AutoEvalLayout'
 import AutoEvalPage from './pages/AutoEvalPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
@@ -24,7 +25,9 @@ import JobDetailsPage from './pages/JobDetailsPage'
 import JobFormPage from './pages/JobFormPage'
 import JobResponsesPage from './pages/JobResponsesPage'
 import LandingPage from './pages/LandingPage'
+import LeaderboardPage from './pages/LeaderboardPage'
 import NewLandingPage from './pages/newLandingPage'
+import RunningMonitorsPage from './pages/RunningMonitorsPage'
 
 function App() {
   return (
@@ -155,7 +158,12 @@ function App() {
           }
         />
         {/* AutoEval Platform */}
-        <Route path="/autoeval" element={<AutoEvalPage />} />
+        <Route path="/autoeval" element={<AutoEvalLayout />}>
+          <Route index element={<AutoEvalPage />} />
+          <Route path="wizard" element={<AutoEvalPage />} />
+          <Route path="monitors" element={<RunningMonitorsPage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
+        </Route>
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />
         <Route path="/" element={<NewLandingPage />} />

@@ -1,20 +1,16 @@
-
 import ConfigurationSummary from "@/components/ConfigurationSummary";
-import { SiteHeader } from "@/components/employer-header";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Play } from "lucide-react";
-import React, { useEffect, useState } from "react"; // Added useEffect import
-import { AutoEvalSidebar } from "./AutoEvalSidebar";
+import { Play, Wand2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Import all step components
 import Step1UploadDataset from "./steps/Step1UploadDataset";
@@ -100,170 +96,160 @@ export default function AutoEvalPage() {
   const isLastStep = currentStep === STEPS.length;
 
   return (
-    <SidebarProvider
-      defaultOpen={false}
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AutoEvalSidebar collapsible="offcanvas" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="autoeval-page h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
-          <div className="flex w-full h-full">
-            {/* Left Container - Wizard */}
-            <div 
-              className={`h-full p-6 flex flex-col overflow-hidden relative transition-all duration-700 ease-in-out ${
-                isStep6Transition ? 'w-full' : 'w-2/3'
-              }`}
-            >
-              {/* Breadcrumb */}
-              <Breadcrumb className="mb-4 flex-shrink-0">
+    <div className="flex w-full h-full">
+      {/* Left Container - Wizard */}
+      <div 
+        className={`h-full p-6 flex flex-col overflow-hidden relative transition-all duration-700 ease-in-out ${
+          isStep6Transition ? 'w-full' : 'w-2/3'
+        }`}
+      >
+        {/* Breadcrumb */}
+        <Breadcrumb className="mb-4 flex-shrink-0">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+                Home
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Wizard</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        
+        {/* Main Heading */}
+        <div className="flex items-center gap-3 mb-6 flex-shrink-0">
+          <div className="p-2 bg-purple-900/20 rounded-lg">
+            <Wand2 className="h-6 w-6 text-purple-400" />
+          </div>
+          <h1 className="text-3xl font-bold">Evaluation Setup Wizard</h1>
+        </div>
+        
+        {/* Content area for future components */}
+        <div className="flex-1 overflow-hidden">
+          <Card className="h-full">
+            <CardHeader className="relative">
+              {/* Breadcrumb at the top */}
+              <Breadcrumb className="mb-4">
                 <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>AutoEval</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-              
-              {/* Main Heading */}
-              <h1 className="text-3xl font-bold mb-6 flex-shrink-0">Evaluation Setup Wizard</h1>
-              
-              {/* Content area for future components */}
-              <div className="flex-1 overflow-hidden">
-                <Card className="h-full">
-                  <CardHeader className="relative">
-                    {/* Breadcrumb at the top */}
-                    <Breadcrumb className="mb-4">
-                      <BreadcrumbList>
-                        {STEPS.slice(0, currentStep).map((step, index) => (
-                          <React.Fragment key={step.id}>
-                            <BreadcrumbItem>
-                              {index === currentStep - 1 ? (
-                                // Current step - not clickable
-                                <BreadcrumbPage className="text-sm text-muted-foreground">
-                                  {step.name}
-                                </BreadcrumbPage>
-                              ) : (
-                                // Previous steps - clickable
-                                <BreadcrumbLink 
-                                  href="#" 
+                  {STEPS.slice(0, currentStep).map((step, index) => (
+                    <React.Fragment key={step.id}>
+                      <BreadcrumbItem>
+                        {index === currentStep - 1 ? (
+                          // Current step - not clickable
+                          <BreadcrumbPage className="text-sm text-muted-foreground">
+                            {step.name}
+                          </BreadcrumbPage>
+                        ) : (
+                          // Previous steps - clickable
+                                                          <button 
                                   className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
-                                  onClick={(e) => {
+                                  onClick={(e: React.MouseEvent) => {
                                     e.preventDefault();
                                     setCurrentStep(step.id);
                                   }}
                                 >
                                   {step.name}
-                                </BreadcrumbLink>
-                              )}
-                            </BreadcrumbItem>
-                            {index < currentStep - 1 && <BreadcrumbSeparator />}
-                          </React.Fragment>
-                        ))}
-                      </BreadcrumbList>
-                    </Breadcrumb>
-                    
-                    {/* Step title and navigation buttons */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle>Step {currentStep} of 6</CardTitle>
-                        <h2 className="text-2xl font-semibold mt-2">{STEPS[currentStep - 1].name}</h2>
-                      </div>
-                      {currentStep === 6 ? (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={handlePrevious}
-                            className="border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm"
-                            size="sm"
-                            variant="outline"
-                          >
-                            Previous
-                          </Button>
-                          <Button
-                            onClick={handleLaunch}
-                            disabled={isLaunching}
-                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
-                            size="sm"
-                          >
-                            {isLaunching ? (
-                              <>
-                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
-                                Launching...
-                              </>
-                            ) : (
-                              <>
-                                <Play className="h-4 w-4 mr-2" />
-                                Launch Evaluation
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                                </button>
+                        )}
+                      </BreadcrumbItem>
+                      {index < currentStep - 1 && <BreadcrumbSeparator />}
+                    </React.Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+              
+              {/* Step title and navigation buttons */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Step {currentStep} of 6</CardTitle>
+                  <h2 className="text-2xl font-semibold mt-2">{STEPS[currentStep - 1].name}</h2>
+                </div>
+                {currentStep === 6 ? (
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handlePrevious}
+                      className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={handleLaunch}
+                      disabled={isLaunching}
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
+                      size="sm"
+                    >
+                      {isLaunching ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                          Launching...
+                        </>
                       ) : (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={handlePrevious}
-                            disabled={isFirstStep}
-                            className={`border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm ${
-                              isFirstStep ? 'opacity-50 cursor-not-allowed' : ''
-                            }`}
-                            size="sm"
-                            variant="outline"
-                          >
-                            Previous
-                          </Button>
-
-                          <Button
-                            onClick={handleNext}
-                            disabled={isLastStep}
-                            className={`border border-blue-400 text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm ${
-                              isLastStep ? 'opacity-50 cursor-not-allowed' : ''
-                            }`}
-                            size="sm"
-                            variant="outline"
-                          >
-                            Next
-                          </Button>
-                        </div>
+                        <>
+                          <Play className="h-4 w-4 mr-2" />
+                          Launch Evaluation
+                        </>
                       )}
-                    </div>
-                  </CardHeader>
-                  {currentStep === 6 ? (
-                    <CurrentStepComponent configuration={configuration} currentStep={currentStep} />
-                  ) : (
-                    <CurrentStepComponent 
-                      onConfigurationUpdate={handleConfigurationUpdate}
-                      initialConfig={configuration}
-                    />
-                  )}
-                </Card>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handlePrevious}
+                      disabled={isFirstStep}
+                      className={`border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors ${
+                        isFirstStep ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+
+                    <Button
+                      onClick={handleNext}
+                      disabled={isLastStep}
+                      className={`border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors ${
+                        isLastStep ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
-            
-            {/* Right Container - Configuration Summary */}
-            <div 
-              className={`h-full p-6 overflow-hidden transition-all duration-700 ease-in-out ${
-                isStep6Transition 
-                  ? 'w-0 opacity-0 translate-x-full' 
-                  : 'w-1/3 opacity-100 translate-x-0'
-              }`}
-            >
-              <ConfigurationSummary 
-                config={configuration}
-                currentStep={currentStep}
-                isCompact={true}
+            </CardHeader>
+            {currentStep === 6 ? (
+              <CurrentStepComponent configuration={configuration} currentStep={currentStep} />
+            ) : (
+              <CurrentStepComponent 
+                onConfigurationUpdate={handleConfigurationUpdate}
+                initialConfig={configuration}
               />
-            </div>
-          </div>
+            )}
+          </Card>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+      
+      {/* Right Container - Configuration Summary */}
+      <div 
+        className={`h-full p-6 overflow-hidden transition-all duration-700 ease-in-out ${
+          isStep6Transition 
+            ? 'w-0 opacity-0 translate-x-full' 
+            : 'w-1/3 opacity-100 translate-x-0'
+        }`}
+      >
+        <ConfigurationSummary 
+          config={configuration}
+          currentStep={currentStep}
+          isCompact={true}
+        />
+      </div>
+    </div>
   );
 }
