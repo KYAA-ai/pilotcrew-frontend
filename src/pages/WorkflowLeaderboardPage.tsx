@@ -174,10 +174,7 @@ export default function WorkflowLeaderboardPage() {
     return rank <= 3 ? rank : 0; // Return 1, 2, 3 for top 3, 0 for others
   };
 
-  const getProviderIcon = (provider: string) => {
-    // Placeholder for provider icons - you can replace with actual icons
-    return <div className="w-4 h-4 bg-gray-600 rounded-sm mr-2" />;
-  };
+
 
   const formatValue = (value: number, field: SortField) => {
     if (field === 'perplexity') {
@@ -433,11 +430,11 @@ export default function WorkflowLeaderboardPage() {
                               </TableCell>
                                 {!showTopK && (
                                  <TableCell className={`text-white border-gray-900 text-center ${
-                                   getPerformanceRank(dataSource.averageScore, 'averageScore') === 1 ? 'bg-gray-800' :
-                                   getPerformanceRank(dataSource.averageScore, 'averageScore') === 2 ? 'bg-gray-700' :
-                                   getPerformanceRank(dataSource.averageScore, 'averageScore') === 3 ? 'bg-gray-600' : ''
+                                   getPerformanceRank(model.averageScore, 'averageScore') === 1 ? 'bg-gray-800' :
+                                   getPerformanceRank(model.averageScore, 'averageScore') === 2 ? 'bg-gray-700' :
+                                   getPerformanceRank(model.averageScore, 'averageScore') === 3 ? 'bg-gray-600' : ''
                                  }`}>
-                                   {formatValue(dataSource.averageScore, 'averageScore')}
+                                   {formatValue(model.averageScore, 'averageScore')}
                                  </TableCell>
                                )}
                                                                <TableCell className={`text-white border-gray-900 text-center ${
