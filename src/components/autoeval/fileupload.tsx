@@ -155,7 +155,8 @@ export class UploadService {
   static async uploadFile(
     file: File,
     onProgress?: (progress: UploadProgress) => void,
-    onCancel?: () => boolean
+    onCancel?: () => boolean,
+    onInit?: (init: UploadInitResponse) => void
   ): Promise<{ location: string; key: string }> {
     const cancelTokenSource = axios.CancelToken.source();
     
@@ -164,6 +165,9 @@ export class UploadService {
       // start timer
       console.time('Upload Time');
       const initData = await this.initializeUpload(file.name, file.type, file.size);
+      if (onInit) {
+        onInit(initData);
+      }
       const { uploadId, key, presignedUrls, chunkSize, totalChunks } = initData;
 
       // Upload parts concurrently with a fixed worker pool
