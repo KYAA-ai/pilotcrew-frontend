@@ -31,6 +31,8 @@ import LandingPage from './pages/LandingPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import NewLandingPage from './pages/newLandingPage'
 import RunningMonitorsPage from './pages/RunningMonitorsPage'
+import WorkflowLeaderboardPage from './pages/WorkflowLeaderboardPage'
+import WorkflowMonitorPage from './pages/WorkflowMonitorPage'
 
 function App() {
   return (
@@ -178,7 +180,9 @@ function App() {
           <Route index element={<AutoEvalPage />} />
           <Route path="dashboard" element={<AutoEvalPage />} />
           <Route path="monitors" element={<RunningMonitorsPage />} />
+          <Route path="monitors/:workflowId" element={<WorkflowMonitorPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
+          <Route path="leaderboard/:workflowId" element={<WorkflowLeaderboardPage />} />
         </Route>
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />
