@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FileText, HelpCircle, RotateCcw, Target } from "lucide-react";
@@ -135,40 +133,43 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
         </div>
         
         <TooltipProvider>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-8">
             {/* Text Metrics */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-green-600" />
                 <h3 className="text-lg font-medium">Text Metrics</h3>
               </div>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {textMetrics.map((metric) => (
-                  <div key={metric.id} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={metric.id}
-                      checked={selectedTextMetrics.includes(metric.id)}
-                      onCheckedChange={() => toggleTextMetric(metric.id)}
-                    />
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={metric.id} className="text-sm font-medium cursor-pointer">
-                        {metric.name}
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-gray-400" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">{metric.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </div>
+                  <Card
+                    key={metric.id}
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      selectedTextMetrics.includes(metric.id)
+                        ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                    }`}
+                    onClick={() => toggleTextMetric(metric.id)}
+                  >
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-sm">{metric.name}</h4>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">{metric.description}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
 
-            {/* Pass@k Metrics */}
+                        {/* Pass@k Metrics */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-blue-600" />
@@ -176,19 +177,21 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
               </div>
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Select Pass@k Value</Label>
-                  <Select value={selectedPassAtK} onValueChange={handlePassAtKChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Pass@k value" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {passAtKOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="text-sm font-medium pl-1">Select Pass@k Value</label>
+                  <div className="mt-4">
+                    <Select value={selectedPassAtK} onValueChange={handlePassAtKChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Pass@k value" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {passAtKOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <p className="text-sm text-gray-600">
                     Measures if at least one correct answer is generated in the first k attempts
                   </p>
