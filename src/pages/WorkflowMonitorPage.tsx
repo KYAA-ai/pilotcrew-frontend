@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { HalfRadialProgress } from "@/components/ui/half-radial-progress";
 import { Activity, Monitor, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -41,6 +42,8 @@ const placeholderModelsData = {
     "averageScore": 0.4407,
     "inputTokens": 17527,
     "outputTokens": 8055,
+    "rowsProcessed": 64,
+    "totalRows": 100,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:35:53.215Z",
     "tokensUsed": 25582
@@ -72,6 +75,8 @@ const placeholderModelsData = {
     "averageScore": 0.527,
     "inputTokens": 19982,
     "outputTokens": 2163,
+    "rowsProcessed": 45,
+    "totalRows": 100,
     "modelStartedAt": "2025-08-19T23:33:50.188Z",
     "modelEndedAt": "2025-08-19T23:36:05.762Z",
     "tokensUsed": 22145
@@ -103,6 +108,8 @@ const placeholderModelsData = {
     "averageScore": 0.6106,
     "inputTokens": 17816,
     "outputTokens": 16285,
+    "rowsProcessed": 78,
+    "totalRows": 100,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:37:05.753Z",
     "tokensUsed": 34101
@@ -145,12 +152,20 @@ export default function WorkflowMonitorPage() {
     setSelectedMonitors(newState);
   };
 
+  const formatTimeToHHMMSS = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}h:${minutes.toString().padStart(2, '0')}m:${seconds.toString().padStart(2, '0')}s`;
+  };
+
   const getTimeElapsed = (startTime: string) => {
     const start = new Date(startTime);
     const now = new Date();
     const elapsedMs = now.getTime() - start.getTime();
     const elapsedSeconds = Math.floor(elapsedMs / 1000);
-    return `${elapsedSeconds}s`;
+    return formatTimeToHHMMSS(elapsedSeconds);
   };
 
   const getCompletionTime = (startTime: string, endTime: string) => {
@@ -158,11 +173,25 @@ export default function WorkflowMonitorPage() {
     const end = new Date(endTime);
     const completionMs = end.getTime() - start.getTime();
     const completionSeconds = Math.floor(completionMs / 1000);
-    return `${completionSeconds}s`;
+    return formatTimeToHHMMSS(completionSeconds);
   };
 
   const formatTime = (timeString: string) => {
-    return new Date(timeString).toLocaleTimeString();
+    const date = new Date(timeString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    return `${hours}h:${minutes}m:${seconds}s`;
+  };
+
+  const formatDate = (timeString: string) => {
+    const date = new Date(timeString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    return `${month}-${day}-${year}`;
   };
 
   const visibleModels = Object.keys(placeholderModelsData).filter(
@@ -269,32 +298,43 @@ export default function WorkflowMonitorPage() {
                         </div>
                       </CardHeader>
                       <CardContent className="flex-1 space-y-4">
+                        {/* Progress Bar */}
+                        <div className="flex justify-center">
+                          <HalfRadialProgress
+                            value={modelData.rowsProcessed}
+                            max={modelData.totalRows}
+                            size="lg"
+                            label="Rows Processed"
+                            className="mb-2"
+                          />
+                        </div>
+                        
                         {/* Mini Cards for Key Metrics - 2x3 Grid */}
                         <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
+                          {/* <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Average Score</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                               {(modelData.averageScore * 100).toFixed(1)}%
                             </div>
-                          </div>
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
+                          </div> */}
+                          {/* <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">CPU Utilization</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                               85.2%
                             </div>
-                          </div>
+                          </div> */}
                           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Tokens</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                               {modelData.tokensUsed.toLocaleString()}
                             </div>
                           </div>
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
+                          {/* <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Pass@K</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                               {(modelData.passAtK["1"] * 100).toFixed(1)}%
                             </div>
-                          </div>
+                          </div> */}
                           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Input Tokens</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -309,10 +349,10 @@ export default function WorkflowMonitorPage() {
                           </div>
                         </div>
 
-                        {/* Other Statistics - Dark Theme Nutrition Label Style */}
+                        {/* Other Information - Dark Theme Nutrition Label Style */}
                         <div className="bg-gray-900 dark:bg-gray-800 rounded-lg border border-gray-700">
                           <div className="px-4 py-2 border-b border-gray-700">
-                            <h4 className="text-sm font-bold text-white">Other Statistics</h4>
+                            <h4 className="text-sm font-bold text-white">Other Information</h4>
                           </div>
                           <div className="px-4 py-3 space-y-2">
                             <div className="flex justify-between items-center py-1">
@@ -326,6 +366,10 @@ export default function WorkflowMonitorPage() {
                             <div className="flex justify-between items-center py-1">
                               <span className="text-xs text-gray-300">Start Time</span>
                               <span className="text-xs font-medium text-white">{formatTime(modelData.modelStartedAt)}</span>
+                            </div>
+                            <div className="flex justify-between items-center py-1">
+                              <span className="text-xs text-gray-300">Start Date</span>
+                              <span className="text-xs font-medium text-white">{formatDate(modelData.modelStartedAt)}</span>
                             </div>
                           </div>
                         </div>

@@ -1,13 +1,14 @@
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Award, Trophy } from "lucide-react";
+import { Award, Eye, Trophy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 // Placeholder data for leaderboard workflows
@@ -62,7 +63,8 @@ const placeholderWorkflows = [
 export default function LeaderboardPage() {
   const navigate = useNavigate();
 
-  const handleRowClick = (workflowId: string) => {
+  const handleViewClick = (workflowId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
     navigate(`/autoeval/leaderboard/${workflowId}`);
   };
 
@@ -110,16 +112,14 @@ export default function LeaderboardPage() {
                     <TableHead>Models</TableHead>
                     <TableHead>Dataset</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Top Model</TableHead>
-                    <TableHead>Avg Score</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {placeholderWorkflows.map((workflow) => (
                     <TableRow 
                       key={workflow.id} 
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => handleRowClick(workflow.id)}
+                      className="hover:bg-muted/50"
                     >
                       <TableCell className="font-medium">{workflow.id}</TableCell>
                       <TableCell>{new Date(workflow.dateCreated).toLocaleDateString()}</TableCell>
@@ -130,8 +130,17 @@ export default function LeaderboardPage() {
                           {workflow.status}
                         </span>
                       </TableCell>
-                      <TableCell className="font-medium text-green-600 dark:text-green-400">{workflow.topModel}</TableCell>
-                      <TableCell>{(workflow.avgScore * 100).toFixed(2)}%</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(event) => handleViewClick(workflow.id, event)}
+                          className="flex items-center gap-2"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

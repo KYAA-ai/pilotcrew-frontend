@@ -5,9 +5,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Activity, Monitor } from "lucide-react";
+import { Activity, Eye, Monitor } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 // Placeholder data for running monitors
@@ -15,35 +16,35 @@ const placeholderWorkflows = [
   {
     id: "wf-001",
     dateCreated: "2024-01-15T10:30:00Z",
-    models: "GPT-4 + Claude-3",
+    models: "GPT-4, Claude-3",
     status: "Running",
     dataset: "Customer Reviews Dataset"
   },
   {
     id: "wf-002", 
     dateCreated: "2024-01-14T14:22:00Z",
-    models: "Llama-2 + GPT-3.5",
+    models: "Llama-2, GPT-3.5",
     status: "Running",
     dataset: "Product Descriptions Dataset"
   },
   {
     id: "wf-003",
     dateCreated: "2024-01-13T09:15:00Z", 
-    models: "Claude-3 + PaLM-2",
+    models: "Claude-3, PaLM-2",
     status: "Running",
     dataset: "Support Tickets Dataset"
   },
   {
     id: "wf-004",
     dateCreated: "2024-01-12T16:45:00Z",
-    models: "GPT-4 + Llama-2 + Claude-3",
+    models: "GPT-4, Llama-2, Claude-3",
     status: "Running", 
     dataset: "Code Review Dataset"
   },
   {
     id: "wf-005",
     dateCreated: "2024-01-11T11:20:00Z",
-    models: "PaLM-2 + GPT-3.5",
+    models: "PaLM-2, GPT-3.5",
     status: "Running",
     dataset: "Email Classification Dataset"
   }
@@ -52,7 +53,8 @@ const placeholderWorkflows = [
 export default function RunningMonitorsPage() {
   const navigate = useNavigate();
 
-  const handleRowClick = (workflowId: string) => {
+  const handleViewClick = (workflowId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
     navigate(`/autoeval/monitors/${workflowId}`);
   };
 
@@ -110,14 +112,14 @@ export default function RunningMonitorsPage() {
                     <TableHead>Models</TableHead>
                     <TableHead>Dataset</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {placeholderWorkflows.map((workflow) => (
                     <TableRow 
                       key={workflow.id}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => handleRowClick(workflow.id)}
+                      className="hover:bg-muted/50 transition-colors"
                     >
                       <TableCell className="font-medium">{workflow.id}</TableCell>
                       <TableCell>{formatDate(workflow.dateCreated)}</TableCell>
@@ -127,6 +129,17 @@ export default function RunningMonitorsPage() {
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
                           {workflow.status}
                         </span>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(event) => handleViewClick(workflow.id, event)}
+                          className="flex items-center gap-2"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
