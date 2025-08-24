@@ -53,24 +53,13 @@ export function AutoEvalAuthGuard({ children }: AutoEvalAuthGuardProps) {
         } catch (error: unknown) {
           const apiError = error as { response?: { status?: number; data?: { error?: string; message?: string } } };
 
-          if (apiError.response?.status === 403) {
-            toast.error("Access forbidden. Please login again.");
-            setIsAuthenticated(false);
-            setProfile(null);
-          } else if (apiError.response?.status === 401) {
-            const errorType = apiError.response?.data?.error;
-            const errorMessage = apiError.response?.data?.message;
-
-            if (errorType === 'TOKEN_EXPIRED') {
-              toast.error("Session expired. Please login again.");
-            } else if (errorType === 'INVALID_TOKEN') {
-              toast.error("Invalid session. Please login again.");
-            } else {
-              toast.error(errorMessage || "Session expired. Please login again.");
-            }
+          // Don't show error toasts for expected authentication failures
+          if (apiError.response?.status === 403 || apiError.response?.status === 401) {
+            // Silent failure - user needs to login
             setIsAuthenticated(false);
             setProfile(null);
           } else {
+            // Only show toast for unexpected errors
             console.error("Auth validation error:", error);
             toast.error("Authentication error. Please try again.");
             setIsAuthenticated(false);

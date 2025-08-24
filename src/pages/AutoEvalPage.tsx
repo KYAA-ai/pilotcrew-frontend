@@ -30,7 +30,6 @@ export default function AutoEvalPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLaunching, setIsLaunching] = useState(false);
 
-  // Check if user has started working on the page
   const hasUserStarted = () => {
     return !!(
       configuration.dataset?.datasetId ||
@@ -41,7 +40,14 @@ export default function AutoEvalPage() {
     );
   };
 
-  // Validation functions for each step
+
+  const handleStepChange = (step: number) => {
+    setCurrentStep(step);
+    if (step === 6) {
+      setShowConfigSummary(false);
+    }
+  };
+
   const validateStep1 = (config: AutoEvalConfiguration) => {
     const issues: string[] = [];
     
@@ -303,7 +309,7 @@ export default function AutoEvalPage() {
             initialConfig={configuration}
             onConfigurationUpdate={handleConfigurationUpdate}
             onComplete={handleLaunch}
-            onStepChange={setCurrentStep}
+            onStepChange={handleStepChange}
             renderHeader={(currentStep, totalSteps, stepName) => (
               <div>
                 <h2 className="text-2xl font-semibold">Step {currentStep} of {totalSteps}</h2>

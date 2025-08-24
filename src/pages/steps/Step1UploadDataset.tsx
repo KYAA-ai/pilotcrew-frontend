@@ -418,7 +418,7 @@ export default function Step1UploadDataset({
 
         {/* Dataset Preview Table */}
         <div className="space-y-3">
-          <h3 className="text-base font-medium">Dataset Preview (df.head())</h3>
+          <h3 className="text-base font-medium">Dataset Preview</h3>
           <div className="border rounded-lg overflow-hidden">
             {!backendResponseReceived ? (
               <div className="p-8 text-center text-gray-500">
