@@ -33,6 +33,7 @@ import NewLandingPage from './pages/newLandingPage'
 import RunningMonitorsPage from './pages/RunningMonitorsPage'
 import WorkflowLeaderboardPage from './pages/WorkflowLeaderboardPage'
 import WorkflowMonitorPage from './pages/WorkflowMonitorPage'
+import AutoEvalStatusPage from './pages/AutoEvalStatusPage'
 
 function App() {
   return (
@@ -179,6 +180,7 @@ function App() {
         >
           <Route index element={<AutoEvalPage />} />
           <Route path="dashboard" element={<AutoEvalPage />} />
+          <Route path="status" element={<AutoEvalStatusPage />} />
           <Route path="monitors" element={<RunningMonitorsPage />} />
           <Route path="monitors/:workflowId" element={<WorkflowMonitorPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />

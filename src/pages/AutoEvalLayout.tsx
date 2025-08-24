@@ -7,7 +7,7 @@ import { AutoEvalSidebar } from "./AutoEvalSidebar";
 export default function AutoEvalLayout() {
   return (
     <SidebarProvider
-      defaultOpen={true}
+      defaultOpen={false}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -18,7 +18,7 @@ export default function AutoEvalLayout() {
       <AutoEvalSidebar collapsible="offcanvas" />
       <SidebarInset>
         <SiteHeader />
-        <div className="autoeval-page h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-hidden">
+        <div className="autoeval-page h-[calc(100vh-var(--header-height))] bg-[var(--background)] flex flex-col overflow-auto">
           <Outlet />
         </div>
       </SidebarInset>

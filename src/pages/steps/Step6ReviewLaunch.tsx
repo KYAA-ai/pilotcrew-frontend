@@ -1,76 +1,45 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { Card, CardContent } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
+import type { AutoEvalConfiguration } from "@/types/shared";
 
 interface Step6ReviewLaunchProps {
-  configuration?: {
-    dataset?: {
-      name: string;
-      columns: string[];
-      outputColumn?: string;
-    };
-    tasks?: string[];
-    models?: Array<{
-      name: string;
-      provider: string;
-      pricing: string;
-    }>;
-    parameters?: Record<string, {
-      temperature: number;
-      topP: number;
-      maxTokens: number;
-    }>;
-    metrics?: {
-      passAtK?: string;
-      textMetrics: string[];
-    };
-  };
+  initialConfig?: AutoEvalConfiguration;
   currentStep?: number;
 }
 
-export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: Step6ReviewLaunchProps) {
-  // Sample configuration data (fallback if no configuration is passed)
-  const config = configuration || {
-    dataset: {
-      name: "qa_dataset.csv",
-      columns: ["id", "question", "answer", "category", "difficulty"],
-      outputColumn: "none"
-    },
-    tasks: ["qa", "classification"],
-    models: [
-      { name: "GPT-4", provider: "OpenAI", pricing: "$0.03/1K tokens" },
-      { name: "Claude-3", provider: "Anthropic", pricing: "$0.015/1K tokens" }
-    ],
-    parameters: {
-      "GPT-4": { temperature: 0, topP: 0, maxTokens: 500 },
-      "Claude-3": { temperature: 0, topP: 0, maxTokens: 500 }
-    },
-    metrics: {
-      passAtK: "1",
-      textMetrics: ["bleu", "rouge", "exact_match"]
-    }
+export default function Step6ReviewLaunch({ initialConfig, currentStep = 6 }: Step6ReviewLaunchProps) {
+  // Use the actual configuration data passed from the parent
+  const config: AutoEvalConfiguration = initialConfig || {
+    dataset: undefined,
+    tasks: [],
+    models: [],
+    parameters: undefined,
+    metrics: undefined,
   };
 
   return (
     <>
-      <CardContent className="overflow-y-auto space-y-6 h-full">
+      <CardContent className="overflow-y-scroll space-y-6 h-full">
         <p className="text-muted-foreground">Review your configuration and launch the evaluation.</p>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100%-4rem)]">
           {/* Configuration Summary Card */}
-          <ConfigurationSummary 
-            config={config}
-            currentStep={currentStep}
-            isCompact={false}
-          />
+          <div className="h-full overflow-y-auto">
+            <ConfigurationSummary 
+              config={config}
+              currentStep={currentStep}
+              isCompact={false}
+            />
+          </div>
 
           {/* Estimated Cost Card */}
-          <div className="space-y-4">
+          <div className="space-y-4 h-full">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
               <h3 className="text-lg font-medium">Estimated Cost</h3>
             </div>
-            <Card className="p-4">
+            <Card className="p-4 h-[calc(100%-3rem)]">
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">$15-25</div>
@@ -80,7 +49,7 @@ export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: St
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-light-gray-600">Dataset Size:</span>
-                    <span className="font-medium">50 MB</span>
+                    <span className="font-medium">{config.dataset?.name || "Not uploaded"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-light-gray-600">Models:</span>
@@ -92,7 +61,12 @@ export default function Step6ReviewLaunch({ configuration, currentStep = 6 }: St
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-light-gray-600">Max Token Limit:</span>
-                    <span className="font-medium">500 tokens</span>
+                    <span className="font-medium">
+                      {config.parameters && config.models && config.models.length > 0 
+                        ? `${config.parameters[config.models[0].name]?.maxTokens || 500} tokens`
+                        : "500 tokens"
+                      }
+                    </span>
                   </div>
                 </div>
                 

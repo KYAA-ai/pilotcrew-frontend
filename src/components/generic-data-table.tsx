@@ -287,6 +287,18 @@ interface GenericDataTableProps {
    * Optional request body to send as POST. If provided, will POST to endpoint with this body; otherwise, GET.
    */
   requestBody?: Record<string, unknown>;
+  /**
+   * Enable server-side pagination, filtering, and sorting
+   */
+  serverSidePagination?: boolean;
+  /**
+   * Total count for server-side pagination (required when serverSidePagination is true)
+   */
+  totalCount?: number;
+  /**
+   * External filters to apply (for server-side pagination)
+   */
+  externalFilters?: Record<string, unknown>;
 }
 
 export function GenericDataTable({
@@ -303,7 +315,10 @@ export function GenericDataTable({
   ],
   customActionElement,
   searchBarElement,
-  requestBody
+  requestBody,
+  serverSidePagination,
+  totalCount,
+  externalFilters
 }: GenericDataTableProps) {
   const [data, setData] = React.useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -328,11 +343,58 @@ export function GenericDataTable({
     try {
       setLoading(true)
       setError(null)
+      
+      const requestConfig: { params?: Record<string, unknown> } = {};
+      
+      if (serverSidePagination) {
+        // Add server-side pagination, filtering, and sorting parameters
+        requestConfig.params = {
+          page: pagination.pageIndex + 1, // Convert to 1-based for server
+          limit: pagination.pageSize,
+          offset: pagination.pageIndex * pagination.pageSize,
+        };
+        
+        // Add sorting parameters
+        if (sorting.length > 0) {
+          const sort = sorting[0];
+          if (requestConfig.params) {
+            requestConfig.params.sortBy = sort.id;
+            requestConfig.params.sortOrder = sort.desc ? 'desc' : 'asc';
+          }
+        }
+        
+        // Add filtering parameters
+        if (columnFilters.length > 0) {
+          columnFilters.forEach(filter => {
+            if (filter.value && requestConfig.params) {
+              requestConfig.params[filter.id] = filter.value;
+            }
+          });
+        }
+
+        // Add external filters
+        if (externalFilters && requestConfig.params) {
+          Object.entries(externalFilters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              requestConfig.params![key] = value;
+            }
+          });
+        }
+      } else if (externalFilters) {
+        // If not server-side pagination but external filters exist, still add them
+        requestConfig.params = {};
+        Object.entries(externalFilters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            requestConfig.params![key] = value;
+          }
+        });
+      }
+      
       let response;
       if (requestBody) {
-        response = await api.post(endpoint, requestBody as Record<string, unknown>);
+        response = await api.post(endpoint, requestBody as Record<string, unknown>, requestConfig);
       } else {
-        response = await api.get(endpoint);
+        response = await api.get(endpoint, requestConfig);
       }
       const responseData = response.data
 
@@ -346,12 +408,19 @@ export function GenericDataTable({
     } finally {
       setLoading(false)
     }
-  }, [endpoint, dataKey, requestBody])
+  }, [endpoint, dataKey, requestBody, serverSidePagination, pagination, sorting, columnFilters, externalFilters])
 
-  // Fetch data from endpoint
+  // Fetch data from endpoint on mount
   React.useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  // Refetch data when pagination, sorting, or filtering changes (only for server-side pagination)
+  React.useEffect(() => {
+    if (serverSidePagination) {
+      fetchData()
+    }
+  }, [pagination, sorting, columnFilters, serverSidePagination, fetchData])
 
   // Generate columns dynamically if not provided
   const generateColumns = React.useCallback((data: Record<string, unknown>[]): ColumnDef<Record<string, unknown>>[] => {
@@ -483,6 +552,11 @@ export function GenericDataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    // Server-side pagination configuration
+    manualPagination: serverSidePagination,
+    manualSorting: serverSidePagination,
+    manualFiltering: serverSidePagination,
+    pageCount: serverSidePagination && totalCount ? Math.ceil(totalCount / pagination.pageSize) : undefined,
   })
 
   function handleDragEnd(event: DragEndEvent) {
@@ -611,7 +685,7 @@ export function GenericDataTable({
               id={sortableId}
             >
               <Table>
-                <TableHeader className="bg-muted sticky top-0 z-10">
+                <TableHeader className="sticky top-0 z-10">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
@@ -654,7 +728,7 @@ export function GenericDataTable({
             </DndContext>
           ) : (
             <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
+              <TableHeader className="sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
@@ -702,8 +776,17 @@ export function GenericDataTable({
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {serverSidePagination ? (
+              <>
+                {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                {totalCount || 0} total row(s) selected.
+              </>
+            ) : (
+              <>
+                {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                {table.getFilteredRowModel().rows.length} row(s) selected.
+              </>
+            )}
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">

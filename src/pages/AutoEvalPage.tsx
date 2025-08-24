@@ -1,18 +1,13 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
-import type { StepConfig } from "@/components/MultiStepForm";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator
-} from "@/components/ui/breadcrumb";
+import MultiStepForm, { type StepConfig } from "@/components/MultiStepForm";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Play, Wand2 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AlertCircle, Play, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import type { AutoEvalConfiguration } from "@/types/shared";
+import apiClient from "@/lib/api";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 import Step1UploadDataset from "./steps/Step1UploadDataset";
 import Step2TaskTypeSelection from "./steps/Step2TaskTypeSelection";
@@ -21,29 +16,9 @@ import Step4ParameterConfiguration from "./steps/Step4ParameterConfiguration";
 import Step5MetricsSelection from "./steps/Step5MetricsSelection";
 import Step6ReviewLaunch from "./steps/Step6ReviewLaunch";
 
-// Step configuration
-const STEPS: StepConfig[] = [
-  { id: 1, name: "Upload dataset", component: Step1UploadDataset },
-  { id: 2, name: "Task Type Selection", component: Step2TaskTypeSelection },
-  { id: 3, name: "Model Selection", component: Step3ModelSelection },
-  { id: 4, name: "Parameter Configuration", component: Step4ParameterConfiguration },
-  { id: 5, name: "Metrics Selection", component: Step5MetricsSelection },
-  { id: 6, name: "Review & Launch", component: Step6ReviewLaunch },
-];
-
 export default function AutoEvalPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isStep6Transition, setIsStep6Transition] = useState(false);
-  
-  console.log('AutoEvalPage rendered, currentStep:', currentStep);
-  
-  const [configuration, setConfiguration] = useState<{
-    dataset?: { name: string; columns: string[]; inputColumn?: string; outputColumn?: string };
-    tasks: string[];
-    models: Array<{ id: string; name: string; provider: string; pricing: string; costPerMillionInputTokens: string; costPerMillionOutputTokens: string; logo: string }>;
-    parameters?: Record<string, { temperature: number; topP: number; maxTokens: number }>;
-    metrics?: { passAtK?: string; textMetrics: string[] };
-  }>({
+  const navigate = useNavigate();
+  const [configuration, setConfiguration] = useState<AutoEvalConfiguration>({
     dataset: undefined,
     tasks: [],
     models: [],
@@ -51,229 +26,382 @@ export default function AutoEvalPage() {
     metrics: undefined,
   });
 
-  // Trigger transition when entering Step 6
-  useEffect(() => {
-    if (currentStep === 6) {
-      const timer = setTimeout(() => {
-        setIsStep6Transition(true);
-      }, 100);
-      return () => clearTimeout(timer);
+  const [showConfigSummary, setShowConfigSummary] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isLaunching, setIsLaunching] = useState(false);
+
+  // Check if user has started working on the page
+  const hasUserStarted = () => {
+    return !!(
+      configuration.dataset?.datasetId ||
+      configuration.tasks.length > 0 ||
+      configuration.models.length > 0 ||
+      configuration.parameters ||
+      configuration.metrics
+    );
+  };
+
+  // Validation functions for each step
+  const validateStep1 = (config: AutoEvalConfiguration) => {
+    const issues: string[] = [];
+    
+    if (!config.dataset?.datasetId) {
+      issues.push("No dataset has been uploaded yet");
+    }
+    
+    if (!config.dataset?.columns || config.dataset.columns.length === 0) {
+      issues.push("Dataset columns have not been loaded");
+    }
+    
+    if (!config.dataset?.inputColumn) {
+      issues.push("Input column has not been selected");
+    }
+    
+    if (!config.dataset?.outputColumn) {
+      issues.push("Output column has not been selected");
+    }
+    
+    return {
+      isValid: issues.length === 0,
+      reason: issues.length > 0 ? "Dataset configuration incomplete" : undefined,
+      details: issues.length > 0 ? issues : undefined
+    };
+  };
+
+  const validateStep2 = (config: AutoEvalConfiguration) => {
+    const issues: string[] = [];
+    
+    if (!config.tasks || config.tasks.length === 0) {
+      issues.push("No task type has been selected");
+    }
+    
+    if (config.tasks && config.tasks.length > 0) {
+      const task = config.tasks[0];
+      if (!task.prompt || task.prompt.trim() === "") {
+        issues.push("Task prompt is empty");
+      }
+    }
+    
+    return {
+      isValid: issues.length === 0,
+      reason: issues.length > 0 ? "Task configuration incomplete" : undefined,
+      details: issues.length > 0 ? issues : undefined
+    };
+  };
+
+  const validateStep3 = (config: AutoEvalConfiguration) => {
+    const issues: string[] = [];
+    
+    if (!config.models || config.models.length === 0) {
+      issues.push("No models have been selected");
+    }
+    
+    return {
+      isValid: issues.length === 0,
+      reason: issues.length > 0 ? "Model selection incomplete" : undefined,
+      details: issues.length > 0 ? issues : undefined
+    };
+  };
+
+  const validateStep4 = (config: AutoEvalConfiguration) => {
+    const issues: string[] = [];
+    
+    if (!config.models || config.models.length === 0) {
+      issues.push("No models are available for parameter configuration");
+      return {
+        isValid: false,
+        reason: "No models selected",
+        details: issues
+      };
+    }
+    
+    if (!config.parameters) {
+      issues.push("Model parameters have not been configured");
     } else {
-      setIsStep6Transition(false);
+      config.models.forEach(model => {
+        if (!config.parameters![model.id]) {
+          issues.push(`Parameters for ${model.name} are not configured`);
+        }
+      });
     }
-  }, [currentStep]);
-
-  const handleNext = () => {
-    console.log('handleNext called, currentStep:', currentStep, 'STEPS.length:', STEPS.length);
-    if (currentStep < STEPS.length) {
-      const nextStep = currentStep + 1;
-      console.log('Moving to step:', nextStep);
-      setCurrentStep(nextStep);
-    }
+    
+    return {
+      isValid: issues.length === 0,
+      reason: issues.length > 0 ? "Parameter configuration incomplete" : undefined,
+      details: issues.length > 0 ? issues : undefined
+    };
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+  const validateStep5 = (config: AutoEvalConfiguration) => {
+    const issues: string[] = [];
+    
+    if (!config.metrics) {
+      issues.push("No metrics have been selected");
+    } else {
+      if (!config.metrics.textMetrics || config.metrics.textMetrics.length === 0) {
+        issues.push("No text evaluation metrics have been selected");
+      }
+      
+      if (!config.metrics.passAtK || config.metrics.passAtK.trim() === "") {
+        issues.push("Pass@K value has not been selected");
+      }
     }
+    
+    return {
+      isValid: issues.length === 0,
+      reason: issues.length > 0 ? "Metrics selection incomplete" : undefined,
+      details: issues.length > 0 ? issues : undefined
+    };
   };
 
+  const steps: StepConfig[] = [
+    {
+      id: 1,
+      name: "Upload dataset",
+      component: Step1UploadDataset,
+      validateStep: validateStep1,
+      hidePreviousButton: true,
+      hideShowSummaryButton: false,
+      hideNextButton: false,
+    },
+    {
+      id: 2,
+      name: "Task Type Selection",
+      component: Step2TaskTypeSelection,
+      validateStep: validateStep2,
+      hidePreviousButton: false,
+      hideShowSummaryButton: false,
+      hideNextButton: false,
+    },
+    {
+      id: 3,
+      name: "Model Selection",
+      component: Step3ModelSelection,
+      validateStep: validateStep3,
+      hidePreviousButton: false,
+      hideShowSummaryButton: false,
+      hideNextButton: false,
+    },
+    {
+      id: 4,
+      name: "Parameter Configuration",
+      component: Step4ParameterConfiguration,
+      validateStep: validateStep4,
+      hidePreviousButton: false,
+      hideShowSummaryButton: false,
+      hideNextButton: false,
+    },
+    {
+      id: 5,
+      name: "Metrics Selection",
+      component: Step5MetricsSelection,
+      validateStep: validateStep5,
+      hidePreviousButton: false,
+      hideShowSummaryButton: false,
+      hideNextButton: false,
+    },
+    {
+      id: 6,
+      name: "Review & Launch",
+      component: Step6ReviewLaunch,
+      hidePreviousButton: false,
+      hideShowSummaryButton: true,
+      hideNextButton: true,
+    }
+  ];
 
+  const handleLaunch = useCallback(async (finalConfig: unknown) => {    
+    setIsLaunching(true);
+    const config = finalConfig as AutoEvalConfiguration;
+    const generationOpts = {
+      dataset: {
+        name: config.dataset?.name || '',
+        datasetId: config.dataset?.datasetId || '',
+        columns: config.dataset?.columns || [],
+        inputColumn: config.dataset?.inputColumn || '',
+        outputColumn: config.dataset?.outputColumn || '',
+      },
+      tasks: config.tasks?.map(task => task.id) || [],
+      models: config.models?.map(model => ({
+        id: model.id,
+        name: model.name,
+        provider: model.provider,
+        pricing: model.pricing,
+        costPerMillionInputTokens: model.costPerMillionInputTokens,
+        costPerMillionOutputTokens: model.costPerMillionOutputTokens,
+        temperature: config.parameters?.[model.id]?.temperature || 0,
+        topP: config.parameters?.[model.id]?.topP || 0,
+        maxTokens: config.parameters?.[model.id]?.maxTokens || 500,
+      })) || [],
+      parameters: config.parameters || {},
+      metrics: {
+        passAtK: config.metrics?.passAtK || '1',
+        textMetrics: config.metrics?.textMetrics || [],
+      },
+    };
 
-  const handleLaunch = useCallback(async () => {
-    console.log('Launching AutoEval evaluation with configuration:', configuration);
     try {
-      const response = await fetch('/api/autoeval/launch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(configuration),
+      const response = await apiClient.post('/v1/autoeval/workflow', { generationOpts });
+      console.log('✅ Evaluation launched successfully:', response.data);
+      toast.success('Evaluation launched successfully!', {
+        description: 'Your AutoEval workflow has been queued. Track the status in Run & Monitor.',
       });
 
-      if (!response.ok) {
-        throw new Error(`Launch failed: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Evaluation launched successfully:', result);
+      // Navigate to status page with configuration data
+      navigate('/autoeval/status', { 
+        state: { configuration: config } 
+      });
 
     } catch (error) {
-      console.error('Failed to launch evaluation:', error);
-      throw error;
+      toast.error('Failed to launch evaluation', {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+      });
+    } finally {
+      setIsLaunching(false);
     }
-  }, [configuration]);
+  }, [navigate]);
 
-  const handleConfigurationUpdate = (stepConfig: Partial<typeof configuration>) => {
-    setConfiguration(prev => ({
-      ...prev,
-      ...stepConfig
-    }));
-  };
-
-  const CurrentStepComponent = STEPS[currentStep - 1].component;
-  const isFirstStep = currentStep === 1;
-  const isLastStep = currentStep === STEPS.length;
+  const handleConfigurationUpdate = useCallback((newConfig: unknown) => {
+    setConfiguration(newConfig as AutoEvalConfiguration);
+  }, []);
 
   return (
     <div className="flex w-full h-full">
-      {/* Left Container - Wizard */}
-      <div 
-        className={`h-full p-6 flex flex-col overflow-hidden relative transition-all duration-700 ease-in-out ${
-          isStep6Transition ? 'w-full' : 'w-2/3'
-        }`}
-      >
-        {/* Breadcrumb */}
-        <Breadcrumb className="mb-4 flex-shrink-0">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-                Home
-              </Link>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Dashboard</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        
-        {/* Main Heading */}
+      <div className={`h-full p-6 flex flex-col overflow-hidden relative ${showConfigSummary ? 'w-2/3' : 'w-full'}`}>
         <div className="flex items-center gap-3 mb-6 flex-shrink-0">
           <div className="p-2 bg-purple-900/20 rounded-lg">
             <Wand2 className="h-6 w-6 text-purple-400" />
           </div>
           <h1 className="text-3xl font-bold">Evaluation Dashboard</h1>
+          <div className="ml-auto">
+            {!steps[currentStep - 1]?.hideShowSummaryButton && (
+              <Button
+                onClick={() => setShowConfigSummary(!showConfigSummary)}
+                variant="outline"
+                size="sm"
+                className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10"
+              >
+                {showConfigSummary ? (
+                  <>
+                    <EyeOff className="h-4 w-4 mr-2" />
+                    Hide Summary
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-4 w-4 mr-2" />
+                    Show Summary
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
         
-        {/* Content area for future components */}
-        <div className="flex-1 overflow-hidden">
-          <Card className="h-full">
-            <CardHeader className="relative">
-              {/* Breadcrumb at the top */}
-              <Breadcrumb className="mb-4">
-                <BreadcrumbList>
-                  {STEPS.slice(0, currentStep).map((step, index) => (
-                    <React.Fragment key={step.id}>
-                      <BreadcrumbItem>
-                        {index === currentStep - 1 ? (
-                          // Current step - not clickable
-                          <BreadcrumbPage className="text-sm text-muted-foreground">
-                            {step.name}
-                          </BreadcrumbPage>
-                        ) : (
-                          // Previous steps - clickable
-                                                          <button 
-                                  className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
-                                  onClick={(e: React.MouseEvent) => {
-                                    e.preventDefault();
-                                    setCurrentStep(step.id);
-                                  }}
-                                >
-                                  {step.name}
-                                </button>
-                        )}
-                      </BreadcrumbItem>
-                      {index < currentStep - 1 && <BreadcrumbSeparator />}
-                    </React.Fragment>
-                  ))}
-                </BreadcrumbList>
-              </Breadcrumb>
-              
-              {/* Step title and navigation buttons */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Step {currentStep} of 6</CardTitle>
-                  <h2 className="text-2xl font-semibold mt-2">{STEPS[currentStep - 1].name}</h2>
-                </div>
-                {currentStep === 6 ? (
-                  <div className="flex gap-2">
+        <div className="flex-1 overflow-auto">
+          <MultiStepForm
+            steps={steps}
+            initialConfig={configuration}
+            onConfigurationUpdate={handleConfigurationUpdate}
+            onComplete={handleLaunch}
+            onStepChange={setCurrentStep}
+            renderHeader={(currentStep, totalSteps, stepName) => (
+              <div>
+                <h2 className="text-2xl font-semibold">Step {currentStep} of {totalSteps}</h2>
+                <p className="text-lg text-muted-foreground mt-1">{stepName}</p>
+              </div>
+            )}
+            renderNavigation={({ currentStep, totalSteps, onNext, onPrevious, onComplete, canGoNext, canGoPrevious, validationState, hidePreviousButton, hideNextButton }) => (
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  {!hidePreviousButton && (
                     <Button
-                      onClick={handlePrevious}
+                      onClick={onPrevious}
+                      disabled={!canGoPrevious}
                       className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
                       size="sm"
                       variant="outline"
                     >
                       Previous
                     </Button>
+                  )}
+                  {currentStep === totalSteps ? (
                     <Button
-                      onClick={handleLaunch}
+                      onClick={onComplete}
+                      disabled={isLaunching}
                       className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
                       size="sm"
                     >
-                      <Play className="h-4 w-4 mr-2" />
-                      Launch Evaluation
+                      {isLaunching ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Launching...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4 mr-2" />
+                          Launch Evaluation
+                        </>
+                      )}
                     </Button>
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handlePrevious}
-                      disabled={isFirstStep}
-                      className={`border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors ${
-                        isFirstStep ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                      size="sm"
-                      variant="outline"
-                    >
-                      Previous
-                    </Button>
-
-                    <Button
-                      onClick={handleNext}
-                      disabled={isLastStep}
-                      className={`border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors ${
-                        isLastStep ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                      size="sm"
-                      variant="outline"
-                    >
-                      Next
-                    </Button>
-                  </div>
-                )}
+                  ) : (
+                    !hideNextButton && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Button
+                                onClick={onNext}
+                                disabled={!canGoNext}
+                                className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
+                                size="sm"
+                                variant="outline"
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          </TooltipTrigger>
+                          {!validationState.isValid && hasUserStarted() && (
+                            <TooltipContent side="top" className="max-w-sm bg-blue-900/90 border border-blue-400/30 text-white">
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <AlertCircle className="h-4 w-4 text-blue-300" />
+                                  <p className="font-medium text-blue-200">
+                                    {validationState.reason}
+                                  </p>
+                                </div>
+                                {validationState.details && validationState.details.length > 0 && (
+                                  <ul className="text-sm text-blue-100 space-y-1">
+                                    {validationState.details.map((detail, index) => (
+                                      <li key={index} className="flex items-start gap-2">
+                                        <span className="text-blue-300 mt-1">•</span>
+                                        <span>{detail}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
+                    )
+                  )}
+                </div>
               </div>
-            </CardHeader>
-            {(() => {
-              try {
-                console.log('Rendering step component:', currentStep, 'Component:', CurrentStepComponent.name);
-                if (currentStep === 6) {
-                  return <CurrentStepComponent configuration={configuration} currentStep={currentStep} />;
-                } else {
-                  return (
-                    <CurrentStepComponent 
-                      onConfigurationUpdate={handleConfigurationUpdate}
-                      initialConfig={configuration}
-                    />
-                  );
-                }
-              } catch (error) {
-                console.error('Error rendering step component:', error);
-                return (
-                  <div className="p-6">
-                    <p className="text-red-500">Error loading step {currentStep}. Please try refreshing the page.</p>
-                  </div>
-                );
-              }
-            })()}
-          </Card>
+            )}
+          />
         </div>
       </div>
       
-      {/* Right Container - Configuration Summary */}
-      <div 
-        className={`h-full p-6 overflow-hidden transition-all duration-700 ease-in-out ${
-          isStep6Transition 
-            ? 'w-0 opacity-0 translate-x-full' 
-            : 'w-1/3 opacity-100 translate-x-0'
-        }`}
-      >
-        <ConfigurationSummary 
-          config={configuration}
-          currentStep={currentStep}
-          isCompact={true}
-        />
-      </div>
+      {showConfigSummary && (
+        <div className="h-full p-6 overflow-hidden w-1/3">
+          <ConfigurationSummary 
+            config={configuration}
+            currentStep={1}
+            isCompact={true}
+          />
+        </div>
+      )}
     </div>
   );
 }

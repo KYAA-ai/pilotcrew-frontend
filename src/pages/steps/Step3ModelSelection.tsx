@@ -2,81 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bot, DollarSign, Move, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-
-interface Model {
-  id: string;
-  name: string;
-  provider: string;
-  pricing: string;
-  costPerMillionInputTokens: string;
-  costPerMillionOutputTokens: string;
-  logo: string;
-}
-
-const availableModels: Model[] = [
-  { 
-    id: "gpt-4", 
-    name: "GPT-4", 
-    provider: "OpenAI", 
-    pricing: "$0.03/1K tokens", 
-    costPerMillionInputTokens: "$30.00",
-    costPerMillionOutputTokens: "$60.00",
-    logo: "🤖" 
-  },
-  { 
-    id: "gpt-3.5-turbo", 
-    name: "GPT-3.5 Turbo", 
-    provider: "OpenAI", 
-    pricing: "$0.002/1K tokens", 
-    costPerMillionInputTokens: "$2.00",
-    costPerMillionOutputTokens: "$2.00",
-    logo: "🤖" 
-  },
-  { 
-    id: "claude-3", 
-    name: "Claude-3", 
-    provider: "Anthropic", 
-    pricing: "$0.015/1K tokens", 
-    costPerMillionInputTokens: "$15.00",
-    costPerMillionOutputTokens: "$75.00",
-    logo: "🤖" 
-  },
-  { 
-    id: "gemini-pro", 
-    name: "Gemini Pro", 
-    provider: "Google", 
-    pricing: "$0.001/1K tokens", 
-    costPerMillionInputTokens: "$1.00",
-    costPerMillionOutputTokens: "$2.00",
-    logo: "🤖" 
-  },
-  { 
-    id: "llama-2", 
-    name: "Llama-2", 
-    provider: "Meta", 
-    pricing: "$0.0006/1K tokens", 
-    costPerMillionInputTokens: "$0.60",
-    costPerMillionOutputTokens: "$0.60",
-    logo: "🤖" 
-  },
-  { 
-    id: "mistral", 
-    name: "Mistral", 
-    provider: "Mistral AI", 
-    pricing: "$0.0014/1K tokens", 
-    costPerMillionInputTokens: "$1.40",
-    costPerMillionOutputTokens: "$4.20",
-    logo: "🤖" 
-  },
-];
+import type { AutoEvalConfiguration } from "@/types/shared";
+import { AVAILABLE_MODELS, type Model } from "@/data/autoevalStaticData";
 
 interface Step3ModelSelectionProps {
-  onConfigurationUpdate?: (config: { models: Model[] }) => void;
-  initialConfig?: { models?: Model[] };
+  onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
+  initialConfig?: AutoEvalConfiguration;
 }
 
 export default function Step3ModelSelection({ onConfigurationUpdate, initialConfig }: Step3ModelSelectionProps) {
-  const [selectedModels, setSelectedModels] = useState<Model[]>([]);
+  const [selectedModels, setSelectedModels] = useState<Model[]>(initialConfig?.models || []);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -124,7 +59,7 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
     }
   };
 
-  const availableModelsList = availableModels.filter(
+  const availableModelsList = AVAILABLE_MODELS.filter(
     model => !selectedModels.find(m => m.id === model.id)
   );
 
@@ -179,7 +114,6 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{model.logo}</span>
                           <div>
                             <h4 className="font-medium text-sm">{model.name}</h4>
                             <p className="text-xs text-gray-600">{model.provider}</p>
@@ -230,7 +164,6 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{model.logo}</span>
                           <div>
                             <h4 className="font-medium text-sm">{model.name}</h4>
                             <p className="text-xs text-gray-600">{model.provider}</p>

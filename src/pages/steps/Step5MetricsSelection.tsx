@@ -4,66 +4,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FileText, HelpCircle, RotateCcw, Target } from "lucide-react";
 import { useEffect, useState } from "react";
-
-interface Metric {
-  id: string;
-  name: string;
-  description: string;
-}
-
-const passAtKOptions = [
-  { value: "1", label: "Pass@1" },
-  { value: "4", label: "Pass@4" },
-  { value: "16", label: "Pass@16" },
-  { value: "64", label: "Pass@64" }
-];
-
-const textMetrics: Metric[] = [
-  {
-    id: "bleu",
-    name: "BLEU",
-    description: "Bilingual Evaluation Understudy - measures n-gram overlap between generated and reference text"
-  },
-  {
-    id: "rouge",
-    name: "ROUGE",
-    description: "Recall-Oriented Understudy for Gisting Evaluation - measures word overlap and n-gram similarity"
-  },
-  {
-    id: "meteor",
-    name: "METEOR",
-    description: "Metric for Evaluation of Translation with Explicit ORdering - considers synonyms and word order"
-  },
-  {
-    id: "bertscore",
-    name: "BERTScore",
-    description: "Uses BERT embeddings to compute similarity between generated and reference text"
-  },
-  {
-    id: "exact_match",
-    name: "Exact Match",
-    description: "Measures if the generated text exactly matches the reference text"
-  },
-  {
-    id: "f1_score",
-    name: "F1 Score",
-    description: "Harmonic mean of precision and recall for text matching"
-  },
-  {
-    id: "perplexity",
-    name: "Perplexity",
-    description: "Measures how well a language model predicts a sample of text, lower values indicate better performance"
-  }
-];
+import type { AutoEvalConfiguration } from "@/types/shared";
+import { TEXT_METRICS, PASS_AT_K_OPTIONS } from "@/data/autoevalStaticData";
 
 interface Step5MetricsSelectionProps {
-  onConfigurationUpdate?: (config: { metrics: { passAtK?: string; textMetrics: string[] } }) => void;
-  initialConfig?: { metrics?: { passAtK?: string; textMetrics: string[] } };
+  onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
+  initialConfig?: AutoEvalConfiguration;
 }
 
 export default function Step5MetricsSelection({ onConfigurationUpdate, initialConfig }: Step5MetricsSelectionProps) {
-  const [selectedPassAtK, setSelectedPassAtK] = useState<string>("");
-  const [selectedTextMetrics, setSelectedTextMetrics] = useState<string[]>([]);
+  const [selectedPassAtK, setSelectedPassAtK] = useState<string>(initialConfig?.metrics?.passAtK || "");
+  const [selectedTextMetrics, setSelectedTextMetrics] = useState<string[]>(initialConfig?.metrics?.textMetrics || []);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -141,7 +92,7 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
                 <h3 className="text-lg font-medium">Text Metrics</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {textMetrics.map((metric) => (
+                {TEXT_METRICS.map((metric) => (
                   <Card
                     key={metric.id}
                     className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
@@ -184,7 +135,7 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
                         <SelectValue placeholder="Select Pass@k value" />
                       </SelectTrigger>
                       <SelectContent>
-                        {passAtKOptions.map((option) => (
+                        {PASS_AT_K_OPTIONS.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>

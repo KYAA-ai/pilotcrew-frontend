@@ -3,91 +3,53 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, Code, FileText, MessageSquare, Pi, RotateCcw, Tags, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { AutoEvalConfiguration } from "@/types/shared";
+import { TASK_TYPES } from "@/data/autoevalStaticData";
 
-interface TaskType {
-  id: string;
-  name: string;
-  description: string;
-  prompt: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-}
-
-const taskTypes: TaskType[] = [
-  {
-    id: "qa",
-    name: "QA",
-    description: "Question answering and conversational AI",
-    prompt: "Please answer the following question based on the provided context. Provide a clear, accurate, and helpful response.",
-    icon: MessageSquare,
-  },
-  {
-    id: "summarization",
-    name: "Summarization",
-    description: "Text summarization and content condensation",
-    prompt: "Please provide a concise summary of the following text, capturing the key points and main ideas while maintaining accuracy.",
-    icon: FileText,
-  },
-  {
-    id: "classification",
-    name: "Classification",
-    description: "Text classification and categorization",
-    prompt: "Please classify the following text into the appropriate category. Consider the content, context, and characteristics to make an accurate classification.",
-    icon: Tags,
-  },
-  {
-    id: "code",
-    name: "Code",
-    description: "Code generation and programming tasks",
-    prompt: "Please generate code that meets the specified requirements. Ensure the code is well-structured, efficient, and follows best practices.",
-    icon: Code,
-  },
-  {
-    id: "function-calling",
-    name: "Function Calling",
-    description: "Function calling and API integration",
-    prompt: "Please execute the appropriate function call based on the user's request. Extract relevant parameters and ensure proper API integration.",
-    icon: Zap,
-  },
-  {
-    id: "reasoning",
-    name: "Reasoning",
-    description: "Logical reasoning and problem solving",
-    prompt: "Please analyze the given problem using logical reasoning. Break down the problem, identify key components, and provide a step-by-step solution.",
-    icon: Pi,
-  },
-];
+// Icon mapping for task types
+const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+  MessageSquare,
+  FileText,
+  Tags,
+  Code,
+  Zap,
+  Pi,
+};
 
 interface Step2TaskTypeSelectionProps {
-  onConfigurationUpdate?: (config: { tasks: string[] }) => void;
-  initialConfig?: { tasks?: string[] };
+  onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
+  initialConfig?: AutoEvalConfiguration;
 }
 
 export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialConfig }: Step2TaskTypeSelectionProps) {
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  const [selectedTasks, setSelectedTasks] = useState<Array<{id: string; prompt: string}>>(initialConfig?.tasks || []);
   const [promptText, setPromptText] = useState<string>("");
 
   // Initialize from initialConfig if provided
   useEffect(() => {
     if (initialConfig?.tasks && initialConfig.tasks.length > 0) {
-      setSelectedTasks([initialConfig.tasks[0]]); // Take the first task if multiple were previously selected
+      const firstTask = initialConfig.tasks[0];
+      setSelectedTasks([firstTask]); // Take the first task if multiple were previously selected
+      setPromptText(firstTask.prompt);
     }
   }, [initialConfig]);
 
   const selectTask = (taskId: string) => {
     // If the same task is clicked, deselect it
-    const newSelectedTasks = selectedTasks.includes(taskId) 
-      ? []
-      : [taskId];
+    const isCurrentlySelected = selectedTasks.some(task => task.id === taskId);
+    let newSelectedTasks: Array<{id: string; prompt: string}>;
+    
+    if (isCurrentlySelected) {
+      newSelectedTasks = [];
+      setPromptText("");
+    } else {
+      const selectedTask = TASK_TYPES.find(task => task.id === taskId);
+      const newPromptText = selectedTask?.prompt || "";
+      newSelectedTasks = [{ id: taskId, prompt: newPromptText }];
+      setPromptText(newPromptText);
+    }
     
     setSelectedTasks(newSelectedTasks);
-    
-    // Set prompt text based on selected task
-    if (newSelectedTasks.length > 0) {
-      const selectedTask = taskTypes.find(task => task.id === taskId);
-      setPromptText(selectedTask?.prompt || "");
-    } else {
-      setPromptText("");
-    }
     
     // Update configuration
     if (onConfigurationUpdate) {
@@ -97,8 +59,24 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
 
   const handleClearSelection = () => {
     setSelectedTasks([]);
+    setPromptText("");
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ tasks: [] });
+    }
+  };
+
+  const handlePromptChange = (newPromptText: string) => {
+    setPromptText(newPromptText);
+    
+    // Update the prompt in the selected task
+    const updatedTasks = selectedTasks.map(task => ({
+      ...task,
+      prompt: newPromptText
+    }));
+    
+    // Update configuration with the new prompt text
+    if (onConfigurationUpdate) {
+      onConfigurationUpdate({ tasks: updatedTasks });
     }
   };
 
@@ -120,9 +98,9 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
         
         {/* Task Type Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {taskTypes.map((task) => {
-              const Icon = task.icon;
-              const isSelected = selectedTasks.includes(task.id);
+            {TASK_TYPES.map((task) => {
+              const Icon = iconMap[task.icon];
+              const isSelected = selectedTasks.some(selectedTask => selectedTask.id === task.id);
               
               return (
                 <Card
@@ -171,7 +149,7 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
             {selectedTasks.length > 0 ? (
               <Textarea
                 value={promptText}
-                onChange={(e) => setPromptText(e.target.value)}
+                onChange={(e) => handlePromptChange(e.target.value)}
                 placeholder="Task prompt will appear here when you select a task..."
                 className="min-h-[120px] bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-xl border border-slate-500/50 text-gray-200 placeholder-gray-500 focus:border-[#f7f7f7] focus:ring-1 focus:ring-[#FFD886]/20 focus:outline-none rounded-xl p-4 shadow-lg transition-all duration-300 hover:border-slate-400/50 text-base"
               />

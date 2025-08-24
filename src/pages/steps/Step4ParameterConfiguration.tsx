@@ -5,12 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { RotateCcw, Target, Thermometer } from "lucide-react";
 import { useEffect, useState } from "react";
-
-interface Model {
-  name: string;
-  provider: string;
-  pricing: string;
-}
+import type { AutoEvalConfiguration } from "@/types/shared";
 
 interface ModelParameters {
   temperature: number;
@@ -19,16 +14,13 @@ interface ModelParameters {
 }
 
 interface Step4ParameterConfigurationProps {
-  onConfigurationUpdate?: (config: { parameters: Record<string, ModelParameters> }) => void;
-  initialConfig?: { 
-    parameters?: Record<string, ModelParameters>;
-    models?: Model[];
-  };
+  onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
+  initialConfig?: AutoEvalConfiguration;
 }
 
 export default function Step4ParameterConfiguration({ onConfigurationUpdate, initialConfig }: Step4ParameterConfigurationProps) {
   const [modelParameters, setModelParameters] = useState<Record<string, ModelParameters>>({});
-  const [selectedModels, setSelectedModels] = useState<Model[]>([]);
+  const [selectedModels, setSelectedModels] = useState<AutoEvalConfiguration['models']>([]);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -38,21 +30,21 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
       // Initialize parameters for each model
       const initialParams: Record<string, ModelParameters> = {};
       initialConfig.models.forEach(model => {
-        if (initialConfig.parameters?.[model.name]) {
-          initialParams[model.name] = initialConfig.parameters[model.name];
+        if (initialConfig.parameters?.[model.id]) {
+          initialParams[model.id] = initialConfig.parameters[model.id];
         } else {
-          initialParams[model.name] = { temperature: 0, topP: 0, maxTokens: 500 };
+          initialParams[model.id] = { temperature: 0, topP: 0, maxTokens: 500 };
         }
       });
       setModelParameters(initialParams);
     }
   }, [initialConfig]);
 
-  const updateModelParameter = (modelName: string, paramType: keyof ModelParameters, value: number) => {
+  const updateModelParameter = (modelId: string, paramType: keyof ModelParameters, value: number) => {
     const updatedParams = {
       ...modelParameters,
-      [modelName]: {
-        ...modelParameters[modelName],
+      [modelId]: {
+        ...modelParameters[modelId],
         [paramType]: value
       }
     };
@@ -66,7 +58,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
   const handleClearSelection = () => {
     const defaultParams: Record<string, ModelParameters> = {};
     selectedModels.forEach(model => {
-      defaultParams[model.name] = { temperature: 0, topP: 0, maxTokens: 500 };
+      defaultParams[model.id] = { temperature: 0, topP: 0, maxTokens: 500 };
     });
     setModelParameters(defaultParams);
     
@@ -75,13 +67,13 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
     }
   };
 
-  const applyToAllModels = (sourceModelName: string) => {
-    const sourceParams = modelParameters[sourceModelName];
+  const applyToAllModels = (sourceModelId: string) => {
+    const sourceParams = modelParameters[sourceModelId];
     if (!sourceParams) return;
 
     const updatedParams: Record<string, ModelParameters> = {};
     selectedModels.forEach(model => {
-      updatedParams[model.name] = {
+      updatedParams[model.id] = {
         temperature: sourceParams.temperature,
         topP: sourceParams.topP,
         maxTokens: sourceParams.maxTokens
@@ -129,10 +121,10 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {selectedModels.map((model) => {
-            const params = modelParameters[model.name] || { temperature: 0, topP: 0, maxTokens: 500 };
+            const params = modelParameters[model.id] || { temperature: 0, topP: 0, maxTokens: 500 };
             
             return (
-              <Card key={model.name} className="p-4">
+              <Card key={model.id} className="p-4">
                 <CardHeader className="pb-3 -ml-2">
                   <div className="flex items-center justify-between">
                     <div className="-ml-2">
@@ -144,7 +136,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                     </div>
                     {selectedModels.length > 1 && (
                       <Button
-                        onClick={() => applyToAllModels(model.name)}
+                        onClick={() => applyToAllModels(model.id)}
                         variant="outline"
                         size="sm"
                         className="h-8 px-3 text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 active:scale-95"
@@ -169,7 +161,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       </div>
                       <Slider
                         value={[params.temperature]}
-                        onValueChange={(value) => updateModelParameter(model.name, 'temperature', value[0])}
+                        onValueChange={(value) => updateModelParameter(model.id, 'temperature', value[0])}
                         max={1}
                         min={0}
                         step={0.1}
@@ -196,7 +188,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       </div>
                       <Slider
                         value={[params.topP]}
-                        onValueChange={(value) => updateModelParameter(model.name, 'topP', value[0])}
+                        onValueChange={(value) => updateModelParameter(model.id, 'topP', value[0])}
                         max={1}
                         min={0}
                         step={0.1}
@@ -223,7 +215,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       </div>
                       <Slider
                         value={[params.maxTokens]}
-                        onValueChange={(value) => updateModelParameter(model.name, 'maxTokens', value[0])}
+                        onValueChange={(value) => updateModelParameter(model.id, 'maxTokens', value[0])}
                         max={1000}
                         min={100}
                         step={1}

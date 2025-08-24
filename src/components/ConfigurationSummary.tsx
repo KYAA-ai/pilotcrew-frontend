@@ -1,32 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Database, FileText, Settings, Target } from "lucide-react";
+import type { AutoEvalConfiguration } from "@/types/shared";
 
 interface ConfigurationSummaryProps {
-  config: {
-    dataset?: {
-      name: string;
-      columns: string[];
-      outputColumn?: string;
-    };
-    tasks?: string[];
-    models?: Array<{
-      id?: string;
-      name: string;
-      provider: string;
-      pricing: string;
-      logo?: string;
-    }>;
-    parameters?: Record<string, {
-      temperature: number;
-      topP: number;
-      maxTokens: number;
-    }>;
-    metrics?: {
-      passAtK?: string;
-      textMetrics: string[];
-    };
-  };
+  config: AutoEvalConfiguration;
   currentStep?: number;
   isCompact?: boolean;
 }
@@ -79,15 +57,33 @@ export default function ConfigurationSummary({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs">
-                      {config.dataset.name}
+                      {config.dataset.name || 'No file selected'}
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-400">
-                    <span className="font-medium text-slate-300">Columns:</span> {config.dataset.columns.length} detected
+                    <span className="font-medium text-slate-300">File Type:</span> {config.dataset.fileType || 'Unknown'}
                   </div>
+                  <div className="text-xs text-slate-400">
+                    <span className="font-medium text-slate-300">Columns:</span> {config.dataset.columns?.length || 0} detected
+                  </div>
+                  {config.dataset.estimatedTotalRows && (
+                    <div className="text-xs text-slate-400">
+                      <span className="font-medium text-slate-300">Total Rows:</span> {config.dataset.estimatedTotalRows.toLocaleString()}
+                    </div>
+                  )}
+                  {config.dataset.inputColumn && (
+                    <div className="text-xs text-slate-400">
+                      <span className="font-medium text-slate-300">Input:</span> {config.dataset.inputColumn}
+                    </div>
+                  )}
                   {config.dataset.outputColumn && (
                     <div className="text-xs text-slate-400">
                       <span className="font-medium text-slate-300">Output:</span> {config.dataset.outputColumn}
+                    </div>
+                  )}
+                  {config.dataset.datasetId && (
+                    <div className="text-xs text-slate-400">
+                      <span className="font-medium text-slate-300">ID:</span> {config.dataset.datasetId.substring(0, 20)}...
                     </div>
                   )}
                 </div>
@@ -109,7 +105,7 @@ export default function ConfigurationSummary({
                 <div className="flex flex-wrap gap-2">
                   {config.tasks.map((task, index) => (
                     <Badge key={index} className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium">
-                      {task}
+                      {task.id}
                     </Badge>
                   ))}
                 </div>
