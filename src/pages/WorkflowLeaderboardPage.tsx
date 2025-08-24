@@ -1,18 +1,22 @@
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Award, ChevronDown, ChevronUp, Cpu, Trophy } from "lucide-react";
+import { Award, ChevronDown, ChevronUp, Cpu, Target, Thermometer, Trophy } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 // Placeholder data for models in the workflow leaderboard (same structure as monitor page)
+
+// NOTE: SET THE VALUE AS -1 FOR THE METRICS THAT ARE NOT AVAILABLE (First row of the json is being used to filter out the columns)
+// COLUMNS WILL BE AUTOMATICALLY FILTERED OUT IF THE VALUE IS -1 
+
 const placeholderModelsData = {
   "deepseek-r1": {
     "bleu": 0.2904,
@@ -21,7 +25,7 @@ const placeholderModelsData = {
     "semantic": 0.4407,
     "perplexity": 21.5458,
     "bertScore": 0.4407,
-    "exactMatch": 0,
+    "exactMatch": -1,
     "f1Score": 0.1077,
     "passAtK": { "1": 0 },
     "topK": {
@@ -31,7 +35,7 @@ const placeholderModelsData = {
       "semantic": 0.44068029503918893,
       "perplexity": 21.545833333333334,
       "bertScore": 0.44068029503918893,
-      "exactMatch": 0,
+      "exactMatch": -1,
       "f1Score": 0.10771827092369313
     },
     "threshold": 0.8,
@@ -41,6 +45,9 @@ const placeholderModelsData = {
     "averageScore": 0.4407,
     "inputTokens": 17527,
     "outputTokens": 8055,
+    "temperature": 0.7,
+    "topP": 0.9,
+    "maxTokens": 199,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:35:53.215Z",
     "tokensUsed": 25582
@@ -52,7 +59,7 @@ const placeholderModelsData = {
     "semantic": 0.527,
     "perplexity": 12.077,
     "bertScore": 0.527,
-    "exactMatch": 0,
+    "exactMatch": -1,
     "f1Score": 0.1289,
     "passAtK": { "1": 0 },
     "topK": {
@@ -62,7 +69,7 @@ const placeholderModelsData = {
       "semantic": 0.5269813712042367,
       "perplexity": 12.07702380952381,
       "bertScore": 0.5269813712042367,
-      "exactMatch": 0,
+      "exactMatch": -1,
       "f1Score": 0.1289028954110076
     },
     "threshold": 0.8,
@@ -72,6 +79,9 @@ const placeholderModelsData = {
     "averageScore": 0.527,
     "inputTokens": 19982,
     "outputTokens": 2163,
+    "temperature": 0.1,
+    "topP": 0.2,
+    "maxTokens": 19,
     "modelStartedAt": "2025-08-19T23:33:50.188Z",
     "modelEndedAt": "2025-08-19T23:36:05.762Z",
     "tokensUsed": 22145
@@ -83,7 +93,7 @@ const placeholderModelsData = {
     "semantic": 0.6106,
     "perplexity": 67.4168,
     "bertScore": 0.6106,
-    "exactMatch": 0,
+    "exactMatch": -1,
     "f1Score": 0.3554,
     "passAtK": { "1": 0.1 },
     "topK": {
@@ -93,7 +103,7 @@ const placeholderModelsData = {
       "semantic": 0.6105734581714604,
       "perplexity": 67.41678166498204,
       "bertScore": 0.6105734581714604,
-      "exactMatch": 0,
+      "exactMatch": -1,
       "f1Score": 0.3553716064540319
     },
     "threshold": 0.8,
@@ -103,6 +113,9 @@ const placeholderModelsData = {
     "averageScore": 0.6106,
     "inputTokens": 17816,
     "outputTokens": 16285,
+    "temperature": 0.9,
+    "topP": 0.2,
+    "maxTokens": 300,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:37:05.753Z",
     "tokensUsed": 34101
@@ -116,14 +129,28 @@ const modelDisplayNames = {
   "llama3-2-1b-instruct": "Llama3-2-1B-Instruct"
 };
 
-type SortField = 'bleu' | 'rougeL' | 'meteor' | 'semantic' | 'perplexity' | 'bertScore' | 'exactMatch' | 'f1Score' | 'averageScore';
+type SortField = 'bleu' | 'rougeL' | 'meteor' | 'semantic' | 'perplexity' | 'bertScore' | 'exactMatch' | 'f1Score';
 type SortDirection = 'asc' | 'desc';
+
+// All available metrics
+const ALL_METRICS = ['bleu', 'rougeL', 'meteor', 'semantic', 'perplexity', 'bertScore', 'exactMatch', 'f1Score'] as const;
 
 export default function WorkflowLeaderboardPage() {
   const { workflowId } = useParams();
-  const [sortField, setSortField] = useState<SortField>('averageScore');
+  const [sortField, setSortField] = useState<SortField>('semantic');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [showTopK, setShowTopK] = useState<boolean>(false);
+
+  // Filter metrics based on first row data (exclude metrics with -1 values)
+  const getVisibleMetrics = () => {
+    const firstModelData = Object.values(placeholderModelsData)[0];
+    return ALL_METRICS.filter(metric => {
+      const value = firstModelData[metric as keyof typeof firstModelData];
+      return value !== -1;
+    });
+  };
+
+  const visibleMetrics = getVisibleMetrics();
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -186,12 +213,20 @@ export default function WorkflowLeaderboardPage() {
     return (value * 100).toFixed(2) + '%';
   };
 
+  const formatTimeToHHMMSS = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}h:${minutes.toString().padStart(2, '0')}m:${seconds.toString().padStart(2, '0')}s`;
+  };
+
   const getExecutionTime = (startTime: string, endTime: string) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const executionMs = end.getTime() - start.getTime();
     const executionSeconds = Math.floor(executionMs / 1000);
-    return `${executionSeconds}s`;
+    return formatTimeToHHMMSS(executionSeconds);
   };
 
   return (
@@ -243,18 +278,31 @@ export default function WorkflowLeaderboardPage() {
                   
                   return (
                     <Card key={modelId} className="flex flex-col">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">{displayName}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="flex-1 space-y-4">
-                        {/* Mini Cards for Key Metrics - 2x3 Grid */}
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Average Score</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                              {(modelData.averageScore * 100).toFixed(1)}%
+                      <CardHeader>
+                        <div>
+                          <CardTitle className="text-lg">{displayName}</CardTitle>
+                          <div className="flex items-center gap-4 mt-2">
+                            <div className="flex items-center gap-1">
+                              <Thermometer className="h-3 w-3 text-blue-600" />
+                              <span className="text-xs text-gray-200">Temperature:</span>
+                              <span className="text-xs font-medium text-gray-200">{modelData.temperature}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Target className="h-3 w-3 text-purple-600" />
+                              <span className="text-xs text-gray-200">Top P:</span>
+                              <span className="text-xs font-medium text-gray-200">{modelData.topP}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Target className="h-3 w-3 text-green-600" />
+                              <span className="text-xs text-gray-200">Max Tokens:</span>
+                              <span className="text-xs font-medium text-gray-200">{modelData.maxTokens}</span>
                             </div>
                           </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-1 space-y-4">
+                        {/* Mini Cards for Key Metrics - 2x2 Grid */}
+                        <div className="grid grid-cols-2 gap-3">
                           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Tokens</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -265,12 +313,6 @@ export default function WorkflowLeaderboardPage() {
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Execution Time</div>
                             <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                               {getExecutionTime(modelData.modelStartedAt, modelData.modelEndedAt)}
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Attempts</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                              {modelData.totalAttempts}
                             </div>
                           </div>
                           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
@@ -312,11 +354,11 @@ export default function WorkflowLeaderboardPage() {
                 </div>
 
                                                                                     <div className="overflow-x-auto">
-                   <Table className="w-full min-w-[800px] bg-gray-900 rounded-xl overflow-hidden">
+                   <Table className="w-full min-w-[800px] bg-gray-900 rounded-xl overflow-hidden table-fixed">
                                              <TableHeader>
                          <TableRow className="border-gray-700 hover:bg-gray-800">
-                           <TableHead className="text-white bg-gray-800 border-gray-700">
-                             <div className="flex items-center gap-2">
+                           <TableHead className="text-white bg-gray-800 border-gray-700 text-center">
+                             <div className="flex items-center justify-center gap-2">
                                <Cpu className="h-4 w-4 text-gray-400" />
                                <span>Model</span>
                                <ChevronUp className="h-4 w-4 text-gray-400" />
@@ -325,89 +367,19 @@ export default function WorkflowLeaderboardPage() {
                           <TableHead className="text-white bg-gray-800 border-gray-700 text-center">
                             {sortedModels.length} / {sortedModels.length}
                           </TableHead>
-                                                     {!showTopK && (
-                             <TableHead 
-                               className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                               onClick={() => handleSort('averageScore')}
-                             >
-                               <div className="flex items-center gap-2">
-                                 <span>Average Score</span>
-                                 {getSortIcon('averageScore')}
-                               </div>
-                             </TableHead>
-                           )}
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('bleu')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>BLEU</span>
-                              {getSortIcon('bleu')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('rougeL')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>ROUGE-L</span>
-                              {getSortIcon('rougeL')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('meteor')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>METEOR</span>
-                              {getSortIcon('meteor')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('semantic')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>Semantic</span>
-                              {getSortIcon('semantic')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('perplexity')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>Perplexity</span>
-                              {getSortIcon('perplexity')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('bertScore')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>BERT Score</span>
-                              {getSortIcon('bertScore')}
-                            </div>
-                          </TableHead>
-                          <TableHead 
-                            className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                            onClick={() => handleSort('exactMatch')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>Exact Match</span>
-                              {getSortIcon('exactMatch')}
-                            </div>
-                          </TableHead>
-                                                     <TableHead 
-                             className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700"
-                             onClick={() => handleSort('f1Score')}
-                           >
-                            <div className="flex items-center gap-2">
-                              <span>F1 Score</span>
-                              {getSortIcon('f1Score')}
-                            </div>
-                          </TableHead>
+
+                          {visibleMetrics.map((metric) => (
+                            <TableHead 
+                              key={metric}
+                              className="text-white bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-700 text-center"
+                              onClick={() => handleSort(metric)}
+                            >
+                              <div className="flex items-center justify-center gap-2">
+                                <span>{metric.toUpperCase()}</span>
+                                {getSortIcon(metric)}
+                              </div>
+                            </TableHead>
+                          ))}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -428,71 +400,18 @@ export default function WorkflowLeaderboardPage() {
                               <TableCell className="text-white border-gray-700 text-center">
                                 {/* Placeholder for additional info */}
                               </TableCell>
-                                {!showTopK && (
-                                 <TableCell className={`text-white border-gray-900 text-center ${
-                                   getPerformanceRank(model.averageScore, 'averageScore') === 1 ? 'bg-gray-800' :
-                                   getPerformanceRank(model.averageScore, 'averageScore') === 2 ? 'bg-gray-700' :
-                                   getPerformanceRank(model.averageScore, 'averageScore') === 3 ? 'bg-gray-600' : ''
-                                 }`}>
-                                   {formatValue(model.averageScore, 'averageScore')}
-                                 </TableCell>
-                               )}
-                                                               <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.bleu, 'bleu') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.bleu, 'bleu') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.bleu, 'bleu') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.bleu, 'bleu')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.rougeL, 'rougeL') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.rougeL, 'rougeL') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.rougeL, 'rougeL') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.rougeL, 'rougeL')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.meteor, 'meteor') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.meteor, 'meteor') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.meteor, 'meteor') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.meteor, 'meteor')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.semantic, 'semantic') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.semantic, 'semantic') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.semantic, 'semantic') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.semantic, 'semantic')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.perplexity, 'perplexity') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.perplexity, 'perplexity') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.perplexity, 'perplexity') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.perplexity, 'perplexity')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.bertScore, 'bertScore') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.bertScore, 'bertScore') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.bertScore, 'bertScore') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.bertScore, 'bertScore')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.exactMatch, 'exactMatch') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.exactMatch, 'exactMatch') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.exactMatch, 'exactMatch') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.exactMatch, 'exactMatch')}
-                                </TableCell>
-                                <TableCell className={`text-white border-gray-900 text-center ${
-                                  getPerformanceRank(dataSource.f1Score, 'f1Score') === 1 ? 'bg-gray-800' :
-                                  getPerformanceRank(dataSource.f1Score, 'f1Score') === 2 ? 'bg-gray-700' :
-                                  getPerformanceRank(dataSource.f1Score, 'f1Score') === 3 ? 'bg-gray-600' : ''
-                                }`}>
-                                  {formatValue(dataSource.f1Score, 'f1Score')}
-                                </TableCell>
+                                {visibleMetrics.map((metric) => (
+                                  <TableCell 
+                                    key={metric}
+                                    className={`text-white border-gray-900 text-center ${
+                                      getPerformanceRank(dataSource[metric], metric) === 1 ? 'bg-gray-800' :
+                                      getPerformanceRank(dataSource[metric], metric) === 2 ? 'bg-gray-700' :
+                                      getPerformanceRank(dataSource[metric], metric) === 3 ? 'bg-gray-600' : ''
+                                    }`}
+                                  >
+                                    {formatValue(dataSource[metric], metric)}
+                                  </TableCell>
+                                ))}
                             </TableRow>
                           );
                         })}

@@ -78,7 +78,7 @@ const HalfRadialProgress = React.forwardRef<HTMLDivElement, HalfRadialProgressPr
                strokeLinecap="round"
                strokeDasharray={strokeDasharray}
                strokeDashoffset={strokeDashoffset}
-               className="text-primary transition-all duration-300 ease-in-out"
+               className="text-[#2d7ee8] transition-all duration-300 ease-in-out"
                clipPath={`url(#half-circle-${size})`}
                transform={`scale(-1, 1) translate(-${radius * 2}, 0)`}
              />

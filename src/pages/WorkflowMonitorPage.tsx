@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { HalfRadialProgress } from "@/components/ui/half-radial-progress";
-import { Activity, Monitor, RefreshCw } from "lucide-react";
+import { Activity, Monitor, RefreshCw, Target, Thermometer } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -44,6 +44,9 @@ const placeholderModelsData = {
     "outputTokens": 8055,
     "rowsProcessed": 64,
     "totalRows": 100,
+    "temperature": 0.7,
+    "topP": 0.9,
+    "maxTokens": 199,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:35:53.215Z",
     "tokensUsed": 25582
@@ -77,6 +80,9 @@ const placeholderModelsData = {
     "outputTokens": 2163,
     "rowsProcessed": 45,
     "totalRows": 100,
+    "temperature": 0.9,
+    "topP": 0.9,
+    "maxTokens": 999,
     "modelStartedAt": "2025-08-19T23:33:50.188Z",
     "modelEndedAt": "2025-08-19T23:36:05.762Z",
     "tokensUsed": 22145
@@ -110,6 +116,9 @@ const placeholderModelsData = {
     "outputTokens": 16285,
     "rowsProcessed": 78,
     "totalRows": 100,
+    "temperature": 0.2,
+    "topP": 0.9,
+    "maxTokens": 55,
     "modelStartedAt": "2025-08-19T23:33:50.189Z",
     "modelEndedAt": "2025-08-19T23:37:05.753Z",
     "tokensUsed": 34101
@@ -130,6 +139,7 @@ export default function WorkflowMonitorPage() {
     "claude-3-5-haiku": true,
     "llama3-2-1b-instruct": true
   });
+  const [tooltipStates, setTooltipStates] = useState<Record<string, { position: { x: number; y: number }; show: boolean }>>({});
 
   const handleRefresh = (modelId: string) => {
     console.log(`Refreshing data for model: ${modelId}`);
@@ -152,6 +162,36 @@ export default function WorkflowMonitorPage() {
     setSelectedMonitors(newState);
   };
 
+  const handleMouseMove = (modelId: string, event: React.MouseEvent) => {
+    setTooltipStates(prev => ({
+      ...prev,
+      [modelId]: {
+        ...prev[modelId],
+        position: { x: event.clientX, y: event.clientY }
+      }
+    }));
+  };
+
+  const handleMouseEnter = (modelId: string) => {
+    setTooltipStates(prev => ({
+      ...prev,
+      [modelId]: {
+        ...prev[modelId],
+        show: true
+      }
+    }));
+  };
+
+  const handleMouseLeave = (modelId: string) => {
+    setTooltipStates(prev => ({
+      ...prev,
+      [modelId]: {
+        ...prev[modelId],
+        show: false
+      }
+    }));
+  };
+
   const formatTimeToHHMMSS = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -166,14 +206,6 @@ export default function WorkflowMonitorPage() {
     const elapsedMs = now.getTime() - start.getTime();
     const elapsedSeconds = Math.floor(elapsedMs / 1000);
     return formatTimeToHHMMSS(elapsedSeconds);
-  };
-
-  const getCompletionTime = (startTime: string, endTime: string) => {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    const completionMs = end.getTime() - start.getTime();
-    const completionSeconds = Math.floor(completionMs / 1000);
-    return formatTimeToHHMMSS(completionSeconds);
   };
 
   const formatTime = (timeString: string) => {
@@ -286,7 +318,26 @@ export default function WorkflowMonitorPage() {
                     <Card key={modelId} className="flex flex-col">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">{displayName}</CardTitle>
+                          <div>
+                            <CardTitle className="text-lg">{displayName}</CardTitle>
+                            <div className="flex items-center gap-4 mt-2">
+                              <div className="flex items-center gap-1">
+                                <Thermometer className="h-3 w-3 text-blue-600" />
+                                <span className="text-xs text-gray-200">Temperature:</span>
+                                <span className="text-xs font-medium text-gray-200">{modelData.temperature}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Target className="h-3 w-3 text-purple-600" />
+                                <span className="text-xs text-gray-200">Top P:</span>
+                                <span className="text-xs font-medium text-gray-200">{modelData.topP}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Target className="h-3 w-3 text-green-600" />
+                                <span className="text-xs text-gray-200">Max Tokens:</span>
+                                <span className="text-xs font-medium text-gray-200">{modelData.maxTokens}</span>
+                              </div>
+                            </div>
+                          </div>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -300,13 +351,32 @@ export default function WorkflowMonitorPage() {
                       <CardContent className="flex-1 space-y-4">
                         {/* Progress Bar */}
                         <div className="flex justify-center">
-                          <HalfRadialProgress
-                            value={modelData.rowsProcessed}
-                            max={modelData.totalRows}
-                            size="lg"
-                            label="Rows Processed"
-                            className="mb-2"
-                          />
+                          <div
+                            onMouseMove={(event) => handleMouseMove(modelId, event)}
+                            onMouseEnter={() => handleMouseEnter(modelId)}
+                            onMouseLeave={() => handleMouseLeave(modelId)}
+                            className="relative"
+                          >
+                            <HalfRadialProgress
+                              value={modelData.rowsProcessed}
+                              max={modelData.totalRows}
+                              size="lg"
+                              label="Rows Processed"
+                              className="mb-2"
+                            />
+                            {tooltipStates[modelId]?.show && (
+                              <div
+                                className="fixed z-50 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg pointer-events-none"
+                                style={{
+                                  left: (tooltipStates[modelId]?.position.x || 0) + 10,
+                                  top: (tooltipStates[modelId]?.position.y || 0) - 40,
+                                }}
+                              >
+                                <div>Rows Processed: {modelData.rowsProcessed.toLocaleString()}</div>
+                                <div>Rows Remaining: {(modelData.totalRows - modelData.rowsProcessed).toLocaleString()}</div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                         
                         {/* Mini Cards for Key Metrics - 2x3 Grid */}
@@ -358,10 +428,6 @@ export default function WorkflowMonitorPage() {
                             <div className="flex justify-between items-center py-1">
                               <span className="text-xs text-gray-300">Total Time Elapsed</span>
                               <span className="text-xs font-medium text-white">{getTimeElapsed(modelData.modelStartedAt)}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-1">
-                              <span className="text-xs text-gray-300">Time for Completion</span>
-                              <span className="text-xs font-medium text-white">{getCompletionTime(modelData.modelStartedAt, modelData.modelEndedAt)}</span>
                             </div>
                             <div className="flex justify-between items-center py-1">
                               <span className="text-xs text-gray-300">Start Time</span>
