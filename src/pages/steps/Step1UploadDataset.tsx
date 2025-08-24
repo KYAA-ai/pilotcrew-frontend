@@ -159,7 +159,7 @@ export default function Step1UploadDataset({
       const file = files[0];
       
       // Validate file type
-      const allowedExtensions = ['.csv', '.json', '.xlsx', '.xls', '.parquet'];
+      const allowedExtensions = ['.csv', '.json', '.jsonl', '.xlsx', '.xls', '.parquet'];
       const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
       
       if (!allowedExtensions.includes(fileExtension)) {
@@ -171,6 +171,7 @@ export default function Step1UploadDataset({
       // Determine file type based on extension
       const fileType = fileExtension === '.csv' ? 'text/csv' :
                       fileExtension === '.json' ? 'application/json' :
+                      fileExtension === '.jsonl' ? 'application/json' :
                       fileExtension === '.xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' :
                       fileExtension === '.xls' ? 'application/vnd.ms-excel' :
                       fileExtension === '.parquet' ? 'application/parquet' :
@@ -409,7 +410,7 @@ export default function Step1UploadDataset({
             <input
               id="file-upload"
               type="file"
-              accept=".csv,.json,.xlsx,.xls,.parquet"
+              accept=".csv,.json,.jsonl,.xlsx,.xls,.parquet"
               className="hidden"
               onChange={(e) => handleFileUpload(e.target.files)}
             />
