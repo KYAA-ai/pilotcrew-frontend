@@ -1,11 +1,11 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import MultiStepForm, { type StepConfig } from "@/components/MultiStepForm";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import apiClient from "@/lib/api";
 import type { AutoEvalConfiguration } from "@/types/shared";
-import { AlertCircle, Eye, EyeOff, Loader2, Play, Wand2, X } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2, Play, Settings, Wand2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -442,25 +442,37 @@ export default function AutoEvalPage() {
       {/* Mobile Configuration Summary Modal */}
       {isMobile && (
         <Dialog open={showMobileSummary} onOpenChange={setShowMobileSummary}>
-          <DialogContent className="max-w-md w-[95vw] h-[90vh] max-h-[600px] p-0">
-            <DialogHeader className="p-4 pb-2">
+          <DialogContent className="max-w-md w-[95vw] max-h-[90vh] p-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600/50" showCloseButton={false}>
+            <div className="p-4 pb-2">
               <div className="flex items-center justify-between">
-                <DialogTitle className="text-lg font-semibold">Configuration Summary</DialogTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowMobileSummary(false)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <div className="flex-1"></div>
+                <div className="flex items-center gap-3 text-slate-100">
+                  <div className="p-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                    <Settings className="h-5 w-5 text-emerald-300" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">Configuration</div>
+                    <div className="text-xs text-slate-400 font-normal">Summary & Details</div>
+                  </div>
+                </div>
+                <div className="flex-1 flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowMobileSummary(false)}
+                    className="h-8 w-8 p-0 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500/50 transition-all duration-200"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </DialogHeader>
-            <div className="flex-1 overflow-hidden px-4 pb-4">
+            </div>
+            <div className="overflow-y-auto px-4 pb-4">
               <ConfigurationSummary 
                 config={configuration}
                 currentStep={1}
                 isCompact={true}
+                isMobile={true}
               />
             </div>
           </DialogContent>
