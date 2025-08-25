@@ -302,17 +302,27 @@ export default function MultiStepForm({
           <CardContent className={`${isMobile ? 'h-auto p-0 overflow-visible' : 'h-full overflow-auto p-0'}`}>
             {(() => {
               try {
+                const stepProps = {
+                  onConfigurationUpdate: handleConfigurationUpdate,
+                  initialConfig: configuration,
+                  currentStep,
+                  totalSteps: steps.length,
+                  // Add step state management props
+                  stepState: getStepState(currentStep),
+                  onStepStateUpdate: (state: unknown) => handleStepStateUpdate(currentStep, state)
+                };
+
+                // Add additional props for Step 6 (mobile launch button)
+                if (currentStep === 6) {
+                  Object.assign(stepProps, {
+                    onComplete,
+                    isProcessing
+                  });
+                }
+
                 return (
                   <CurrentStepComponent 
-                    {...{
-                      onConfigurationUpdate: handleConfigurationUpdate,
-                      initialConfig: configuration,
-                      currentStep,
-                      totalSteps: steps.length,
-                      // Add step state management props
-                      stepState: getStepState(currentStep),
-                      onStepStateUpdate: (state: unknown) => handleStepStateUpdate(currentStep, state)
-                    }}
+                    {...stepProps}
                   />
                 );
               } catch (error) {

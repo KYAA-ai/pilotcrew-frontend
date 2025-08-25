@@ -353,28 +353,30 @@ export default function AutoEvalPage() {
                         size="sm"
                         variant="outline"
                       >
-                        Previous
+                        {currentStep === 6 ? "Go back" : "Previous"}
                       </Button>
                     )}
                     {currentStep === totalSteps ? (
-                      <Button
-                        onClick={onComplete}
-                        disabled={isLaunching}
-                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
-                        size="sm"
-                      >
-                        {isLaunching ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Launching...
-                          </>
-                        ) : (
-                          <>
-                            <Play className="h-4 w-4 mr-2" />
-                            Launch Evaluation
-                          </>
-                        )}
-                      </Button>
+                      !isMobile && (
+                        <Button
+                          onClick={onComplete}
+                          disabled={isLaunching}
+                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
+                          size="sm"
+                        >
+                          {isLaunching ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Launching...
+                            </>
+                          ) : (
+                            <>
+                              <Play className="h-4 w-4 mr-2" />
+                              Launch Evaluation
+                            </>
+                          )}
+                        </Button>
+                      )
                     ) : (
                       !hideNextButton && (
                         <TooltipProvider>

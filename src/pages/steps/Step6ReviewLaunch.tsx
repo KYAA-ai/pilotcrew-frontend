@@ -1,14 +1,37 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { AutoEvalConfiguration } from "@/types/shared";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Loader2, Play } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Step6ReviewLaunchProps {
   initialConfig?: AutoEvalConfiguration;
   currentStep?: number;
+  onComplete?: (finalConfig: unknown) => Promise<void> | void;
+  isProcessing?: boolean;
 }
 
-export default function Step6ReviewLaunch({ initialConfig, currentStep = 6 }: Step6ReviewLaunchProps) {
+export default function Step6ReviewLaunch({ 
+  initialConfig, 
+  currentStep = 6, 
+  onComplete,
+  isProcessing = false 
+}: Step6ReviewLaunchProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Use the actual configuration data passed from the parent
   const config: AutoEvalConfiguration = initialConfig || {
     dataset: undefined,
@@ -25,13 +48,23 @@ export default function Step6ReviewLaunch({ initialConfig, currentStep = 6 }: St
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100%-4rem)]">
           {/* Configuration Summary Card */}
-          <div className="h-full overflow-y-auto">
+          {isMobile ? (
             <ConfigurationSummary 
               config={config}
               currentStep={currentStep}
               isCompact={false}
+              isMobile={true}
             />
-          </div>
+          ) : (
+            <div className="h-full overflow-y-auto">
+              <ConfigurationSummary 
+                config={config}
+                currentStep={currentStep}
+                isCompact={false}
+                isMobile={false}
+              />
+            </div>
+          )}
 
           {/* Estimated Cost Card */}
           <div className="space-y-4 h-full">
@@ -79,6 +112,30 @@ export default function Step6ReviewLaunch({ initialConfig, currentStep = 6 }: St
             </Card>
           </div>
         </div>
+
+        {/* Mobile Launch Button - Positioned at bottom */}
+        {isMobile && onComplete && (
+          <div className="mt-6">
+            <Button
+              onClick={() => onComplete(config)}
+              disabled={isProcessing}
+              className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base"
+              size="lg"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Launching...
+                </>
+              ) : (
+                <>
+                  <Play className="h-5 w-5 mr-2" />
+                  Launch Evaluation
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </>
   );
