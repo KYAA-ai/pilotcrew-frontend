@@ -350,6 +350,11 @@ export default function Step1UploadDataset({
           </TooltipProvider>
         </div>
 
+        {/* Step Heading */}
+        <div className="space-y-2">
+          <p className="text-slate-300">Upload your dataset file and select the input and output columns for evaluation.</p>
+        </div>
+
         {/* Upload Status Message */}
         {uploadStatus !== 'idle' && (
           <div className={`flex items-center justify-between gap-2 p-2 rounded-md ${

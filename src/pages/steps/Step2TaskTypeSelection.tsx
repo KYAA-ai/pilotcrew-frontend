@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { TASK_TYPES } from "@/data/autoevalStaticData";
+import type { AutoEvalConfiguration } from "@/types/shared";
 import { Check, Code, FileText, MessageSquare, Pi, RotateCcw, Tags, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { AutoEvalConfiguration } from "@/types/shared";
-import { TASK_TYPES } from "@/data/autoevalStaticData";
 
 // Icon mapping for task types
 const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
@@ -22,8 +22,21 @@ interface Step2TaskTypeSelectionProps {
 }
 
 export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialConfig }: Step2TaskTypeSelectionProps) {
+  const [isMobile, setIsMobile] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Array<{id: string; prompt: string}>>(initialConfig?.tasks || []);
   const [promptText, setPromptText] = useState<string>("");
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -83,17 +96,34 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
   return (
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
-        <div className="flex items-center justify-between">
-          <p className="text-slate-300">Select the task type you want to evaluate.</p>
-          <Button
-            onClick={handleClearSelection}
-            variant="outline"
-            size="sm"
-            className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
-          >
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Clear Selection
-          </Button>
+        {/* Clear Selection Button - Top of Screen (Mobile) */}
+        {isMobile && (
+          <div className="flex justify-end">
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200 w-40"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          </div>
+        )}
+
+        <div className={`${isMobile ? 'flex flex-col gap-3' : 'flex items-center justify-between'}`}>
+          <p className="text-slate-300">Select the task type for evaluation and modify the respective prompt below.</p>
+          {!isMobile && (
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          )}
         </div>
         
         {/* Task Type Grid */}
@@ -105,11 +135,11 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
               return (
                 <Card
                   key={task.id}
-                  className={`p-6 cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-xl border-l-4 backdrop-blur-xl ${
+                  className={`cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-xl border-l-4 backdrop-blur-xl ${
                     isSelected 
                       ? 'bg-[#04071307] border-l-[#FFD886] border-[#FFD886] shadow-lg' 
                       : 'bg-gradient-to-br from-[rgb(5,15,34)] to-[rgb(11,51,87)] hover:border-l-slate-300 hover:shadow-lg'
-                  }`}
+                  } ${isMobile ? 'p-3' : 'p-6'}`}
                   onClick={() => selectTask(task.id)}
                 >
                   <div className="flex items-start justify-between mb-4">

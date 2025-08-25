@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import type { AutoEvalConfiguration } from "@/types/shared";
 import { RotateCcw, Target, Thermometer } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { AutoEvalConfiguration } from "@/types/shared";
 
 interface ModelParameters {
   temperature: number;
@@ -19,8 +19,21 @@ interface Step4ParameterConfigurationProps {
 }
 
 export default function Step4ParameterConfiguration({ onConfigurationUpdate, initialConfig }: Step4ParameterConfigurationProps) {
+  const [isMobile, setIsMobile] = useState(false);
   const [modelParameters, setModelParameters] = useState<Record<string, ModelParameters>>({});
   const [selectedModels, setSelectedModels] = useState<AutoEvalConfiguration['models']>([]);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -106,17 +119,34 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
   return (
     <>
       <CardContent className="overflow-y-auto space-y-8 h-full">
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Configure parameters for each selected model individually.</p>
-          <Button
-            onClick={handleClearSelection}
-            variant="outline"
-            size="sm"
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Clear Selection
-          </Button>
+        {/* Clear Selection Button - Top of Screen (Mobile) */}
+        {isMobile && (
+          <div className="flex justify-end mb-4">
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200 w-40"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          </div>
+        )}
+
+        <div className={`${isMobile ? 'flex flex-col gap-2' : 'flex items-center justify-between'}`}>
+          <p className="text-slate-300">Configure parameters for each selected model individually.</p>
+          {!isMobile && (
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          )}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -125,9 +155,9 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
             
             return (
               <Card key={model.id} className="p-4">
-                <CardHeader className="pb-3 -ml-2">
+                <CardHeader className={`pb-3 ${isMobile ? '-ml-4 -mr-4' : '-ml-2'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="-ml-2">
+                    <div className={isMobile ? '' : '-ml-2'}>
                       <CardTitle className="text-base flex items-center gap-2">
                         <Target className="h-4 w-4 text-blue-600" />
                         {model.name}
@@ -139,7 +169,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                         onClick={() => applyToAllModels(model.id)}
                         variant="outline"
                         size="sm"
-                        className="h-8 px-3 text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 active:scale-95"
+                        className={`h-8 px-3 text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 active:scale-95 ${isMobile ? 'ml-4' : ''}`}
                       >
                         Apply to All
                       </Button>

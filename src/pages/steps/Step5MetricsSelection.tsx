@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PASS_AT_K_OPTIONS, TEXT_METRICS } from "@/data/autoevalStaticData";
+import type { AutoEvalConfiguration } from "@/types/shared";
 import { FileText, HelpCircle, RotateCcw, Target } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { AutoEvalConfiguration } from "@/types/shared";
-import { TEXT_METRICS, PASS_AT_K_OPTIONS } from "@/data/autoevalStaticData";
 
 interface Step5MetricsSelectionProps {
   onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
@@ -13,8 +13,21 @@ interface Step5MetricsSelectionProps {
 }
 
 export default function Step5MetricsSelection({ onConfigurationUpdate, initialConfig }: Step5MetricsSelectionProps) {
+  const [isMobile, setIsMobile] = useState(false);
   const [selectedPassAtK, setSelectedPassAtK] = useState<string>(initialConfig?.metrics?.passAtK || "");
   const [selectedTextMetrics, setSelectedTextMetrics] = useState<string[]>(initialConfig?.metrics?.textMetrics || []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize from initialConfig if provided
   useEffect(() => {
@@ -70,17 +83,34 @@ export default function Step5MetricsSelection({ onConfigurationUpdate, initialCo
   return (
     <>
       <CardContent className="overflow-y-auto space-y-6 h-full">
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Select the metrics you want to use for evaluation. You can select multiple text metrics.</p>
-          <Button
-            onClick={handleClearSelection}
-            variant="outline"
-            size="sm"
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Clear Selection
-          </Button>
+        {/* Clear Selection Button - Top of Screen (Mobile) */}
+        {isMobile && (
+          <div className="flex justify-end mb-4">
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200 w-40"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          </div>
+        )}
+
+        <div className={`${isMobile ? 'flex flex-col gap-2' : 'flex items-center justify-between'}`}>
+          <p className="text-slate-300">Select the metrics you want to use for evaluation. You can select multiple text metrics.</p>
+          {!isMobile && (
+            <Button
+              onClick={handleClearSelection}
+              variant="outline"
+              size="sm"
+              className="text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500 hover:bg-slate-700/50 transition-colors duration-200"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Clear Selection
+            </Button>
+          )}
         </div>
         
         <TooltipProvider>
