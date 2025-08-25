@@ -174,8 +174,11 @@ export default function Step2TaskTypeSelection({ onConfigurationUpdate, initialC
           {/* Prompt Text Area */}
           <div className="space-y-4 mt-8">
             <h3 className="text-xl font-semibold text-white">
-              Set Task Prompt
+              Task Prompt
             </h3>
+            <p className="text-gray-400 text-sm">
+              This prompt will be used as the system prompt to guide the model's behavior for all tasks.
+            </p>
             {selectedTasks.length > 0 ? (
               <Textarea
                 value={promptText}

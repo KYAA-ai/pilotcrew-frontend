@@ -258,6 +258,7 @@ export default function AutoEvalPage() {
         passAtK: config.metrics?.passAtK || '1',
         textMetrics: config.metrics?.textMetrics || [],
       },
+      systemPrompt: config.tasks?.[0]?.prompt,
     };
 
     try {

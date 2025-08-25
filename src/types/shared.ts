@@ -30,6 +30,7 @@ export interface AutoEvalConfiguration {
     passAtK?: string;
     textMetrics: string[];
   };
+  systemPrompt?: string;
 }
 
 export interface StepUIState {

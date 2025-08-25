@@ -12,7 +12,7 @@ export interface TaskType {
   name: string;
   description: string;
   prompt: string;
-  icon: string; // Icon name for dynamic import
+  icon: string;
 }
 
 export interface Metric {
@@ -30,56 +30,55 @@ export interface ModelParameters {
 // Available models for selection
 export const AVAILABLE_MODELS: Model[] = [
   { 
-    id: "gpt-4", 
-    name: "GPT-4", 
+    id: "gpt-4o-mini", 
+    name: "GPT-4o Mini", 
     provider: "OpenAI", 
     pricing: "$0.03/1K tokens", 
     costPerMillionInputTokens: "$30.00",
     costPerMillionOutputTokens: "$60.00"
   },
   { 
-    id: "gpt-3.5-turbo", 
-    name: "GPT-3.5 Turbo", 
-    provider: "OpenAI", 
-    pricing: "$0.002/1K tokens", 
-    costPerMillionInputTokens: "$2.00",
-    costPerMillionOutputTokens: "$2.00"
-  },
-  { 
-    id: "claude-3", 
-    name: "Claude-3", 
+    id: "claude-3-5-haiku", 
+    name: "Claude-3-5-Haiku", 
     provider: "Anthropic", 
     pricing: "$0.015/1K tokens", 
     costPerMillionInputTokens: "$15.00",
     costPerMillionOutputTokens: "$75.00"
   },
   { 
-    id: "gemini-pro", 
-    name: "Gemini Pro", 
+    id: "gemini-2.0-flash-lite", 
+    name: "Gemini-2.0-Flash-Lite", 
     provider: "Google", 
     pricing: "$0.001/1K tokens", 
     costPerMillionInputTokens: "$1.00",
     costPerMillionOutputTokens: "$2.00"
   },
   { 
-    id: "llama-2", 
-    name: "Llama-2", 
+    id: "llama-3.2-1b-instruct", 
+    name: "Llama-3.2-1B-Instruct", 
     provider: "Meta", 
     pricing: "$0.0006/1K tokens", 
     costPerMillionInputTokens: "$0.60",
     costPerMillionOutputTokens: "$0.60"
   },
   { 
-    id: "mistral", 
-    name: "Mistral", 
-    provider: "Mistral AI", 
+    id: "nova-micro", 
+    name: "Amazon-Nova-Micro", 
+    provider: "Amazon", 
     pricing: "$0.0014/1K tokens", 
     costPerMillionInputTokens: "$1.40",
     costPerMillionOutputTokens: "$4.20"
   },
+  { 
+    id: "command-r", 
+    name: "Cohere-Command-R", 
+    provider: "Cohere", 
+    pricing: "$0.002/1K tokens", 
+    costPerMillionInputTokens: "$2.00",
+    costPerMillionOutputTokens: "$2.00"
+  },
 ];
 
-// Available task types
 export const TASK_TYPES: TaskType[] = [
   {
     id: "qa",
@@ -125,7 +124,6 @@ export const TASK_TYPES: TaskType[] = [
   },
 ];
 
-// Available text metrics
 export const TEXT_METRICS: Metric[] = [
   {
     id: "bleu",

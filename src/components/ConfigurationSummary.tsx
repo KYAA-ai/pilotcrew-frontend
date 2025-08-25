@@ -37,8 +37,10 @@ export default function ConfigurationSummary({
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs">
-                        {config.dataset.name || 'No file selected'}
+                      <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs max-w-full">
+                        <span className="truncate">
+                          {config.dataset.name || 'No file selected'}
+                        </span>
                       </Badge>
                     </div>
                     <div className="text-xs text-slate-400">
@@ -252,8 +254,10 @@ export default function ConfigurationSummary({
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs">
-                      {config.dataset.name || 'No file selected'}
+                    <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs max-w-full">
+                      <span className="truncate">
+                        {config.dataset.name || 'No file selected'}
+                      </span>
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-400">
@@ -304,6 +308,26 @@ export default function ConfigurationSummary({
                       {task.id}
                     </Badge>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* System Prompt */}
+            {config.tasks && config.tasks.length > 0 && config.tasks[0].prompt && (
+              <div className="bg-gradient-to-r from-slate-700/50 to-slate-800/50 rounded-lg p-4 border border-slate-600/50">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 bg-green-500/20 rounded-lg border border-green-500/30">
+                    <FileText className="h-4 w-4 text-green-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-100 text-sm">Task Prompt</h4>
+                    <p className="text-xs text-slate-400">This prompt will be used as the system prompt to guide the model's behavior for all tasks.</p>
+                  </div>
+                </div>
+                <div className="bg-slate-600/30 rounded-lg p-3 border border-slate-500/30">
+                  <p className="text-sm text-slate-200 whitespace-pre-wrap">
+                    {config.tasks[0].prompt}
+                  </p>
                 </div>
               </div>
             )}
