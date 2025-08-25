@@ -1,7 +1,7 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign } from "lucide-react";
 import type { AutoEvalConfiguration } from "@/types/shared";
+import { DollarSign } from "lucide-react";
 
 interface Step6ReviewLaunchProps {
   initialConfig?: AutoEvalConfiguration;
@@ -48,7 +48,7 @@ export default function Step6ReviewLaunch({ initialConfig, currentStep = 6 }: St
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-light-gray-600">Dataset Size:</span>
+                    <span className="text-light-gray-600">Dataset Name:</span>
                     <span className="font-medium">{config.dataset?.name || "Not uploaded"}</span>
                   </div>
                   <div className="flex justify-between text-sm">

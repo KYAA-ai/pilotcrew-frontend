@@ -1,13 +1,14 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import MultiStepForm, { type StepConfig } from "@/components/MultiStepForm";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AlertCircle, Play, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import type { AutoEvalConfiguration } from "@/types/shared";
 import apiClient from "@/lib/api";
-import { toast } from "sonner";
+import type { AutoEvalConfiguration } from "@/types/shared";
+import { AlertCircle, Eye, EyeOff, Loader2, Play, Wand2, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import Step1UploadDataset from "./steps/Step1UploadDataset";
 import Step2TaskTypeSelection from "./steps/Step2TaskTypeSelection";
@@ -29,6 +30,20 @@ export default function AutoEvalPage() {
   const [showConfigSummary, setShowConfigSummary] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileSummary, setShowMobileSummary] = useState(false);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const hasUserStarted = () => {
     return !!(
@@ -39,7 +54,6 @@ export default function AutoEvalPage() {
       configuration.metrics
     );
   };
-
 
   const handleStepChange = (step: number) => {
     setCurrentStep(step);
@@ -272,15 +286,15 @@ export default function AutoEvalPage() {
   }, []);
 
   return (
-    <div className="flex w-full h-full">
-      <div className={`h-full p-6 flex flex-col overflow-hidden relative ${showConfigSummary ? 'w-2/3' : 'w-full'}`}>
-        <div className="flex items-center gap-3 mb-6 flex-shrink-0">
-          <div className="p-2 bg-purple-900/20 rounded-lg">
-            <Wand2 className="h-6 w-6 text-purple-400" />
+    <div className={`flex w-full ${isMobile ? 'h-auto' : 'h-full'}`}>
+      <div className={`flex flex-col relative ${!isMobile && showConfigSummary ? 'w-2/3 p-6 h-full overflow-hidden' : isMobile ? 'w-full py-6 px-3' : 'w-full p-6 h-full overflow-hidden'}`}>
+        <div className={`flex items-center gap-3 flex-shrink-0 ${isMobile ? 'flex-row items-center gap-2 mb-2' : 'mb-6'}`}>
+          <div className={`p-2 bg-purple-900/20 rounded-lg ${isMobile ? 'p-1.5' : ''}`}>
+            <Wand2 className={`text-purple-400 ${isMobile ? 'h-5 w-5' : 'h-6 w-6'}`} />
           </div>
-          <h1 className="text-3xl font-bold">Evaluation Dashboard</h1>
-          <div className="ml-auto">
-            {!steps[currentStep - 1]?.hideShowSummaryButton && (
+          <h1 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Evaluation Dashboard</h1>
+          <div className={`${isMobile ? 'ml-auto' : 'ml-auto'}`}>
+            {!steps[currentStep - 1]?.hideShowSummaryButton && !isMobile && (
               <Button
                 onClick={() => setShowConfigSummary(!showConfigSummary)}
                 variant="outline"
@@ -303,7 +317,7 @@ export default function AutoEvalPage() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-auto">
+        <div className={`${isMobile ? 'flex-1' : 'flex-1 overflow-auto'}`}>
           <MultiStepForm
             steps={steps}
             initialConfig={configuration}
@@ -317,81 +331,94 @@ export default function AutoEvalPage() {
               </div>
             )}
             renderNavigation={({ currentStep, totalSteps, onNext, onPrevious, onComplete, canGoNext, canGoPrevious, validationState, hidePreviousButton, hideNextButton }) => (
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  {!hidePreviousButton && (
+              <div className={`space-y-3 ${isMobile ? 'w-full mb-3' : ''}`}>
+                <div className="flex gap-2 justify-between items-center">
+                  {isMobile && !steps[currentStep - 1]?.hideShowSummaryButton && (
                     <Button
-                      onClick={onPrevious}
-                      disabled={!canGoPrevious}
-                      className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
-                      size="sm"
+                      onClick={() => setShowMobileSummary(true)}
                       variant="outline"
-                    >
-                      Previous
-                    </Button>
-                  )}
-                  {currentStep === totalSteps ? (
-                    <Button
-                      onClick={onComplete}
-                      disabled={isLaunching}
-                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
                       size="sm"
+                      className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10"
                     >
-                      {isLaunching ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Launching...
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Launch Evaluation
-                        </>
-                      )}
+                      <Eye className="h-4 w-4 mr-2" />
+                      Summary
                     </Button>
-                  ) : (
-                    !hideNextButton && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              <Button
-                                onClick={onNext}
-                                disabled={!canGoNext}
-                                className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
-                                size="sm"
-                                variant="outline"
-                              >
-                                Next
-                              </Button>
-                            </div>
-                          </TooltipTrigger>
-                          {!validationState.isValid && hasUserStarted() && (
-                            <TooltipContent side="top" className="max-w-sm bg-blue-900/90 border border-blue-400/30 text-white">
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <AlertCircle className="h-4 w-4 text-blue-300" />
-                                  <p className="font-medium text-blue-200">
-                                    {validationState.reason}
-                                  </p>
-                                </div>
-                                {validationState.details && validationState.details.length > 0 && (
-                                  <ul className="text-sm text-blue-100 space-y-1">
-                                    {validationState.details.map((detail, index) => (
-                                      <li key={index} className="flex items-start gap-2">
-                                        <span className="text-blue-300 mt-1">•</span>
-                                        <span>{detail}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
-                      </TooltipProvider>
-                    )
                   )}
+                  <div className="flex gap-2">
+                    {!hidePreviousButton && (
+                      <Button
+                        onClick={onPrevious}
+                        disabled={!canGoPrevious}
+                        className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
+                        size="sm"
+                        variant="outline"
+                      >
+                        Previous
+                      </Button>
+                    )}
+                    {currentStep === totalSteps ? (
+                      <Button
+                        onClick={onComplete}
+                        disabled={isLaunching}
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
+                        size="sm"
+                      >
+                        {isLaunching ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Launching...
+                          </>
+                        ) : (
+                          <>
+                            <Play className="h-4 w-4 mr-2" />
+                            Launch Evaluation
+                          </>
+                        )}
+                      </Button>
+                    ) : (
+                      !hideNextButton && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <Button
+                                  onClick={onNext}
+                                  disabled={!canGoNext}
+                                  className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10 px-4 py-2 text-sm transition-colors"
+                                  size="sm"
+                                  variant="outline"
+                                >
+                                  Next
+                                </Button>
+                              </div>
+                            </TooltipTrigger>
+                            {!validationState.isValid && hasUserStarted() && (
+                              <TooltipContent side="top" className="max-w-sm bg-blue-900/90 border border-blue-400/30 text-white">
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <AlertCircle className="h-4 w-4 text-blue-300" />
+                                    <p className="font-medium text-blue-200">
+                                      {validationState.reason}
+                                    </p>
+                                  </div>
+                                  {validationState.details && validationState.details.length > 0 && (
+                                    <ul className="text-sm text-blue-100 space-y-1">
+                                      {validationState.details.map((detail, index) => (
+                                        <li key={index} className="flex items-start gap-2">
+                                          <span className="text-blue-300 mt-1">•</span>
+                                          <span>{detail}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -399,7 +426,8 @@ export default function AutoEvalPage() {
         </div>
       </div>
       
-      {showConfigSummary && (
+      {/* Desktop Configuration Summary */}
+      {!isMobile && showConfigSummary && (
         <div className="h-full p-6 overflow-hidden w-1/3">
           <ConfigurationSummary 
             config={configuration}
@@ -407,6 +435,34 @@ export default function AutoEvalPage() {
             isCompact={true}
           />
         </div>
+      )}
+
+      {/* Mobile Configuration Summary Modal */}
+      {isMobile && (
+        <Dialog open={showMobileSummary} onOpenChange={setShowMobileSummary}>
+          <DialogContent className="max-w-md w-[95vw] h-[90vh] max-h-[600px] p-0">
+            <DialogHeader className="p-4 pb-2">
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-lg font-semibold">Configuration Summary</DialogTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowMobileSummary(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogHeader>
+            <div className="flex-1 overflow-hidden px-4 pb-4">
+              <ConfigurationSummary 
+                config={configuration}
+                currentStep={1}
+                isCompact={true}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

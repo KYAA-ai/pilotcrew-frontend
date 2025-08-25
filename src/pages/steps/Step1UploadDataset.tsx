@@ -1,14 +1,14 @@
 import { UploadService } from "@/components/autoeval/fileupload";
-import apiClient from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AlertCircle, Info, RotateCcw, Upload } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import apiClient from "@/lib/api";
 import type { AutoEvalConfiguration, StepUIState } from "@/types/shared";
+import { AlertCircle, Info, RotateCcw, Upload } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Step1UploadDatasetProps {
   onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
@@ -21,6 +21,20 @@ export default function Step1UploadDataset({
   initialConfig,
   stepState = {}
 }: Step1UploadDatasetProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // UI-specific state (not part of configuration)
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>(
     stepState.uploadStatus || 'idle'
@@ -312,7 +326,7 @@ export default function Step1UploadDataset({
 
   return (
     <>
-      <CardContent className="overflow-y-auto space-y-4 h-full">
+      <CardContent className={`space-y-4 h-full ${isMobile ? 'overflow-visible' : 'overflow-y-auto'}`}>
         {/* Clear Selection Button - Top of Screen */}
         <div className="flex justify-end">
           <TooltipProvider>
@@ -550,7 +564,7 @@ export default function Step1UploadDataset({
           <div className="flex items-center justify-between">
             <h3 className="text-base font-medium">Column Selection</h3>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className={`${isMobile ? 'space-y-4' : 'grid grid-cols-2 gap-4'}`}>
             <div className="space-y-3">
               <label className="text-sm font-medium">Input Column</label>
               <Select 
@@ -558,7 +572,7 @@ export default function Step1UploadDataset({
                 onValueChange={handleInputColumnChange}
                 disabled={!backendResponseReceived}
               >
-                <SelectTrigger className="mt-3">
+                <SelectTrigger className={isMobile ? 'mt-1' : 'mt-3'}>
                   <SelectValue placeholder={backendResponseReceived ? "Select input column" : "Upload dataset first"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -578,7 +592,7 @@ export default function Step1UploadDataset({
                 onValueChange={handleOutputColumnChange}
                 disabled={!backendResponseReceived}
               >
-                <SelectTrigger className="mt-3">
+                <SelectTrigger className={isMobile ? 'mt-1' : 'mt-3'}>
                   <SelectValue placeholder={backendResponseReceived ? "Select output column" : "Upload dataset first"} />
                 </SelectTrigger>
                 <SelectContent>

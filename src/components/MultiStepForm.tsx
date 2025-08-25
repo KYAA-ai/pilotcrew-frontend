@@ -1,6 +1,3 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardTitle, CardContent } from '@/components/ui/card';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +5,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import type { AutoEvalConfiguration } from '@/types/shared';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export interface StepConfig {
   id: number;
@@ -56,12 +56,23 @@ export default function MultiStepForm({
   const [currentStep, setCurrentStep] = useState(1);
   const [configuration, setConfiguration] = useState(initialConfig);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   // Add step-specific state storage
   const [stepStates, setStepStates] = useState<Record<number, unknown>>({});
   // Add validation state
   const [validationState, setValidationState] = useState<{ isValid: boolean; reason?: string; details?: string[] }>({ isValid: false });
 
-
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleConfigurationUpdate = useCallback((stepConfig: unknown) => {
     setConfiguration((prev: unknown) => {
@@ -200,19 +211,19 @@ export default function MultiStepForm({
 
   return (
     <div className="flex w-full h-full">
-      <div className="h-full p-6 flex flex-col overflow-auto relative w-full">
-        <Breadcrumb className="mb-4 flex-shrink-0">
-          <BreadcrumbList>
+      <div className={`h-full flex flex-col overflow-auto relative w-full ${isMobile ? 'p-3' : 'p-6'}`}>
+        <Breadcrumb className={`mb-4 flex-shrink-0 ${isMobile ? 'text-xs' : ''}`}>
+          <BreadcrumbList className={isMobile ? 'flex-wrap' : ''}>
             {steps.slice(0, currentStep).map((step, index) => (
               <React.Fragment key={step.id}>
                 <BreadcrumbItem>
                   {index === currentStep - 1 ? (
-                    <BreadcrumbPage className="text-sm text-muted-foreground">
+                    <BreadcrumbPage className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
                       {step.name}
                     </BreadcrumbPage>
                   ) : (
                     <button 
-                      className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
+                      className={`text-muted-foreground hover:text-foreground cursor-pointer ${isMobile ? 'text-xs' : 'text-sm'}`}
                       onClick={(e: React.MouseEvent) => {
                         e.preventDefault();
                         setCurrentStep(step.id);
@@ -228,13 +239,13 @@ export default function MultiStepForm({
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="flex justify-between items-start">
+        <div className={`flex justify-between items-start ${isMobile ? 'flex-col gap-4' : ''}`}>
           {renderHeader ? (
             renderHeader(currentStep, steps.length, steps[currentStep - 1]?.name || '')
           ) : (
             <div>
-              <CardTitle className="pb-2">Step {currentStep} of {steps.length}</CardTitle>
-              <h2 className="text-2xl font-semibold mt-2">{steps[currentStep - 1]?.name}</h2>
+              <CardTitle className={`pb-2 ${isMobile ? 'text-lg' : ''}`}>Step {currentStep} of {steps.length}</CardTitle>
+              <h2 className={`font-semibold mt-2 ${isMobile ? 'text-xl' : 'text-2xl'}`}>{steps[currentStep - 1]?.name}</h2>
             </div>
           )}
 
@@ -287,8 +298,8 @@ export default function MultiStepForm({
           )}
         </div>
 
-        <Card className="flex-1 mt-4 overflow-hidden">
-          <CardContent className="h-full p-0 overflow-auto">
+        <Card className={`flex-1 mt-4 overflow-hidden ${isMobile ? 'mt-2 w-full h-auto' : ''}`}>
+          <CardContent className={`${isMobile ? 'h-auto p-0 overflow-visible' : 'h-full overflow-auto p-0'}`}>
             {(() => {
               try {
                 return (
@@ -307,7 +318,7 @@ export default function MultiStepForm({
               } catch (error) {
                 console.error('❌ Error rendering step component:', error);
                 return (
-                  <div className="p-6">
+                  <div className={isMobile ? 'p-3' : 'p-6'}>
                     <p className="text-red-500">Error loading step {currentStep}. Please try refreshing the page.</p>
                   </div>
                 );
