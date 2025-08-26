@@ -10,8 +10,10 @@ import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import AutoEvalAuth from './components/auth/AutoEvalAuth'
 import { LinkedInAuthCallback } from './components/auth/LinkedInAuthCallback'
+import AutoEvalAboutPage from './pages/AutoEvalAboutPage'
 import AutoEvalLayout from './pages/AutoEvalLayout'
 import AutoEvalPage from './pages/AutoEvalPage'
+import AutoEvalStatusPage from './pages/AutoEvalStatusPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
@@ -33,7 +35,6 @@ import NewLandingPage from './pages/newLandingPage'
 import RunningMonitorsPage from './pages/RunningMonitorsPage'
 import WorkflowLeaderboardPage from './pages/WorkflowLeaderboardPage'
 import WorkflowMonitorPage from './pages/WorkflowMonitorPage'
-import AutoEvalStatusPage from './pages/AutoEvalStatusPage'
 
 function App() {
   return (
@@ -169,6 +170,7 @@ function App() {
           }
         />
         {/* AutoEval Platform */}
+        <Route path="/autoeval/about" element={<AutoEvalAboutPage />} />
         <Route path="/autoeval" element={<AutoEvalAuth />} />
         <Route
           path="/autoeval"
