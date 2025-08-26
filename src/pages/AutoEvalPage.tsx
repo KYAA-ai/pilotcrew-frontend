@@ -232,7 +232,7 @@ export default function AutoEvalPage() {
 
   const handleLaunch = useCallback(async (finalConfig: unknown) => {    
     setIsLaunching(true);
-    const config = finalConfig as AutoEvalConfiguration;
+    const config = finalConfig as AutoEvalConfiguration & { costEstimate?: any };
     const generationOpts = {
       dataset: {
         name: config.dataset?.name || '',
@@ -262,7 +262,10 @@ export default function AutoEvalPage() {
     };
 
     try {
-      const response = await apiClient.post('/v1/autoeval/workflow', { generationOpts });
+      const response = await apiClient.post('/v1/autoeval/workflow', { 
+        generationOpts,
+        costEstimate: config.costEstimate 
+      });
       console.log('✅ Evaluation launched successfully:', response.data);
       toast.success('Evaluation launched successfully!', {
         description: 'Your AutoEval workflow has been queued. Track the status in Run & Monitor.',

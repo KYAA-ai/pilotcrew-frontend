@@ -261,7 +261,7 @@ export default function Step6ReviewLaunch({
         {isMobile && onComplete && (
           <div className="mt-6">
             <Button
-              onClick={() => onComplete(config)}
+              onClick={() => onComplete({ ...config, costEstimate })}
               disabled={isProcessing || loadingCost}
               className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base"
               size="lg"
