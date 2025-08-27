@@ -5,31 +5,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    ArrowRight,
-    Cloud,
-    Database,
-    FileUp,
-    GitCompare,
-    Mail,
-    MessageSquare,
-    Send,
-    Target,
-    TrendingUp,
-    User,
-    Zap
+  ArrowRight,
+  Cloud,
+  Database,
+  FileUp,
+  GitCompare,
+  Mail,
+  MessageSquare,
+  Send,
+  Target,
+  TrendingUp,
+  User,
+  Zap
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import logo from "../assets/logo.png";
+import apiClient from "@/lib/api";
+
+
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+  phone?: string;
+  company?: string;
+}
 
 export default function AutoEvalAboutPage() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
     email: "",
-    message: ""
+    message: "",
+    phone: "NA",
+    company: "NA"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,21 +55,21 @@ export default function AutoEvalAboutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.fullName || !formData.email || !formData.message) {
+
+    if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all fields");
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
-      // Simulate API call - replace with actual endpoint when available
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const response = await apiClient.post('/v1/autoeval/contact', formData);
+      console.log(response);
       toast.success("Message sent successfully! We'll get back to you soon.");
-      setFormData({ fullName: "", email: "", message: "" });
-    } catch {
+      setFormData({ name: "", email: "", message: "", phone: "NA", company: "NA" });
+    } catch (error) {
+      console.error('Contact form error:', error);
       toast.error("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -73,11 +85,11 @@ export default function AutoEvalAboutPage() {
       ]
     },
     {
-        title: "Flexible Parameter Tuning",
-        points: [
-          { icon: <Zap className="h-7 w-7 text-[#e9a855]" />, text: "Have the ability to tune over 20+ parameters for each model" },
-          { icon: <TrendingUp className="h-7 w-7 text-[#e9a855]" />, text: "Get comprehensive scoring with 10+ built-in metrics like bleu, rougel, meteor, perplexity, etc" },
-        ]
+      title: "Flexible Parameter Tuning",
+      points: [
+        { icon: <Zap className="h-7 w-7 text-[#e9a855]" />, text: "Have the ability to tune over 20+ parameters for each model" },
+        { icon: <TrendingUp className="h-7 w-7 text-[#e9a855]" />, text: "Get comprehensive scoring with 10+ built-in metrics like bleu, rougel, meteor, perplexity, etc" },
+      ]
     },
     {
       title: "Multiple Evaluation Metrics",
@@ -110,7 +122,7 @@ export default function AutoEvalAboutPage() {
         {/* Why Choose AutoEval Section */}
         <div className="flex items-center justify-center mx-10 mt-8 sm:mt-16 md:mt-24 lg:mt-32 xl:mt-40 2xl:mt-48 mb-8 sm:mb-16 md:mb-24 lg:mb-32 xl:mb-40 2xl:mb-48">
           <div className="w-full max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 py-8 md:py-12 lg:py-16">
-                        <div className="grid grid-cols-4 gap-0">
+            <div className="grid grid-cols-4 gap-0">
               <div className="col-span-4 px-8 mb-12">
                 <h2 className="text-2xl md:text-3xl font-bold text-white text-left">
                   Why choose AutoEval
@@ -142,131 +154,131 @@ export default function AutoEvalAboutPage() {
         {/* Bottom Section - Login and Contact Form */}
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
-          {/* Already a Member - Login Section */}
-          <div className="flex flex-col justify-center max-w-lg mx-auto">
-            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 border-blue-500/30 p-4">
-              <CardContent className="p-4 text-center">
-                <div className="relative flex justify-center mb-4 pt-4">
-                  {/* Golden blur sphere behind logo */}
-                  <div 
-                    className="absolute top-1/2 left-1/2 w-12 h-12 rounded-full bg-[#e9a855] blur-md opacity-60 transform -translate-x-1/2 -translate-y-1/2"
-                    style={{ zIndex: -1 }}
-                  />
-                  <img src={logo} alt="Pilotcrew Logo" className="w-12 h-12 object-contain relative z-10" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">
-                  Already a member? Login!
-                </h3>
-                <p className="text-slate-300 mb-4 text-sm">
-                  Access your AutoEval dashboard and continue evaluating your AI models. 
-                  Track your progress and optimize your model performance.
-                </p>
-                
-                <div className="space-y-3">
-                  <Button 
-                    onClick={() => navigate('/auth/autoeval')}
-                    size="sm"
-                    className="w-full max-w-xs mx-auto mt-8 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white transition-all duration-100 text-sm font-eudoxus-bold"
-                  >
-                    Access AutoEval Platform
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                  
-                  <p className="text-xs text-slate-400 pb-4">
-                    New to AutoEval? Get in touch with us to explore our features.
+            {/* Already a Member - Login Section */}
+            <div className="flex flex-col justify-center max-w-lg mx-auto">
+              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 border-blue-500/30 p-4">
+                <CardContent className="p-4 text-center">
+                  <div className="relative flex justify-center mb-4 pt-4">
+                    {/* Golden blur sphere behind logo */}
+                    <div
+                      className="absolute top-1/2 left-1/2 w-12 h-12 rounded-full bg-[#e9a855] blur-md opacity-60 transform -translate-x-1/2 -translate-y-1/2"
+                      style={{ zIndex: -1 }}
+                    />
+                    <img src={logo} alt="Pilotcrew Logo" className="w-12 h-12 object-contain relative z-10" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">
+                    Already a member? Login!
+                  </h3>
+                  <p className="text-slate-300 mb-4 text-sm">
+                    Access your AutoEval dashboard and continue evaluating your AI models.
+                    Track your progress and optimize your model performance.
                   </p>
-                </div>
+
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => navigate('/auth/autoeval')}
+                      size="sm"
+                      className="w-full max-w-xs mx-auto mt-8 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white transition-all duration-100 text-sm font-eudoxus-bold"
+                    >
+                      Access AutoEval Platform
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+
+                    <p className="text-xs text-slate-400 pb-4">
+                      New to AutoEval? Get in touch with us to explore our features.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Contact Form */}
+            <Card className="bg-slate-800/30 backdrop-blur-md border-slate-600 shadow-[0_10px_60px_rgba(0,46,103,0.4)]">
+              <CardHeader>
+                <CardTitle className="text-white text-2xl flex items-center gap-3">
+                  <MessageSquare className="h-6 w-6 text-blue-400" />
+                  Get in Touch
+                </CardTitle>
+                <CardDescription className="text-slate-300">
+                  Have questions about AutoEval? Send us a message and we'll get back to you soon.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Full Name
+                    </label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter your full name"
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Address
+                    </label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter your email address"
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Message
+                    </label>
+                    <Textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      placeholder="Tell us about your use case, questions, or how we can help..."
+                      rows={5}
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex justify-center">
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full max-w-xs bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white transition-all duration-100 font-eudoxus-bold"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4 mr-2" />
+                          Send Message
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
           </div>
-
-          {/* Contact Form */}
-          <Card className="bg-slate-800/30 backdrop-blur-md border-slate-600 shadow-[0_10px_60px_rgba(0,46,103,0.4)]">
-            <CardHeader>
-              <CardTitle className="text-white text-2xl flex items-center gap-3">
-                <MessageSquare className="h-6 w-6 text-blue-400" />
-                Get in Touch
-              </CardTitle>
-              <CardDescription className="text-slate-300">
-                Have questions about AutoEval? Send us a message and we'll get back to you soon.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Full Name
-                  </label>
-                  <Input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    placeholder="Enter your full name"
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Email Address
-                  </label>
-                  <Input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Enter your email address"
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    Message
-                  </label>
-                  <Textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Tell us about your use case, questions, or how we can help..."
-                    rows={5}
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 resize-none"
-                    required
-                  />
-                </div>
-                
-                <div className="flex justify-center">
-                  <Button 
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full max-w-xs bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-transparent hover:border-2 hover:border-blue-500 hover:text-white transition-all duration-100 font-eudoxus-bold"
-                  >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Message
-                    </>
-                                      )}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-          </div>
         </div>
       </div>
-      
+
       {/* Footer */}
       <div className="mt-40">
         <Footer />
