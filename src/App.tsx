@@ -14,6 +14,7 @@ import AutoEvalAboutPage from './pages/AutoEvalAboutPage'
 import AutoEvalLayout from './pages/AutoEvalLayout'
 import AutoEvalPage from './pages/AutoEvalPage'
 import AutoEvalStatusPage from './pages/AutoEvalStatusPage'
+import AutoEvalAdminPage from './pages/AutoEvalAdminPage'
 import EmployeeAgenticDashboard from './pages/EmployeeAgenticDashboard'
 import EmployeeAuth from './pages/EmployeeAuth'
 import EmployeeCompletedJobs from './pages/EmployeeCompletedJobs'
@@ -187,6 +188,7 @@ function App() {
           <Route path="monitors/:workflowId" element={<WorkflowMonitorPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="leaderboard/:workflowId" element={<WorkflowLeaderboardPage />} />
+          <Route path="admin" element={<AutoEvalAdminPage />} />
         </Route>
         {/* Fallback to landing for unknown routes */}
         <Route path="/platform" element={<LandingPage />} />

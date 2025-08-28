@@ -64,8 +64,7 @@ export default function AutoEvalAboutPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await apiClient.post('/v1/autoeval/contact', formData);
-      console.log(response);
+      await apiClient.post('/v1/autoeval/contact', formData);
       toast.success("Message sent successfully! We'll get back to you soon.");
       setFormData({ name: "", email: "", message: "", phone: "NA", company: "NA" });
     } catch (error) {

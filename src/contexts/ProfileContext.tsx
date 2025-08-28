@@ -27,6 +27,8 @@ interface AutoEvalProfile {
   id: string;
   name: string;
   email: string;
+  permissions?: string[];
+  isAdmin?: boolean;
 }
 
 type Profile = EmployerProfile | EmployeeProfile | AutoEvalProfile;
@@ -43,6 +45,9 @@ interface ProfileContextType {
   isEmployee: () => boolean;
   isAutoEval: () => boolean;
   isLoggingOut: boolean;
+  // Permission helpers for AutoEval users
+  hasPermission: (permission: string) => boolean;
+  isAdmin: boolean;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -97,6 +102,15 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     return userType === 'autoeval';
   };
 
+  // Permission helpers for AutoEval users
+  const hasPermission = (permission: string): boolean => {
+    if (userType !== 'autoeval' || !profile) return false;
+    const autoEvalProfile = profile as AutoEvalProfile;
+    return autoEvalProfile.permissions?.includes(permission) || false;
+  };
+
+  const isAdmin = userType === 'autoeval' && (profile as AutoEvalProfile)?.isAdmin || false;
+
   const value = {
     profile,
     userType,
@@ -108,6 +122,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     isEmployee,
     isAutoEval,
     isLoggingOut,
+    hasPermission,
+    isAdmin,
   };
 
   return (

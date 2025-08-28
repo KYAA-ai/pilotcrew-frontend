@@ -3,6 +3,7 @@ import MultiStepForm, { type StepConfig } from "@/components/MultiStepForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useProfile } from "@/contexts/ProfileContext";
 import apiClient from "@/lib/api";
 import type { AutoEvalConfiguration } from "@/types/shared";
 import { AlertCircle, Eye, EyeOff, Loader2, Play, Settings, Wand2, X } from "lucide-react";
@@ -19,6 +20,7 @@ import Step6ReviewLaunch from "./steps/Step6ReviewLaunch";
 
 export default function AutoEvalPage() {
   const navigate = useNavigate();
+  const { hasPermission } = useProfile();
   const [configuration, setConfiguration] = useState<AutoEvalConfiguration>({
     dataset: undefined,
     tasks: [],
@@ -32,6 +34,9 @@ export default function AutoEvalPage() {
   const [isLaunching, setIsLaunching] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileSummary, setShowMobileSummary] = useState(false);
+
+  // Check if user has permission to launch evaluations
+  const canLaunchEvaluation = hasPermission('LAUNCH_EVALUATION');
 
   // Mobile detection
   useEffect(() => {
@@ -232,7 +237,7 @@ export default function AutoEvalPage() {
 
   const handleLaunch = useCallback(async (finalConfig: unknown) => {    
     setIsLaunching(true);
-    const config = finalConfig as AutoEvalConfiguration & { costEstimate?: any };
+    const config = finalConfig as AutoEvalConfiguration & { costEstimate?: number };
     const generationOpts = {
       dataset: {
         name: config.dataset?.name || '',
@@ -362,24 +367,37 @@ export default function AutoEvalPage() {
                     )}
                     {currentStep === totalSteps ? (
                       !isMobile && (
-                        <Button
-                          onClick={onComplete}
-                          disabled={isLaunching}
-                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm"
-                          size="sm"
-                        >
-                          {isLaunching ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Launching...
-                            </>
-                          ) : (
-                            <>
-                              <Play className="h-4 w-4 mr-2" />
-                              Launch Evaluation
-                            </>
-                          )}
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <Button
+                                  onClick={onComplete}
+                                  disabled={isLaunching || !canLaunchEvaluation}
+                                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                  size="sm"
+                                >
+                                  {isLaunching ? (
+                                    <>
+                                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                      Launching...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Play className="h-4 w-4 mr-2" />
+                                      Launch Evaluation
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </TooltipTrigger>
+                            {!canLaunchEvaluation && (
+                              <TooltipContent side="top" className="max-w-sm bg-blue-900/90 border border-blue-400/30 text-white">
+                                <p>Launch evaluation is not enabled for your account yet. Please contact your administrator.</p>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
                       )
                     ) : (
                       !hideNextButton && (

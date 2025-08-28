@@ -1,6 +1,8 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useProfile } from "@/contexts/ProfileContext";
 import type { AutoEvalConfiguration } from "@/types/shared";
 import { DollarSign, Loader2, Play, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -44,10 +46,13 @@ export default function Step6ReviewLaunch({
   onComplete,
   isProcessing = false 
 }: Step6ReviewLaunchProps) {
+  const { hasPermission } = useProfile();
   const [isMobile, setIsMobile] = useState(false);
   const [costEstimate, setCostEstimate] = useState<CostEstimate | null>(null);
   const [loadingCost, setLoadingCost] = useState(false);
   const [costError, setCostError] = useState<string | null>(null);
+
+  const canLaunchEvaluation = hasPermission('LAUNCH_EVALUATION');
 
   // Use the actual configuration data passed from the parent
   const config: AutoEvalConfiguration = initialConfig || {
@@ -260,24 +265,37 @@ export default function Step6ReviewLaunch({
         {/* Mobile Launch Button - Positioned at bottom */}
         {isMobile && onComplete && (
           <div className="mt-6">
-            <Button
-              onClick={() => onComplete({ ...config, costEstimate })}
-              disabled={isProcessing || loadingCost}
-              className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base"
-              size="lg"
-            >
-              {isProcessing ? (
-                <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Launching...
-                </>
-              ) : (
-                <>
-                  <Play className="h-5 w-5 mr-2" />
-                  Launch Evaluation
-                </>
-              )}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button
+                      onClick={() => onComplete({ ...config, costEstimate })}
+                      disabled={isProcessing || loadingCost || !canLaunchEvaluation}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      size="lg"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          Launching...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-5 w-5 mr-2" />
+                          Launch Evaluation
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {!canLaunchEvaluation && (
+                  <TooltipContent side="top" className="max-w-sm bg-blue-900/90 border border-blue-400/30 text-white">
+                    <p>Launch evaluation is not enabled for your account yet. Please contact your administrator.</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
       </CardContent>

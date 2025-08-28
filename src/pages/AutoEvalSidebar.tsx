@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
+import { useProfile } from "@/contexts/ProfileContext"
 
 import logo from '@/assets/logo.png'
 import {
@@ -13,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Monitor, Trophy, Wand2 } from "lucide-react"
+import { Monitor, Trophy, Wand2, Shield } from "lucide-react"
 
 // Navigation items for AutoEval sidebar
 const autoEvalNavItems: Array<{
@@ -38,6 +39,19 @@ const autoEvalNavItems: Array<{
   },
 ]
 
+// Admin navigation items
+const adminNavItems: Array<{
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
+  {
+    title: "Admin",
+    url: "/autoeval/admin",
+    icon: Shield,
+  },
+]
+
 const autoEvalSecondaryItems: Array<{
   title: string;
   url: string;
@@ -47,7 +61,9 @@ const autoEvalSecondaryItems: Array<{
 
 
 export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const location = useLocation()
+  const location = useLocation();
+  const { isAdmin } = useProfile();
+  
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="pt-6">
@@ -81,6 +97,21 @@ export function AutoEvalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                       location.pathname === item.url ||
                       (item.title === 'Dashboard' && (location.pathname === '/autoeval' || location.pathname === '/autoeval/dashboard'))
                     }
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url}>
+                      <item.icon className="size-3" />
+                      <span className="text-sm">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+              {/* Show admin navigation for admin users */}
+              {isAdmin && adminNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.url}
                     tooltip={item.title}
                   >
                     <Link to={item.url}>
