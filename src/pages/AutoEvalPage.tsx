@@ -1,5 +1,12 @@
 import ConfigurationSummary from "@/components/ConfigurationSummary";
 import MultiStepForm, { type StepConfig } from "@/components/MultiStepForm";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -8,7 +15,7 @@ import apiClient from "@/lib/api";
 import type { AutoEvalConfiguration } from "@/types/shared";
 import { AlertCircle, Eye, EyeOff, Loader2, Play, Settings, Wand2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import Step1UploadDataset from "./steps/Step1UploadDataset";
@@ -297,33 +304,56 @@ export default function AutoEvalPage() {
   return (
     <div className={`flex w-full ${isMobile ? 'h-auto' : 'h-full'}`}>
       <div className={`flex flex-col relative ${!isMobile && showConfigSummary ? 'w-2/3 p-6 h-full overflow-hidden' : isMobile ? 'w-full py-6 px-3' : 'w-full p-6 h-full overflow-hidden'}`}>
-        <div className={`flex items-center gap-3 flex-shrink-0 ${isMobile ? 'flex-row items-center gap-2 mb-2' : 'mb-6'}`}>
+        {/* Breadcrumb */}
+        {!isMobile && (
+          <Breadcrumb className="mb-4 flex-shrink-0">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+                  Home
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Evaluation Dashboard</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
+        
+        {/* Main Heading */}
+        <div className={`flex items-center gap-3 flex-shrink-0 ${isMobile ? 'mb-2 pt-4' : 'mb-6 pt-6'}`}>
           <div className={`p-2 bg-purple-900/20 rounded-lg ${isMobile ? 'p-1.5' : ''}`}>
             <Wand2 className={`text-purple-400 ${isMobile ? 'h-5 w-5' : 'h-6 w-6'}`} />
           </div>
-          <h1 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Evaluation Dashboard</h1>
-          <div className={`${isMobile ? 'ml-auto' : 'ml-auto'}`}>
-            {!steps[currentStep - 1]?.hideShowSummaryButton && !isMobile && (
-              <Button
-                onClick={() => setShowConfigSummary(!showConfigSummary)}
-                variant="outline"
-                size="sm"
-                className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10"
-              >
-                {showConfigSummary ? (
-                  <>
-                    <EyeOff className="h-4 w-4 mr-2" />
-                    Hide Summary
-                  </>
-                ) : (
-                  <>
-                    <Eye className="h-4 w-4 mr-2" />
-                    Show Summary
-                  </>
-                )}
-              </Button>
+          <div className="flex-1">
+            <h1 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Evaluation Dashboard</h1>
+            {!isMobile && (
+              <p className="text-muted-foreground">
+                Configure and launch your model evaluation workflows
+              </p>
             )}
           </div>
+          {!steps[currentStep - 1]?.hideShowSummaryButton && !isMobile && (
+            <Button
+              onClick={() => setShowConfigSummary(!showConfigSummary)}
+              variant="outline"
+              size="sm"
+              className="border border-blue-400 text-white hover:text-blue-400 hover:bg-blue-400/10"
+            >
+              {showConfigSummary ? (
+                <>
+                  <EyeOff className="h-4 w-4 mr-2" />
+                  Hide Summary
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Show Summary
+                </>
+              )}
+            </Button>
+          )}
         </div>
         
         <div className={`${isMobile ? 'flex-1' : 'flex-1 overflow-auto'}`}>

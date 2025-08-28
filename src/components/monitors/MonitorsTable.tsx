@@ -3,12 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import api from "@/lib/api";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Eye, Info, Filter } from "lucide-react";
+import { Eye, Filter, Info } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
-import api from "@/lib/api";
 
 interface ModelDef {
   id: string;
@@ -72,6 +72,7 @@ export function MonitorsTable() {
     {
       accessorKey: "id",
       header: "Workflow ID",
+      size: 140,
       cell: ({ row }) => (
         <Badge variant="outline" className="font-mono text-xs">
           {String(row.getValue("id"))}
@@ -81,6 +82,7 @@ export function MonitorsTable() {
     {
       accessorKey: "createdAt",
       header: "Date Created",
+      size: 160,
       cell: ({ row }) => {
         const dateString = row.getValue("createdAt") as string;
         if (!dateString) return <span className="text-muted-foreground">-</span>;
@@ -101,13 +103,14 @@ export function MonitorsTable() {
     {
       accessorKey: "models",
       header: "Models",
+      size: 200,
       cell: ({ row }) => {
         const models = row.getValue("models") as ModelDef[];
         if (Array.isArray(models) && models.length > 0) {
           const modelNames = models.map(model => model.name || model.id).join(", ");
           return (
-            <div className="text-sm text-muted-foreground">
-              {modelNames.length > 50 ? modelNames.substring(0, 50) + "..." : modelNames}
+            <div className="text-sm text-muted-foreground truncate max-w-[180px]">
+              {modelNames.length > 40 ? modelNames.substring(0, 40) + "..." : modelNames}
             </div>
           );
         }
@@ -117,13 +120,14 @@ export function MonitorsTable() {
     {
       accessorKey: "datasetId",
       header: "Dataset ID",
+      size: 150,
       cell: ({ row }) => {
         const datasetId = row.getValue("datasetId") as string;
         if (datasetId) {
           return (
             <Badge 
               variant="outline" 
-              className="font-mono text-xs bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/40 dark:hover:to-purple-800/40 transition-all duration-200"
+              className="font-mono text-xs bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/40 dark:hover:to-purple-800/40 transition-all duration-200 max-w-[130px] truncate"
             >
               {datasetId}
             </Badge>
@@ -135,6 +139,7 @@ export function MonitorsTable() {
     {
       accessorKey: "generationOpts",
       header: "Configuration",
+      size: 250,
       cell: ({ row }) => {
         const generationOpts = row.getValue("generationOpts") as GenerationOpts;
         if (generationOpts) {
@@ -156,7 +161,7 @@ export function MonitorsTable() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-2">
-                    <div className="text-sm text-muted-foreground max-w-48 truncate">
+                    <div className="text-sm text-muted-foreground max-w-[200px] truncate">
                       {summary || "Configuration available"}
                     </div>
                     <Button
@@ -253,6 +258,7 @@ export function MonitorsTable() {
     },
     {
       accessorKey: "status",
+      size: 120,
       header: () => (
         <div className="flex items-center gap-2">
           <span>Status</span>
@@ -314,6 +320,7 @@ export function MonitorsTable() {
     {
       id: "actions",
       header: "Actions",
+      size: 100,
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button
@@ -335,7 +342,7 @@ export function MonitorsTable() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 pb-8">
+    <div className="flex flex-col gap-6 pb-8 w-full overflow-hidden">
       {/* <div className="flex items-center gap-3 px-8 lg:px-16">
         <div className="bg-blue-900/20 rounded-lg">
           <Monitor className="h-6 w-6 text-blue-400" />

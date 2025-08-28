@@ -1,48 +1,48 @@
 import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  DotsVertical,
-  GripVertical,
-  LayoutColumns,
-  // Add a refresh icon if available, fallback to Loader
-  Loader as RefreshIcon
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    DotsVertical,
+    GripVertical,
+    LayoutColumns,
+    // Add a refresh icon if available, fallback to Loader
+    Loader as RefreshIcon
 } from "@/components/SimpleIcons"
 import {
-  closestCenter,
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  type UniqueIdentifier,
-  useSensor,
-  useSensors,
+    closestCenter,
+    DndContext,
+    type DragEndEvent,
+    KeyboardSensor,
+    MouseSensor,
+    TouchSensor,
+    type UniqueIdentifier,
+    useSensor,
+    useSensors,
 } from "@dnd-kit/core"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
+    arrayMove,
+    SortableContext,
+    useSortable,
+    verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type Row,
-  type SortingState,
-  useReactTable,
-  type VisibilityState,
+    type ColumnDef,
+    type ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    type Row,
+    type SortingState,
+    useReactTable,
+    type VisibilityState,
 } from "@tanstack/react-table"
 import * as React from "react"
 import { toast } from "sonner"
@@ -50,40 +50,40 @@ import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
 } from "@/components/ui/drawer"
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
 import { useIsMobile } from "@/hooks/use-mobile"
 import api from "@/lib/api"
@@ -299,6 +299,10 @@ interface GenericDataTableProps {
    * External filters to apply (for server-side pagination)
    */
   externalFilters?: Record<string, unknown>;
+  /**
+   * Static data to use instead of fetching from endpoint (optional)
+   */
+  staticData?: Record<string, unknown>[];
 }
 
 export function GenericDataTable({
@@ -318,7 +322,8 @@ export function GenericDataTable({
   requestBody,
   serverSidePagination,
   totalCount,
-  externalFilters
+  externalFilters,
+  staticData
 }: GenericDataTableProps) {
   const [data, setData] = React.useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -343,6 +348,13 @@ export function GenericDataTable({
     try {
       setLoading(true)
       setError(null)
+      
+      // If static data is provided, use it instead of fetching
+      if (staticData) {
+        setData(staticData)
+        setLoading(false)
+        return
+      }
       
       const requestConfig: { params?: Record<string, unknown> } = {};
       
@@ -408,7 +420,7 @@ export function GenericDataTable({
     } finally {
       setLoading(false)
     }
-  }, [endpoint, dataKey, requestBody, serverSidePagination, pagination, sorting, columnFilters, externalFilters])
+  }, [endpoint, dataKey, requestBody, serverSidePagination, pagination, sorting, columnFilters, externalFilters, staticData])
 
   // Fetch data from endpoint on mount
   React.useEffect(() => {
