@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import type { AutoEvalConfiguration } from "@/types/shared";
-import { ChevronDown, ChevronUp, RotateCcw, Target, Thermometer } from "lucide-react";
+import { Minus, Plus, RotateCcw, Target, Thermometer } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -87,7 +87,7 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
       case 'maxTokens':
         step = 1;
         min = 100;
-        max = 1000;
+        max = 3000;
         break;
       default:
         return;
@@ -261,14 +261,14 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
                             disabled={params.temperature >= 1}
                           >
-                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Plus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                           <button
                             onClick={() => adjustParameter(model.id, 'temperature', false)}
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
                             disabled={params.temperature <= 0}
                           >
-                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Minus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                         </div>
                       </div>
@@ -308,14 +308,14 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
                             disabled={params.topP >= 1}
                           >
-                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Plus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                           <button
                             onClick={() => adjustParameter(model.id, 'topP', false)}
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
                             disabled={params.topP <= 0}
                           >
-                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Minus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                         </div>
                       </div>
@@ -338,12 +338,12 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                         <div className="flex-1 relative">
                           <div className="flex justify-between text-xs text-gray-400 mb-3 px-1">
                             <span>100</span>
-                            <span>1000</span>
+                            <span>3000</span>
                           </div>
                           <Slider
                             value={[params.maxTokens]}
                             onValueChange={(value) => updateModelParameter(model.id, 'maxTokens', value[0])}
-                            max={1000}
+                            max={3000}
                             min={100}
                             step={1}
                             className="w-full"
@@ -353,16 +353,16 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                           <button
                             onClick={() => adjustParameter(model.id, 'maxTokens', true)}
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
-                            disabled={params.maxTokens >= 1000}
+                            disabled={params.maxTokens >= 3000}
                           >
-                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Plus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                           <button
                             onClick={() => adjustParameter(model.id, 'maxTokens', false)}
                             className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
                             disabled={params.maxTokens <= 100}
                           >
-                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                            <Minus className="h-3 w-3 text-orange-300 stroke-2" />
                           </button>
                         </div>
                       </div>
