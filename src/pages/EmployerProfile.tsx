@@ -34,6 +34,7 @@ interface EmployerProfile {
   companyName: string;
   companyWebsite?: string;
   isEmailVerified: boolean;
+  userType: string;
 }
 
 export default function EmployerProfile() {

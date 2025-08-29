@@ -35,10 +35,64 @@ interface Permission {
   description: string;
 }
 
+// Available permissions that can be assigned to users
+const AVAILABLE_PERMISSIONS: Permission[] = [
+  {
+    value: 'LAUNCH_EVALUATION',
+    label: 'Launch Evaluation',
+    description: 'Can create and run evaluation workflows'
+  },
+  {
+    value: 'SUPER_ADMIN',
+    label: 'Super Admin',
+    description: 'Full system access including managing other admins'
+  }
+];
+
+// Custom debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// Debounced GenericDataTable wrapper
+function DebouncedGenericDataTable({ 
+  searchQuery, 
+  ...props 
+}: { 
+  searchQuery: string;
+  endpoint: string;
+  dataKey: string;
+  title?: string;
+  enableSelection?: boolean;
+  customColumns?: ColumnDef<Record<string, unknown>>[];
+  serverSidePagination?: boolean;
+  searchBarElement?: React.ReactNode;
+}) {
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  
+  return (
+    <GenericDataTable
+      {...props}
+      externalFilters={debouncedSearchQuery ? { search: debouncedSearchQuery } : undefined}
+    />
+  );
+}
+
 export default function AutoEvalAdminPage() {
   const { isAdmin, hasPermission } = useProfile();
   const navigate = useNavigate();
-  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingRow, setEditingRow] = useState<{
@@ -67,16 +121,32 @@ export default function AutoEvalAdminPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [permissionsResponse, statsResponse] = await Promise.all([
-          apiClient.get('/v1/autoeval/admin/permissions'),
-          apiClient.get('/v1/autoeval/admin/stats')
-        ]);
-        
-        setPermissions(permissionsResponse.data.permissions);
-        setStats(statsResponse.data.stats);
+        const statsResponse = await apiClient.get('/v1/autoeval/admin/stats');
+        // Add null check and fallback values
+        const responseStats = statsResponse.data?.stats;
+        if (responseStats) {
+          setStats({
+            totalUsers: responseStats.totalUsers || 0,
+            adminUsers: responseStats.adminUsers || 0,
+            regularUsers: responseStats.regularUsers || 0
+          });
+        } else {
+          // Fallback to default values if stats is undefined
+          setStats({
+            totalUsers: 0,
+            adminUsers: 0,
+            regularUsers: 0
+          });
+        }
       } catch (error) {
         console.error('Failed to load data:', error);
         toast.error('Failed to load admin data');
+        // Keep default values on error
+        setStats({
+          totalUsers: 0,
+          adminUsers: 0,
+          regularUsers: 0
+        });
       }
     };
 
@@ -186,7 +256,7 @@ export default function AutoEvalAdminPage() {
           return (
             <div className="flex flex-wrap gap-1">
               {userPermissions.map(permission => {
-                const permissionInfo = permissions.find(p => p.value === permission);
+                const permissionInfo = AVAILABLE_PERMISSIONS.find(p => p.value === permission);
                 return (
                   <Badge key={permission} variant="secondary" className="mr-1 mb-1">
                     {permissionInfo?.label || permission}
@@ -200,7 +270,7 @@ export default function AutoEvalAdminPage() {
           );
         }
 
-        const permissionOptions = permissions.map(p => ({
+        const permissionOptions = AVAILABLE_PERMISSIONS.map(p => ({
           value: p.value,
           label: p.label
         }));
@@ -221,7 +291,7 @@ export default function AutoEvalAdminPage() {
           return (
             <div className="flex flex-wrap gap-1">
               {userPermissions.map(permission => {
-                const permissionInfo = permissions.find(p => p.value === permission);
+                const permissionInfo = AVAILABLE_PERMISSIONS.find(p => p.value === permission);
                 return (
                   <Badge key={permission} variant="secondary" className="mr-1 mb-1">
                     {permissionInfo?.label || permission}
@@ -422,7 +492,8 @@ export default function AutoEvalAdminPage() {
           <div className="mb-4">
             <h2 className="text-lg font-semibold">User Management</h2>
           </div>
-          <GenericDataTable
+          <DebouncedGenericDataTable
+            searchQuery={searchQuery}
             endpoint="/v1/autoeval/admin/users"
             dataKey="users"
             title=""
@@ -430,7 +501,6 @@ export default function AutoEvalAdminPage() {
             customColumns={userColumns}
             serverSidePagination={true}
             searchBarElement={<SearchComponent />}
-            externalFilters={searchQuery ? { search: searchQuery } : undefined}
           />
         </div>
       </div>
@@ -474,7 +544,7 @@ export default function AutoEvalAdminPage() {
               <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Permissions</label>
                 <MultiSelect
-                  options={permissions.map(p => ({
+                  options={AVAILABLE_PERMISSIONS.map(p => ({
                     value: p.value,
                     label: p.label
                   }))}

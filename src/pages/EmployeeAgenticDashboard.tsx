@@ -206,6 +206,7 @@ interface EmployeeProfile {
   linkedinPicture?: string;
   linkedinProfileUrl?: string;
   isEmailVerified?: boolean;
+  userType: string;
 }
 
 const employeeNavItems = [
