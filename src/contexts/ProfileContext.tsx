@@ -8,6 +8,7 @@ interface EmployerProfile {
   companyName: string;
   companyWebsite?: string;
   isEmailVerified: boolean;
+  userType: string;
 }
 
 interface EmployeeProfile {
@@ -21,6 +22,7 @@ interface EmployeeProfile {
   linkedinPicture?: string;
   linkedinProfileUrl?: string;
   isEmailVerified?: boolean;
+  userType: string;
 }
 
 interface AutoEvalProfile {
@@ -29,6 +31,7 @@ interface AutoEvalProfile {
   email: string;
   permissions?: string[];
   isAdmin?: boolean;
+  userType: string;
 }
 
 type Profile = EmployerProfile | EmployeeProfile | AutoEvalProfile;
@@ -59,8 +62,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
-    // Don't automatically load from localStorage on mount
-    // Let auth guards handle profile validation and loading
     setIsLoading(false);
   }, []);
 
@@ -68,12 +69,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const setProfile = (newProfile: Profile | null) => {
     setProfileState(newProfile);
     if (newProfile) {
-      // Check if it's an autoeval user by looking for autoeval-specific properties
-      const type: UserType = 'companyName' in newProfile ? 'employer' : 
-                            'linkedinId' in newProfile ? 'employee' : 'autoeval';
+      let type: UserType = null;
+      if(newProfile?.userType == 'EMPLOYER') {
+        type = 'employer'
+      } else if(newProfile?.userType == 'EMPLOYEE') {
+        type = 'employee'
+      } else if(newProfile?.userType == 'AUTO_EVAL') {
+        type = 'autoeval'
+      }
       setUserType(type);
       localStorage.setItem('userProfile', JSON.stringify(newProfile));
-      localStorage.setItem('userType', type);
+      localStorage.setItem('userType', type || '');
       setIsLoggingOut(false);
     } else {
       setUserType(null);
