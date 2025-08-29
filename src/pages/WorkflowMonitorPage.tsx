@@ -276,18 +276,19 @@ export default function WorkflowMonitorPage() {
             <CardContent className="space-y-6 overflow-auto">
               {/* Monitor Selection */}
               <div className="border-b pb-4">
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
                   <h3 className="text-sm font-medium text-muted-foreground">Select Monitors</h3>
+                  {/* Desktop: Show button on the right */}
                   <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={handleSelectAll}
-                    className="text-xs h-7 px-2"
+                    className="text-xs h-7 px-2 hidden md:block"
                   >
                     {allSelected ? 'Deselect All' : 'Select All'}
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 mb-3">
                   {Object.keys(placeholderModelsData).map((modelId) => (
                     <div key={modelId} className="flex items-center space-x-2">
                       <Checkbox
@@ -306,6 +307,17 @@ export default function WorkflowMonitorPage() {
                     </div>
                   ))}
                 </div>
+                {/* Mobile: Show button on the left below monitor options */}
+                <div className="md:hidden">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleSelectAll}
+                    className="text-xs h-7 px-2"
+                  >
+                    {allSelected ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </div>
               </div>
 
               {/* Model Performance Grid */}
@@ -317,35 +329,38 @@ export default function WorkflowMonitorPage() {
                   return (
                     <Card key={modelId} className="flex flex-col">
                       <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle className="text-lg">{displayName}</CardTitle>
-                            <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between gap-3">
+                              <CardTitle className="text-lg flex-1 min-w-0">{displayName}</CardTitle>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRefresh(modelId)}
+                                className="h-8 px-3 bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 hover:from-gray-700 hover:to-gray-800 hover:border-gray-500 text-gray-200 hover:text-white transition-all duration-200 shadow-sm hover:shadow-md flex-shrink-0"
+                              >
+                                <RefreshCw className="h-3 w-3 mr-1" />
+                                <span className="text-xs font-medium">Refresh</span>
+                              </Button>
+                            </div>
+                            <div className="flex items-center gap-2 md:gap-4 mt-2">
                               <div className="flex items-center gap-1">
                                 <Thermometer className="h-3 w-3 text-blue-600" />
-                                <span className="text-xs text-gray-200">Temperature:</span>
-                                <span className="text-xs font-medium text-gray-200">{modelData.temperature}</span>
+                                <span className="text-xs md:text-xs text-gray-200">Temp:</span>
+                                <span className="text-xs md:text-xs font-medium text-gray-200">{modelData.temperature}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Target className="h-3 w-3 text-purple-600" />
-                                <span className="text-xs text-gray-200">Top P:</span>
-                                <span className="text-xs font-medium text-gray-200">{modelData.topP}</span>
+                                <span className="text-xs md:text-xs text-gray-200">Top P:</span>
+                                <span className="text-xs md:text-xs font-medium text-gray-200">{modelData.topP}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Target className="h-3 w-3 text-green-600" />
-                                <span className="text-xs text-gray-200">Max Tokens:</span>
-                                <span className="text-xs font-medium text-gray-200">{modelData.maxTokens}</span>
+                                <span className="text-xs md:text-xs text-gray-200">Max:</span>
+                                <span className="text-xs md:text-xs font-medium text-gray-200">{modelData.maxTokens}</span>
                               </div>
                             </div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRefresh(modelId)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <RefreshCw className="h-4 w-4" />
-                          </Button>
                         </div>
                       </CardHeader>
                       <CardContent className="flex-1 space-y-4">
