@@ -123,7 +123,7 @@ export default function AutoEvalAboutPage() {
           <div className="w-full max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 pt-4 md:pt-6 lg:pt-8 pb-10 md:pb-102 lg:pb-14">
             <div className="grid grid-cols-4 gap-0">
               <div className="col-span-4 px-8 mb-12">
-                <h2 className="text-2xl md:text-3xl font-bold text-white text-left">
+                <h2 className="text-2xl md:text-3xl font-bold text-white text-center">
                   Why choose AutoEval
                 </h2>
               </div>
