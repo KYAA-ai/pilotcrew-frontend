@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import apiClient from "@/lib/api";
 import {
   ArrowRight,
   Cloud,
@@ -22,7 +23,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import logo from "../assets/logo.png";
-import apiClient from "@/lib/api";
 
 
 interface FormData {
@@ -91,7 +91,7 @@ export default function AutoEvalAboutPage() {
       ]
     },
     {
-      title: "Multiple Evaluation Metrics",
+      title: "Real-Time Monitoring",
       points: [
         { icon: <TrendingUp className="h-7 w-7 text-[#e9a855]" />, text: "Get real-time progress of execution and compare models specific to your use case" },
         { icon: <Target className="h-7 w-7 text-[#e9a855]" />, text: "Observe usage and accurate execution times of different models with token usage" }
@@ -119,8 +119,8 @@ export default function AutoEvalAboutPage() {
       {/* Main Content */}
       <div className="px-6 py-8">
         {/* Why Choose AutoEval Section */}
-        <div className="flex items-center justify-center mx-10 mt-8 sm:mt-16 md:mt-24 lg:mt-32 xl:mt-40 2xl:mt-48 mb-8 sm:mb-16 md:mb-24 lg:mb-32 xl:mb-40 2xl:mb-48">
-          <div className="w-full max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 py-8 md:py-12 lg:py-16">
+        <div className="flex items-center justify-center mx-10 mt-8 sm:mt-16 md:mt-24 lg:mt-32 xl:mt-40 2xl:mt-48 mb-4 sm:mb-6 md:mb-8 lg:mb-12 xl:mb-16 2xl:mb-20">
+          <div className="w-full max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 pt-4 md:pt-6 lg:pt-8 pb-10 md:pb-102 lg:pb-14">
             <div className="grid grid-cols-4 gap-0">
               <div className="col-span-4 px-8 mb-12">
                 <h2 className="text-2xl md:text-3xl font-bold text-white text-left">

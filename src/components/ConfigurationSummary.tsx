@@ -85,12 +85,31 @@ export default function ConfigurationSummary({
                       <p className="text-xs text-slate-400">Selected evaluation task</p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {config.tasks.map((task, index) => (
-                      <Badge key={index} className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium">
-                        {task.id}
-                      </Badge>
-                    ))}
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      {config.tasks.map((task, index) => (
+                        <Badge key={index} className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium">
+                          {task.id}
+                        </Badge>
+                      ))}
+                    </div>
+                    
+                    {/* Classification Labels */}
+                    {config.tasks.some(task => task.id === 'classification') && config.classificationLabels && config.classificationLabels.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-slate-400 font-medium">Classification Labels:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {config.classificationLabels.map((label, index) => (
+                            <span
+                              key={index}
+                              className="inline-block px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-md text-cyan-300 text-xs"
+                            >
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -302,12 +321,31 @@ export default function ConfigurationSummary({
                     <p className="text-xs text-slate-400">Selected evaluation task</p>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {config.tasks.map((task, index) => (
-                    <Badge key={index} className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium">
-                      {task.id}
-                    </Badge>
-                  ))}
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {config.tasks.map((task, index) => (
+                      <Badge key={index} className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium">
+                        {task.id}
+                      </Badge>
+                    ))}
+                  </div>
+                  
+                  {/* Classification Labels */}
+                  {config.tasks.some(task => task.id === 'classification') && config.classificationLabels && config.classificationLabels.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-slate-400 font-medium">Classification Labels:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {config.classificationLabels.map((label, index) => (
+                          <span
+                            key={index}
+                            className="inline-block px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-md text-cyan-300 text-xs"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

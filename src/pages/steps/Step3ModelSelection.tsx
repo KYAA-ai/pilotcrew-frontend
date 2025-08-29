@@ -112,10 +112,11 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
             <p className="text-slate-300">Select models for evaluation by tapping on them.</p>
           </div>
           
-          {/* Cost Footnote */}
-          <div className="mb-3">
-            <p className="text-xs text-gray-500 text-left">
-              * All costs are measured per 1 million tokens
+          {/* Cost Notice */}
+          <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <p className="text-sm font-semibold text-amber-400 text-center flex items-center justify-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Note: All costs are measured per 1 million tokens
             </p>
           </div>
           
@@ -250,10 +251,11 @@ export default function Step3ModelSelection({ onConfigurationUpdate, initialConf
           )}
         </div>
         
-        {/* Cost Footnote */}
-        <div className="mb-3">
-          <p className="text-xs text-gray-500 text-left">
-            * All costs are measured per 1 million tokens
+        {/* Cost Notice */}
+        <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+          <p className="text-sm font-semibold text-amber-400 text-center flex items-center justify-center gap-2">
+            <DollarSign className="h-4 w-4" />
+            Note: All costs are measured per 1 million tokens
           </p>
         </div>
         

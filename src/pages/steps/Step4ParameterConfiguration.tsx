@@ -4,8 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import type { AutoEvalConfiguration } from "@/types/shared";
-import { RotateCcw, Target, Thermometer } from "lucide-react";
+import { ChevronDown, ChevronUp, RotateCcw, Target, Thermometer } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface ModelParameters {
   temperature: number;
@@ -68,6 +69,44 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
     }
   };
 
+  const adjustParameter = (modelId: string, paramType: keyof ModelParameters, increment: boolean) => {
+    const currentValue = modelParameters[modelId]?.[paramType] || 0;
+    let newValue: number;
+    let step: number;
+    let min: number;
+    let max: number;
+
+    // Define step, min, max based on parameter type
+    switch (paramType) {
+      case 'temperature':
+      case 'topP':
+        step = 0.1;
+        min = 0;
+        max = 1;
+        break;
+      case 'maxTokens':
+        step = 1;
+        min = 100;
+        max = 1000;
+        break;
+      default:
+        return;
+    }
+
+    if (increment) {
+      newValue = Math.min(currentValue + step, max);
+    } else {
+      newValue = Math.max(currentValue - step, min);
+    }
+
+    // Round to avoid floating point precision issues
+    if (paramType === 'temperature' || paramType === 'topP') {
+      newValue = Math.round(newValue * 10) / 10;
+    }
+
+    updateModelParameter(modelId, paramType, newValue);
+  };
+
   const handleClearSelection = () => {
     const defaultParams: Record<string, ModelParameters> = {};
     selectedModels.forEach(model => {
@@ -98,6 +137,22 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
     if (onConfigurationUpdate) {
       onConfigurationUpdate({ parameters: updatedParams });
     }
+
+         // Show success toast notification
+     toast.success("Configuration applied to all models successfully!", {
+       position: "top-center",
+       style: {
+         background: "#1e293b", // slate-800 - dark grey-blue background
+         color: "#f9fafb", // gray-50 - light text
+         border: "1px solid #d1d5db", // gray-300 - light grey border
+         padding: "16px 24px", // larger padding
+         fontSize: "16px", // larger font
+         fontWeight: "500",
+         borderRadius: "12px", // rounded corners
+         minWidth: "400px", // larger width
+       },
+       duration: 4000, // Show for 4 seconds
+     });
   };
 
   if (selectedModels.length === 0) {
@@ -185,18 +240,38 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       <Label className="text-sm font-medium">Temperature</Label>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>0.0</span>
-                        <span>1.0</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 relative">
+                          <div className="flex justify-between text-xs text-gray-400 mb-3 px-1">
+                            <span>0.0</span>
+                            <span>1.0</span>
+                          </div>
+                          <Slider
+                            value={[params.temperature]}
+                            onValueChange={(value) => updateModelParameter(model.id, 'temperature', value[0])}
+                            max={1}
+                            min={0}
+                            step={0.1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => adjustParameter(model.id, 'temperature', true)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.temperature >= 1}
+                          >
+                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                          <button
+                            onClick={() => adjustParameter(model.id, 'temperature', false)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.temperature <= 0}
+                          >
+                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                        </div>
                       </div>
-                      <Slider
-                        value={[params.temperature]}
-                        onValueChange={(value) => updateModelParameter(model.id, 'temperature', value[0])}
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        className="w-full"
-                      />
                       <div className="text-center">
                         <span className="text-sm font-semibold text-blue-600">{params.temperature}</span>
                       </div>
@@ -212,18 +287,38 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       <Label className="text-sm font-medium">Top P</Label>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>0.0</span>
-                        <span>1.0</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 relative">
+                          <div className="flex justify-between text-xs text-gray-400 mb-3 px-1">
+                            <span>0.0</span>
+                            <span>1.0</span>
+                          </div>
+                          <Slider
+                            value={[params.topP]}
+                            onValueChange={(value) => updateModelParameter(model.id, 'topP', value[0])}
+                            max={1}
+                            min={0}
+                            step={0.1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => adjustParameter(model.id, 'topP', true)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.topP >= 1}
+                          >
+                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                          <button
+                            onClick={() => adjustParameter(model.id, 'topP', false)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.topP <= 0}
+                          >
+                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                        </div>
                       </div>
-                      <Slider
-                        value={[params.topP]}
-                        onValueChange={(value) => updateModelParameter(model.id, 'topP', value[0])}
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        className="w-full"
-                      />
                       <div className="text-center">
                         <span className="text-sm font-semibold text-purple-600">{params.topP}</span>
                       </div>
@@ -239,18 +334,38 @@ export default function Step4ParameterConfiguration({ onConfigurationUpdate, ini
                       <Label className="text-sm font-medium">Max Tokens</Label>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>100</span>
-                        <span>1000</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 relative">
+                          <div className="flex justify-between text-xs text-gray-400 mb-3 px-1">
+                            <span>100</span>
+                            <span>1000</span>
+                          </div>
+                          <Slider
+                            value={[params.maxTokens]}
+                            onValueChange={(value) => updateModelParameter(model.id, 'maxTokens', value[0])}
+                            max={1000}
+                            min={100}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => adjustParameter(model.id, 'maxTokens', true)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.maxTokens >= 1000}
+                          >
+                            <ChevronUp className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                          <button
+                            onClick={() => adjustParameter(model.id, 'maxTokens', false)}
+                            className="w-6 h-6 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg border border-orange-500/30 hover:border-orange-400/50 flex items-center justify-center transition-colors"
+                            disabled={params.maxTokens <= 100}
+                          >
+                            <ChevronDown className="h-3 w-3 text-orange-300 stroke-2" />
+                          </button>
+                        </div>
                       </div>
-                      <Slider
-                        value={[params.maxTokens]}
-                        onValueChange={(value) => updateModelParameter(model.id, 'maxTokens', value[0])}
-                        max={1000}
-                        min={100}
-                        step={1}
-                        className="w-full"
-                      />
                       <div className="text-center">
                         <span className="text-sm font-semibold text-green-600">{params.maxTokens}</span>
                       </div>

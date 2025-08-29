@@ -9,6 +9,7 @@ import apiClient from "@/lib/api";
 import type { AutoEvalConfiguration, StepUIState } from "@/types/shared";
 import { AlertCircle, Info, RotateCcw, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface Step1UploadDatasetProps {
   onConfigurationUpdate?: (config: Partial<AutoEvalConfiguration> | ((prevConfig: AutoEvalConfiguration) => AutoEvalConfiguration)) => void;
@@ -132,6 +133,12 @@ export default function Step1UploadDataset({
           setUploadStatus('success');
           setUploadMessage('Dataset uploaded and preview loaded successfully!');
           
+          // Show success toast notification
+          toast.success('Dataset uploaded successfully!', {
+            description: 'Your dataset has been uploaded and preview is ready.',
+            duration: 4000,
+          });
+          
         } catch (previewError) {
           console.error('❌ Failed to fetch dataset preview:', previewError);
           // Still update with datasetId even if preview fails
@@ -147,6 +154,12 @@ export default function Step1UploadDataset({
           setBackendResponseReceived(true);
           setUploadStatus('success');
           setUploadMessage('Dataset uploaded successfully! (Preview unavailable)');
+          
+          // Show success toast notification (preview failed case)
+          toast.success('Dataset uploaded successfully!', {
+            description: 'Your dataset has been uploaded. Preview is temporarily unavailable.',
+            duration: 4000,
+          });
         } finally {
           setLoadingPreview(false);
           setUploadProgress(100);
@@ -161,11 +174,17 @@ export default function Step1UploadDataset({
         setUploadStatus('error');
         setUploadMessage(errorMessage);
         setUploadProgress(0);
+        
+        // Show error toast notification
+        toast.error('Upload failed', {
+          description: errorMessage,
+          duration: 5000,
+        });
       } finally {
         setUploading(false);
       }
     },
-    [selectedFile, uploading, uploadedFileName, datasetColumns, selectedInputColumn, selectedOutputColumn, onConfigurationUpdate]
+    [selectedFile, uploading, onConfigurationUpdate]
   );
 
   const handleFileUpload = (files: FileList | null) => { 
@@ -485,38 +504,46 @@ export default function Step1UploadDataset({
                 </div>
               </div>
             ) : datasetColumns.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {datasetColumns.map((column) => (
-                      <TableHead key={column} className="font-medium text-xs">
-                        {column}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {datasetPreview.length > 0 ? (
-                    datasetPreview.map((row: Record<string, unknown>, index: number) => (
-                      <TableRow key={index}>
-                        {datasetColumns.map((column) => (
-                          <TableCell key={column} className="text-xs">
-                            {typeof row[column] === 'object' ? 
-                              JSON.stringify(row[column]) : 
-                              String(row[column] || '')}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
+              <div 
+                className="overflow-x-auto border rounded-md"
+                style={{
+                  scrollbarWidth: 'auto',
+                  scrollbarColor: '#cbd5e0 #f7fafc'
+                }}
+              >
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={datasetColumns.length} className="text-xs text-center">
-                        Dataset uploaded successfully
-                      </TableCell>
+                      {datasetColumns.map((column) => (
+                        <TableHead key={column} className="font-medium text-xs whitespace-nowrap">
+                          {column}
+                        </TableHead>
+                      ))}
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {datasetPreview.length > 0 ? (
+                      datasetPreview.map((row: Record<string, unknown>, index: number) => (
+                        <TableRow key={index}>
+                          {datasetColumns.map((column) => (
+                            <TableCell key={column} className="text-xs whitespace-nowrap">
+                              {typeof row[column] === 'object' ? 
+                                JSON.stringify(row[column]) : 
+                                String(row[column] || '')}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={datasetColumns.length} className="text-xs text-center">
+                          Dataset uploaded successfully
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="p-8 text-center text-gray-500">
                 <p className="text-sm">No data available</p>

@@ -13,6 +13,7 @@ export interface AutoEvalConfiguration {
     id: string;
     prompt: string;
   }>;
+  classificationLabels?: string[];
   models: Array<{
     id: string;
     name: string;

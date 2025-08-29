@@ -112,6 +112,13 @@ export default function AutoEvalPage() {
       if (!task.prompt || task.prompt.trim() === "") {
         issues.push("Task prompt is empty");
       }
+      
+      // Check for classification labels if classification task is selected
+      if (task.id === 'classification') {
+        if (!config.classificationLabels || config.classificationLabels.length === 0) {
+          issues.push("Classification task requires at least one label");
+        }
+      }
     }
     
     return {
